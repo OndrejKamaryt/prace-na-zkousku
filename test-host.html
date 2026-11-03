@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<title>Práce na zkoušku | Coders Lab (testovací stránka)</title>
+<!-- Napodobenina coderslab.cz podle měření z 29. 10. 2026 (NALEZY.md, A1, A2, E2, E12):
+     Bootstrap 5.2.3, písma Open Sans a Ubuntu bez Ubuntu Mono, lepicí hlavička
+     (od 992 px růžový pruh 60 px, od 1200 px i menu 59 px a podmenu 56 nebo 80 px),
+     pod 1200 px dolní lišta 70 px se z-index 5000, lišta cookies se z-index 2000
+     a ikona poradce se z-index 5000. Obsah s widgetem je v main se z-index 1,
+     který vytváří vlastní kontext vrstvení.
+     Parametry: ?podmenu=56|80|0, ?start=data-start, ?offset=data-scroll-offset, ?cookies=0. -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Ubuntu:wght@400;500;700&display=swap">
+<style>
+body{font-family:'Open Sans', sans-serif; color:#212529; font-size:16px}
+h1, h2, h3, .btn{font-family:'Ubuntu', sans-serif}
+.cl-in{max-width:1110px; margin:0 auto; padding:0 16px; display:flex; align-items:center; gap:24px}
+.cl-promo{background:#D81B53; color:#FFFFFF; font:500 15px/1.3 'Ubuntu', sans-serif; height:60px; display:flex; align-items:center; position:relative; z-index:1020}
+.cl-promo .cl-in{justify-content:center; text-align:center}
+.cl-menu{background:#212529; color:#FFFFFF; height:59px; display:flex; align-items:center; position:relative; z-index:1020}
+.cl-logo{display:flex; align-items:center; gap:10px; font:700 18px/1 'Ubuntu', sans-serif; letter-spacing:.02em; color:#FFFFFF; text-decoration:none}
+.cl-logo i{width:38px; height:38px; background:#FABA20; display:grid; place-items:center; font-style:normal; color:#212529; font-size:17px}
+.cl-links{display:flex; gap:22px; margin-left:auto; font:500 15px 'Ubuntu', sans-serif}
+.cl-links a{color:#FFFFFF; text-decoration:none}
+.cl-burger{margin-left:auto; display:none; width:28px; height:2px; background:#FFFFFF; box-shadow:0 -8px 0 #FFFFFF, 0 8px 0 #FFFFFF}
+.cl-sub{background:#FCF3D9; height:var(--sub, 56px); display:flex; align-items:center; font:500 15px 'Ubuntu', sans-serif; border-bottom:1px solid #E2E6EA; position:relative; z-index:1020}
+.cl-sub .cl-in span{color:#5F676F}
+@media (min-width:992px){ .cl-promo{position:sticky; top:0} }
+@media (min-width:1200px){ .cl-menu{position:sticky; top:60px} .cl-sub{position:sticky; top:119px} }
+@media (max-width:1199px){ .cl-links, .cl-sub{display:none} .cl-burger{display:block} }
+@media (max-width:991px){ .cl-promo{font-size:14px} }
+.mobile-nav{position:fixed; left:0; right:0; bottom:0; height:70px; background:#000000; z-index:5000; display:flex; justify-content:space-around; align-items:center; color:#FFFFFF; font:500 13px 'Ubuntu', sans-serif}
+@media (min-width:1200px){ .mobile-nav{display:none} }
+#cookie-notice{position:fixed; left:0; right:0; bottom:0; z-index:2000; background:#FFFFFF; box-shadow:0 -4px 16px rgba(0,0,0,.15); padding:20px 0}
+#cookie-notice .cl-in{flex-wrap:wrap; gap:12px 24px}
+#cookie-notice p{margin:0; flex:1 1 320px; font-size:14px}
+#toastContactIcon{position:fixed; right:16px; bottom:86px; width:85px; height:85px; border-radius:50%; background:#69CCEA; display:grid; place-items:center; font:700 13px 'Ubuntu', sans-serif; color:#212529; box-shadow:0 4px 12px rgba(0,0,0,.2)}
+@media (min-width:1200px){ #toastContactIcon{bottom:16px} }
+.page-main{position:relative; z-index:1}
+.cl-head{padding:28px 0 20px}
+.cl-head h1{font-weight:700; font-size:32px; margin:6px 0 0}
+.host-after{padding:40px 0}
+.cl-foot{background:#212529; color:#ADB5BD; font-size:14px; padding:28px 0 100px}
+</style>
+<script>
+  // testovací parametry stránky (widget sám čte jen ?ukazka a UTM)
+  const q = new URLSearchParams(location.search);
+  document.documentElement.style.setProperty('--sub', (q.get('podmenu') || '56') + 'px');
+  if (q.get('podmenu') === '0') document.documentElement.classList.add('no-sub');
+</script>
+<style>.no-sub .cl-sub{display:none !important}</style>
+</head>
+<body>
+<div id="cookie-notice" role="region" aria-label="Cookies">
+  <div class="cl-in"><p>Tento web používá soubory cookies ke zlepšení služeb a k analýze návštěvnosti. Napodobenina lišty z coderslab.cz se stejným z-index 2000.</p><button type="button" class="btn btn-primary" id="cookie-ok">Rozumím</button></div>
+</div>
+<div class="cl-promo"><div class="cl-in">Testovací stránka: napodobenina coderslab.cz s vloženou Prací na zkoušku</div></div>
+<div class="cl-menu"><div class="cl-in"><a class="cl-logo" href="#"><i>CL</i>CODERS LAB</a><span class="cl-links"><a href="#">Kurzy</a><a href="#">Webináře</a><a href="#">Pro firmy</a><a href="#">Blog</a><a href="#">Kontakt</a></span><span class="cl-burger" aria-hidden="true"></span></div></div>
+<div class="cl-sub"><div class="cl-in"><b>Práce na zkoušku</b><span>Jak to funguje</span><span>DIGIkurzy</span><span>Časté otázky</span></div></div>
+
+<main class="page-main">
+  <div class="container cl-head">
+    <nav aria-label="Drobečková navigace"><ol class="breadcrumb mb-0"><li class="breadcrumb-item"><a href="#">Úvod</a></li><li class="breadcrumb-item active" aria-current="page">Práce na zkoušku</li></ol></nav>
+    <h1 id="host-title">Práce na zkoušku</h1>
+    <p class="lead mt-2 mb-3" id="host-lead">Obsah hostitelské stránky nad widgetem. Bootstrap, písma a styly webu se do widgetu nesmí propsat a widget je nesmí změnit.</p>
+    <button type="button" class="btn btn-primary" id="host-btn">Tlačítko webu</button>
+  </div>
+
+  <prace-na-zkousku id="pnz" data-variant="embed" data-start="start" data-scroll-offset="auto"></prace-na-zkousku>
+
+  <div class="container host-after" id="host-after">
+    <h2>Časté otázky</h2>
+    <p>Obsah webu pod widgetem, aby se dalo posouvat i za jeho konec.</p>
+    <div style="height:900px"></div>
+  </div>
+</main>
+<footer class="cl-foot"><div class="cl-in" style="display:block">Patička webu coderslab.cz (napodobenina). Data se nikam neposílají.</div></footer>
+
+<nav class="mobile-nav" aria-label="Mobilní menu webu"><span>Kurzy</span><span>Webináře</span><span>Menu</span><span>Kontakt</span></nav>
+<div id="toastContactIcon" style="z-index:5000" aria-label="Poradce">Poradce</div>
+
+<script>
+  const w = document.getElementById('pnz');
+  if (q.get('start')) w.dataset.start = q.get('start');
+  if (q.get('offset')) w.dataset.scrollOffset = q.get('offset');
+  const cookie = document.getElementById('cookie-notice');
+  if (q.get('cookies') === '0') cookie.hidden = true;
+  document.getElementById('cookie-ok').addEventListener('click', () => { cookie.hidden = true; });
+</script>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

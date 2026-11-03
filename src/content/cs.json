@@ -1,4 +1,587 @@
 {
+  "ui": {
+    "toolName": "Práce na zkoušku",
+    "logoLabel": "Práce na zkoušku, úvodní stránka",
+    "progLabel": "Moje odznaky a výsledek",
+    "progWord": "Odznaky",
+    "badgesLabel": "Moje odznaky",
+    "back": "Zpět na výběr",
+    "duration": "5 minut",
+    "try": "Zkusit",
+    "done": "Hotovo ✓",
+    "skipped": "Přeskočeno",
+    "claim": "Vyzvednout odznak",
+    "nextWork": "Zkusit další práci",
+    "myResult": "Můj výsledek"
+  },
+  "start": {
+    "title": "Vyzkoušej si práci v IT dřív, než se rozhodneš",
+    "lede": "Čtyři pětiminutové ukázky skutečné práce. Stačí zkusit jednu a hned uvidíš, co ti sedí.",
+    "meta": [
+      "Bez registrace",
+      "Bez znalosti programování",
+      "Nic nepokazíš"
+    ],
+    "stripTag": "Dotace až {cap}",
+    "stripText": "na kurz z programu DIGIkurzy od úřadu práce. Platí i pro lidi v práci.",
+    "pathsTitle": "Co tě láká víc?",
+    "cards": {
+      "data": {
+        "field": "Datová analýza",
+        "title": "Proč kavárně klesly tržby?",
+        "desc": "Zahraj si na detektiva v datech z pokladny a najdi, kam zmizelo 57 600 Kč."
+      },
+      "ai": {
+        "field": "Stavění s AI",
+        "title": "Aplikace za pár minut",
+        "desc": "Vyber nápad a sleduj, jak ho AI postaví. Pak jí řekni, co má změnit."
+      },
+      "hry": {
+        "field": "Tvorba her",
+        "title": "Zahraj si a postav level",
+        "desc": "Nejdřív si level zahraj, pak ho předělej podle sebe."
+      },
+      "kyber": {
+        "field": "Kyberbezpečnost",
+        "title": "Někdo se dobývá do serveru",
+        "desc": "Najdi útočníka a zavři mu dveře. Všechno uděláš tlačítky."
+      }
+    }
+  },
+  "data": {
+    "title": "Proč kavárně Zrnko v březnu klesly tržby?",
+    "who": "J",
+    "mission": "Majitelka Jana nechápe, kam se v březnu ztratilo 57 600 Kč. Přepínej pohledy na data a najdi viníka.",
+    "tip": "Tip: nejvíc toho prozradí pohled podle produktů a podle dnů.",
+    "tabsLabel": "Pohled na data",
+    "tabs": {
+      "mesice": "Po měsících",
+      "produkty": "Podle produktů",
+      "dny": "Podle dnů",
+      "hodiny": "Podle hodin"
+    },
+    "views": {
+      "mesice": {
+        "note": "Tržby kavárny po měsících.",
+        "rows": [
+          [
+            "Leden",
+            312400
+          ],
+          [
+            "Únor",
+            298900
+          ],
+          [
+            "Březen",
+            241300
+          ],
+          [
+            "Duben",
+            306200
+          ]
+        ]
+      },
+      "produkty": {
+        "note": "Únor a březen podle toho, co lidé kupovali.",
+        "rows": [
+          [
+            "Káva a nápoje",
+            148200,
+            146900
+          ],
+          [
+            "Dezerty",
+            63400,
+            61800
+          ],
+          [
+            "Snídaně",
+            62100,
+            9300
+          ],
+          [
+            "Obědové menu",
+            25200,
+            23300
+          ]
+        ]
+      },
+      "dny": {
+        "note": "Únor a březen podle dne v týdnu.",
+        "rows": [
+          [
+            "Pondělí",
+            33100,
+            32700
+          ],
+          [
+            "Úterý",
+            34800,
+            34100
+          ],
+          [
+            "Středa",
+            35600,
+            35900
+          ],
+          [
+            "Čtvrtek",
+            36900,
+            36200
+          ],
+          [
+            "Pátek",
+            41200,
+            40600
+          ],
+          [
+            "Sobota",
+            63400,
+            33400
+          ],
+          [
+            "Neděle",
+            53900,
+            28400
+          ]
+        ]
+      },
+      "hodiny": {
+        "note": "Únor a březen podle hodiny nákupu.",
+        "rows": [
+          [
+            "7 až 10 h",
+            92300,
+            49800
+          ],
+          [
+            "10 až 13 h",
+            88600,
+            76400
+          ],
+          [
+            "13 až 16 h",
+            64900,
+            63200
+          ],
+          [
+            "16 až 19 h",
+            53100,
+            51900
+          ]
+        ]
+      }
+    },
+    "kpiSpend": "Průměrná útrata",
+    "kpiSpendValue": "únor 142 Kč, březen 141 Kč",
+    "kpiReceipts": "Počet účtenek",
+    "kpiReceiptsValue": "únor 2 105, březen 1 711",
+    "legendFeb": "únor",
+    "legendMar": "březen a rozdíl proti únoru",
+    "question": "Co se v březnu stalo?",
+    "seen": "Prohlédnuto {n} ze 4 pohledů na data",
+    "options": [
+      {
+        "t": "Lidé přestali chodit na kávu.",
+        "ok": false,
+        "why": "Káva v březnu vydělala skoro stejně jako v únoru, 146 900 proti 148 200 Kč. Hledej, co kleslo víc."
+      },
+      {
+        "t": "Kavárna zdražila a lidé utrácejí méně.",
+        "ok": false,
+        "why": "Průměrná útrata zůstala na 141 až 142 Kč. Lidé tedy neutrácejí méně, jen jich přišlo méně."
+      },
+      {
+        "t": "Zmizely víkendové snídaně.",
+        "ok": true,
+        "why": "Přesně tak. Snídaně spadly z 62 100 na 9 300 Kč a propad je skoro celý o víkendových dopolednech. Majitelka pak potvrdila, že v březnu odešel kuchař a o víkendu snídaně nikdo nepřipravoval. Stálo ji to 52 800 Kč za měsíc."
+      },
+      {
+        "t": "Bylo špatné počasí a lidé nechodili ven.",
+        "ok": false,
+        "why": "Ve všední dny jsou tržby skoro stejné jako v únoru. Počasí by se projevilo každý den."
+      }
+    ],
+    "revealed": "Správně je zmizení víkendových snídaní: snídaně spadly z 62 100 na 9 300 Kč, hlavně o víkendových dopolednech.",
+    "sqlSummary": "Jak na to přijde datový analytik",
+    "sqlIntro": "V Excelu na to stačí kontingenční tabulka. V databázi jeden dotaz v jazyce SQL:",
+    "sqlOutro": "Nemusíš tomu teď rozumět, na kurzu se to naučíš od nuly.",
+    "fab": "Znám viníka",
+    "done": "Hotovo, detektivka je vyřešená!"
+  },
+  "ai": {
+    "tagNote": "Tohle se učí na kurzu Claude Code",
+    "title": "Nech AI postavit aplikaci podle tebe",
+    "sub": "Dnes se aplikace čím dál častěji staví tak, že člověk řekne AI, co chce, a pak kontroluje, co postavila.",
+    "pick": "Vyber, co má AI postavit",
+    "termBar": "AI pracuje",
+    "termNote": "Kód za tebe píše AI. Nemusíš mu rozumět, na kurzu se naučíš AI řídit a kontrolovat.",
+    "previewKicker": "Tvoje aplikace",
+    "previewEmpty": "Tady se objeví hotová aplikace.",
+    "working": "Agent pracuje…",
+    "changesTitle": "Vyber, co má AI změnit",
+    "changesHint": "Úpravu hned uvidíš v aplikaci. V ukázce jsou připravené tři, na kurzu jí zadáš cokoli, co budeš potřebovat.",
+    "logChange": "Upravuji: {log}",
+    "logCheck": "Kontroluji, že všechno funguje",
+    "logDone": "Hotovo, změna je v aplikaci",
+    "done": "Hotovo, aplikace je podle tebe!",
+    "dark": {
+      "label": "Přepni na tmavý vzhled",
+      "log": "Měním barvy na tmavý vzhled"
+    },
+    "ideas": {
+      "uctenka": {
+        "blurb": "Kolik má kdo zaplatit po večeři s přáteli",
+        "steps": [
+          "Čtu zadání: rozpočítat útratu mezi přátele",
+          "Navrhuji obrazovku: částka, počet lidí, výsledek",
+          "Vytvářím soubor index.html",
+          "Píšu výpočet a ošetřuji případ s nula lidmi",
+          "Zkouším 1 840 Kč pro 4 lidi, vychází 460 Kč",
+          "Aplikace běží"
+        ],
+        "changes": {
+          "tip": {
+            "label": "Přidej spropitné",
+            "log": "Přidávám výběr spropitného 0, 5 a 10 %"
+          },
+          "round": {
+            "label": "Zaokrouhli na desetikoruny",
+            "log": "Upravuji výpočet: zaokrouhlení nahoru na desetikoruny"
+          }
+        }
+      },
+      "kadernice": {
+        "blurb": "Termíny pro kadeřnici, trenéra nebo zasedačku",
+        "steps": [
+          "Čtu zadání: rezervace termínů pro kadeřnictví",
+          "Navrhuji obrazovku: dny, volné časy, potvrzení",
+          "Vytvářím soubor index.html",
+          "Píšu výběr termínu a potvrzení rezervace",
+          "Zkouším rezervaci na {den} ve 13:00",
+          "Aplikace běží"
+        ],
+        "changes": {
+          "service": {
+            "label": "Přidej výběr služby",
+            "log": "Přidávám služby: střih, barvení, foukaná"
+          },
+          "busy": {
+            "label": "Ukaž obsazené termíny",
+            "log": "Načítám obsazené termíny a zašedím je"
+          }
+        }
+      },
+      "navyky": {
+        "blurb": "Posilovna, učení a cokoli dalšího, co chceš dodržet",
+        "steps": [
+          "Čtu zadání: týdenní přehled návyků",
+          "Navrhuji obrazovku: návyky a dny v týdnu",
+          "Vytvářím soubor index.html",
+          "Píšu odškrtávání a součet splněných dnů",
+          "Zkouším odškrtnout středu",
+          "Aplikace běží"
+        ],
+        "changes": {
+          "streak": {
+            "label": "Počítej série dnů",
+            "log": "Přidávám počítání nejdelší série dnů"
+          },
+          "add": {
+            "label": "Přidej vlastní návyk",
+            "log": "Přidávám políčko pro nový návyk"
+          }
+        }
+      }
+    },
+    "days": [
+      "Ne",
+      "Po",
+      "Út",
+      "St",
+      "Čt",
+      "Pá",
+      "So"
+    ],
+    "daysOn": [
+      "neděli",
+      "pondělí",
+      "úterý",
+      "středu",
+      "čtvrtek",
+      "pátek",
+      "sobotu"
+    ],
+    "apps": {
+      "uctenka": {
+        "title": "Dělení útraty",
+        "sum": "Útrata v Kč",
+        "people": "Počet lidí",
+        "tipLabel": "Spropitné",
+        "tip": "{tip} %",
+        "each": "Každý platí {amount}",
+        "rounded": "Zaokrouhleno nahoru na desetikoruny.",
+        "total": "Celkem {total}.",
+        "totalTip": "Celkem {total} včetně spropitného {tip} %."
+      },
+      "kadernice": {
+        "title": "Kadeřnictví U Lucie",
+        "dayLabel": "Den",
+        "serviceLabel": "Služba",
+        "timeLabel": "Čas",
+        "services": [
+          [
+            "Střih",
+            450
+          ],
+          [
+            "Barvení",
+            1200
+          ],
+          [
+            "Foukaná",
+            300
+          ]
+        ],
+        "book": "Rezervovat",
+        "busy": "Obsazeno",
+        "booked": "Rezervace potvrzená: {den} v {cas}{what}.",
+        "picked": "Vybráno: {den} v {cas}{what}.",
+        "what": ", {service} {price}",
+        "busyHint": "Obsazené časy jsou přeškrtnuté. Vyber volný čas.",
+        "pickTime": "Vyber čas."
+      },
+      "navyky": {
+        "title": "Moje návyky",
+        "habits": [
+          "Posilovna",
+          "Učení 30 minut",
+          "Spát do 23:00"
+        ],
+        "week": [
+          "Po",
+          "Út",
+          "St",
+          "Čt",
+          "Pá",
+          "So",
+          "Ne"
+        ],
+        "streak": "{n} {word} v řadě",
+        "streakWord": {
+          "one": "den",
+          "few": "dny",
+          "many": "dní"
+        },
+        "cell": "{habit}, {day}",
+        "progress": "Splněno {done} z {total}.",
+        "newHabit": "Nový návyk",
+        "add": "Přidat"
+      }
+    }
+  },
+  "hry": {
+    "title": "Zahraj si level a pak ho postav po svém",
+    "stepsLabel": "Postup",
+    "steps": [
+      "Zahraj si",
+      "Uprav level",
+      "Dohraj svůj level"
+    ],
+    "toolsLabel": "Dílky",
+    "tools": {
+      "solid": "Plošina",
+      "spike": "Bodce",
+      "coin": "Mince",
+      "eraser": "Guma"
+    },
+    "canvasLabel": "Herní level. Ve hře klepnutím skáčeš, při úpravách klepnutím pokládáš dílky.",
+    "intro": "Postavička běží sama, ty jen skáčeš. Zmáčkni Hrát a pak klepni kamkoli do hry.",
+    "jump": "Skok",
+    "play": "Hrát",
+    "playAgain": "Hrát znovu",
+    "edit": "Upravit level",
+    "reset": "Výchozí level",
+    "skip": "Stačí, chci výsledek",
+    "jumpHere": "Tady skoč!",
+    "playing": "Klepni kamkoli do hry, tlačítkem Skok nebo mezerníkem skočíš.",
+    "deathWall": "Postavička narazila do zdi.",
+    "deathSpikes": "Au, bodce!",
+    "deathHole": "Spadla do díry.",
+    "unlock": "Nevadí, i herní designéři ladí obtížnost. Uprav level, aby šel projít, třeba zasyp díru plošinou.",
+    "tooHard": "Je to moc těžké? Dobrý level designér obtížnost ladí, zkus překážku posunout nebo přidat plošinu.",
+    "retry": "Zmáčkni Hrát znovu a zkus to ještě jednou.",
+    "winFirst": "Super, máš to! Mince: {coins}. Teď level navrhuješ ty: přidej bodce, mince nebo plošiny a zmáčkni Hrát.",
+    "winOwn": "Tvůj vlastní level je dohraný! Mince: {coins}. Klidně ho ještě ztiž.",
+    "winDefault": "Dohráno! Mince: {coins}. Teď level uprav po svém a zkus ho znovu.",
+    "coins": "{got}/{total}",
+    "editHelp": "Klepni do mřížky a polož dílek. Až budeš chtít, zmáčkni Hrát.",
+    "locked": "Tohle pole patří startu nebo cíli, polož dílek jinam.",
+    "resetDone": "Level je zase ve výchozí podobě.",
+    "stats": "Pokusy: {plays}, upravené dílky: {edits}",
+    "done": "Hotovo, tvůj level je dohraný! V Unreal Enginu 5 se stejně skládají celé herní světy, ve 3D a bez programování."
+  },
+  "kyber": {
+    "title": "Někdo se dobývá do serveru pekárny",
+    "sub": "Staráš se o server pekárny Kvásek, přes který chodí objednávky z kaváren. Všechno uděláš tlačítky, nic psát nemusíš.",
+    "alert": "<b>Poplach:</b> od 3:00 v noci se na server někdo stokrát pokusil přihlásit.",
+    "termBar": "terminál serveru",
+    "cmd": {
+      "grep": "Ukázat neúspěšná přihlášení",
+      "count": "Spočítat pokusy podle adresy",
+      "ufw": "Zablokovat adresu útočníka",
+      "last": "Ukázat, kdo se přihlásil"
+    },
+    "meter": "Zabezpečení serveru",
+    "meterValue": "{n} %",
+    "stepOf": "krok {n} ze 3",
+    "steps": [
+      "Najdi útočníka",
+      "Zavři dveře",
+      "Ať se to neopakuje"
+    ],
+    "safe": "Server je v bezpečí",
+    "start": "Server si zapisuje každý pokus o přihlášení. Podívej se na ty, které neprošly.",
+    "count": "Všechny pokusy jdou z jedné adresy a zkouší různá jména: root, admin, petra. Spočítej, kolik pokusů přišlo odkud.",
+    "q1": "<b>Odkud útok přichází?</b>",
+    "block": "Správně! 412 pokusů za pár minut nezkouší člověk, ale program, který hádá hesla. Zablokuj ho.",
+    "last": "Útočník je venku. Jen zkontroluj, jestli se mezitím nedostal dovnitř.",
+    "q2": "Ve 3:12 se z adresy útočníka přihlásila <b>Petra</b>. Jenže Petra chodí do práce z kanceláře a ve tři ráno spí. <b>Co uděláš s jejím účtem?</b>",
+    "q3": "Účet je zamčený. Teď vyber <b>dvě opatření</b>, která na serveru nasadíš.",
+    "q1Options": [
+      {
+        "t": "203.0.113.47 (412 pokusů)",
+        "ok": true,
+        "why": ""
+      },
+      {
+        "t": "198.51.100.23 (3 pokusy)",
+        "ok": false,
+        "why": "Tři pokusy jsou nejspíš někdo z kanceláře, kdo si spletl heslo."
+      },
+      {
+        "t": "192.0.2.10 (1 pokus)",
+        "ok": false,
+        "why": "Jeden neúspěšný pokus je běžný překlep."
+      }
+    ],
+    "q2Options": [
+      {
+        "t": "Účet smažu i se všemi daty.",
+        "ok": false,
+        "why": "Smazáním přijdeš o stopy, podle kterých zjistíš, co útočník na serveru dělal, a Petra přijde o svá data."
+      },
+      {
+        "t": "Účet zamknu, prověřím, co se v něm dělo, a s Petrou nastavím nové heslo.",
+        "ok": true,
+        "why": ""
+      },
+      {
+        "t": "Nic, útočníka už blokuje firewall.",
+        "ok": false,
+        "why": "Útočník zná Petřino heslo a z jiné adresy se může vrátit."
+      }
+    ],
+    "q3Options": [
+      {
+        "id": "k1",
+        "t": "Přihlašování digitálním klíčem místo hesla (klíč se uhodnout nedá)",
+        "ok": true,
+        "why": ""
+      },
+      {
+        "id": "k2",
+        "t": "Hlídač fail2ban, který útočníka po 5 neúspěšných pokusech sám zablokuje",
+        "ok": true,
+        "why": ""
+      },
+      {
+        "id": "k3",
+        "t": "Vypínat server přes noc",
+        "ok": false,
+        "why": "Vypínat server nejde, objednávky z kaváren chodí i brzy ráno a útok může přijít kdykoli."
+      },
+      {
+        "id": "k4",
+        "t": "Přejmenovat server, aby ho útočník nenašel",
+        "ok": false,
+        "why": "Přejmenování nepomůže, útočníci hledají otevřené porty a jméno serveru je nezajímá."
+      }
+    ],
+    "deploy": "Nasadit opatření",
+    "pickTwo": "Vyber přesně dvě opatření.",
+    "tryAgain": "Zkus to ještě jednou.",
+    "doneList": [
+      "Útočník odhalený a zablokovaný ve firewallu",
+      "Napadený účet zamčený dřív, než stihl napáchat víc",
+      "Přihlašování heslem vypnuté, fail2ban hlídá další pokusy",
+      "Správná rozhodnutí napoprvé: {n} ze 3"
+    ],
+    "doneHint": "Přesně tohle se učí IT administrátoři: Linux, sítě a zabezpečení serverů.",
+    "done": "Hotovo, server je v bezpečí!"
+  },
+  "result": {
+    "emptyTitle": "Zatím nemáš žádný odznak",
+    "emptyHint": "Vyber si jednu práci, zabere asi pět minut. Výsledek uvidíš hned potom.",
+    "emptyCta": "Vybrat práci",
+    "taglineStrong": "Tvůj nejsilnější směr",
+    "taglineFirst": "Tvoje první práce na zkoušku",
+    "taglineNotFun": "Zatím ti nejvíc sedí",
+    "notFunDesc": "Podle tvé odpovědi tě tahle práce moc nebavila. Zkus ještě jinou, každá zabere asi pět minut.",
+    "favMost": "Bavilo tě to ze všeho nejvíc",
+    "favOne": "Bavilo tě to",
+    "qFavMany": "Co tě bavilo nejvíc?",
+    "qFavOne": "Bavilo tě to?",
+    "favUnknown": "Nevím",
+    "favYes": "Ano",
+    "favNo": "Spíš ne",
+    "qGoal": "Co od kurzu čekáš?",
+    "goalSwitch": "Chci změnit obor",
+    "goalUpskill": "Chci se zlepšit ve své práci",
+    "firmTitle": "Jiná cesta: školení přes firmu",
+    "firmText": "Když se chceš zlepšit ve své práci, může školení zařídit i tvůj zaměstnavatel. Firmy na to můžou čerpat dotaci Vzdělávání pro firmy, až přes 38 000 Kč na zaměstnance. Školení připravíme na míru pro tebe i kolegy.",
+    "firmCheck": "Zajímá mě školení přes firmu",
+    "firmLink": "Víc o školení pro firmy",
+    "othersTitle": "Další práce na zkoušku",
+    "otherTime": "asi 5 minut",
+    "priceTitleDefault": "Kurz s příspěvkem od státu",
+    "priceTitle": "Kurz {course} s příspěvkem",
+    "payLabel": "Kolik zaplatíš",
+    "contribTag": "Dotace {contrib}",
+    "regular": "Běžná cena kurzu <b>{price}</b>.",
+    "payZero": "Celou cenu může zaplatit úřad práce.",
+    "payPart": "Z toho {contrib} zaplatí úřad práce.",
+    "facts": [
+      "Příspěvek platí i pro lidi v práci, nemusíš být bez zaměstnání.",
+      "Kurz jde zvládnout při práci, výuka je online a běží i o víkendech.",
+      "S přihláškou ti rádi pomůžeme."
+    ],
+    "lowIncome": "Studuji poslední ročník, nebo jsem bez práce a nepobírám podporu",
+    "fineSummary": "Jak příspěvek funguje a jak o něj požádat",
+    "fineIntro": "DIGIkurzy jsou program úřadu práce, který přispívá na digitální kurzy. Příspěvek je {rate} ceny, ale nejvýš {cap}. Proto u dražších kurzů pokryje menší část ceny.",
+    "fineSteps": [
+      "Zaregistruješ se na úřadu práce jako zájemce o zaměstnání. Jde to i ve chvíli, kdy práci máš nebo podnikáš na IČO.",
+      "Na portálu Jsem v kurzu se přihlásíš na kurz. S přihláškou ti pomůžeme.",
+      "Po schválení zaplatíš svou část, nejpozději den před začátkem kurzu.",
+      "Zbytek pošle úřad práce rovnou nám, když absolvuješ aspoň 80 % výuky."
+    ],
+    "fineGroups": "Studentům posledního ročníku, lidem bez práce, kteří nepobírají podporu, a několika dalším skupinám může úřad zaplatit celou cenu, ale také nejvýš {cap}. Přihlásit se musíš, dokud do skupiny patříš, a doložit to, třeba potvrzením ze školy.",
+    "fineLimit": "Limit {cap} platí pro všechny tvé DIGIkurzy dohromady až do konce roku 2028. O příspěvku rozhoduje úřad práce.",
+    "proof": "Přes úřad práce jsme už vyškolili víc než 2 500 lidí.",
+    "nextTitle": "Co dál",
+    "detail": "Detail kurzu",
+    "consultIntro": "Chceš si o tom popovídat s někým zkušeným?",
+    "consultLink": "Domluv si nezávaznou konzultaci"
+  },
+  "celebrate": {
+    "new": "Nový odznak",
+    "countAll": "Máš všechny čtyři odznaky. Paráda!",
+    "count": "Máš {n} ze 4 odznaků. Výsledek už na tebe čeká.",
+    "more": "Další práce",
+    "result": "Můj výsledek",
+    "stay": "Zůstat tady"
+  },
   "paths": {
     "data": {
       "label": "Datová analýza",

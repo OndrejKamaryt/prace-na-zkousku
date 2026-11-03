@@ -9,9 +9,12 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typo:fix": "node scripts/typo-fix.ts"
+    "typo:fix": "node scripts/typo-fix.ts",
+    "test:e2e": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^24.19.2",
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
