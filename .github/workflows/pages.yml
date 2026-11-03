@@ -26,11 +26,9 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
-      # Zatím jen prototyp. Widget a testovací stránka jako coderslab.cz přibudou ve fázích 2 a 3.
+      # Zatím prototyp vložený do napodobeniny coderslab.cz. Skutečný widget přijde ve fázi 2.
       - name: Sestavit web
-        run: |
-          mkdir -p _site
-          cp prototyp/prace-na-zkousku.html _site/index.html
+        run: node scripts/build-site.ts
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

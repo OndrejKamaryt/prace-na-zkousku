@@ -31,6 +31,13 @@ Ondřej odsouhlasil tyto odpovědi. Čísla odpovídají otázkám níže.
 - **19:** data v ukázkách počítat od dneška, mince zobrazit jako „6/6“.
 - **20:** zaškrtávátko „Studuji poslední ročník, nebo jsem bez práce a nepobírám podporu“, v poznámce „má zájem“ a „nebavilo“.
 
+Doplněno 3. 11. 2026:
+
+- **Texty do poznámky:** nadpis „Zájem o školení přes firmu, předat LifeScale Business“, „nebavilo (název ukázky)“, „otázka se nezobrazila“, bez hotové ukázky věta „Zatím nic nedokončeno.“
+- **Výsledek s jednou hotovou ukázkou** má nadpis „Tvoje první práce na zkoušku“, od dvou ukázek „Tvůj nejsilnější směr“.
+- **První krok k příspěvku:** „Jde to i ve chvíli, kdy práci máš nebo podnikáš na IČO.“
+- **Widget se staví jako embed na stránce webu**, samostatná stránka je až druhotná. Demo na GitHub Pages ukazuje prototyp vložený do napodobeniny coderslab.cz (`scripts/build-site.ts`).
+
 Otevřené zůstávají otázky 1 až 4 a 6 a tabulka spouštěčů analytiky (fáze 4). Otázka 5: aktivita patří vlastníkovi dealu, jak píše kapitola 4.
 
 ## Co sedí
