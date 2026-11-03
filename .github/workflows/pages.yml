@@ -26,9 +26,15 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
-      # Zatím prototyp vložený do napodobeniny coderslab.cz. Skutečný widget přijde ve fázi 2.
-      - name: Sestavit web
+      # Sestaví widget (vite build) a demo: widget vložený do napodobeniny coderslab.cz,
+      # samostatnou stránku a původní prototyp pro porovnání.
+      - name: Sestavit widget a web
         run: node scripts/build-site.ts
+      - name: Velikost widgetu (cíl do 80 kB gzip)
+        run: |
+          size=$(gzip -c dist/prace-na-zkousku.js | wc -c)
+          echo "prace-na-zkousku.js: $size B gzip"
+          test "$size" -lt 81920
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
