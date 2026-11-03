@@ -1,9 +1,11 @@
-/* Stavění s AI: předem připravený agent a tři malé aplikace. Odznak až po
-   první dokončené úpravě, žádné pole pro vlastní pokyn. */
+/* Stavění s AI: předem připravený agent a tři malé aplikace. Po postavení
+   člověk najde chybu, kterou AI udělala, a nechá ji opravit. Teprve pak jdou
+   úpravy a odznak je po první dokončené úpravě. Žádné pole pro vlastní pokyn. */
 import cs from '../content/cs.json';
-import { ideaCode, nextWorkdays } from '../content/fixtures.ts';
+import { BUSY, ideaCode, nextWorkdays } from '../content/fixtures.ts';
 import { changeApplied, ideaBuilt, startIdea } from '../logic/state.ts';
 import { fill } from '../logic/text.ts';
+import { NBSP } from '../logic/typography.ts';
 import { IDEAS } from '../logic/types.ts';
 import type { IdeaKey } from '../logic/types.ts';
 import type { Ctx, Screen } from '../ui/ctx.ts';
@@ -23,6 +25,8 @@ export function createAi(ctx: Ctx): Screen {
   const workdays = nextWorkdays(ctx.today);
   const days = workdays.map(d => t.days[d.getDay()] + ' ' + d.getDate() + '. ' + (d.getMonth() + 1) + '.');
   const testDay = t.daysOn[workdays[1]!.getDay()]!;
+  // rezervace otevře druhý pracovní den, obsazené časy v zadání chyby musí sedět s ním
+  const busyTimes = (BUSY[1] ?? []).join(' a' + NBSP);
 
   const root = el(`<section class="view t-ai" id="v-ai" hidden><div class="container">
   ${viewHead('ai', t.tagNote, t.title, t.sub)}
@@ -43,6 +47,14 @@ export function createAi(ctx: Ctx): Screen {
         <div class="device empty" id="a-app">${t.previewEmpty}</div>
       </div>
     </div>
+    <div id="a-bug-wrap" hidden style="margin-top:18px">
+      <h3>${t.bugTitle}</h3>
+      <p class="hint">${t.bugHint}</p>
+      <p class="hint" id="a-bug-ctx"></p>
+      <div class="options" id="a-bug"></div>
+      <div class="feedback" id="a-bug-fb" hidden></div>
+      <div class="btn-row" id="a-fix-row" hidden style="margin-top:12px"><button type="button" class="btn btn-primary" id="a-fix"></button></div>
+    </div>
     <div id="a-changes-wrap" hidden style="margin-top:18px">
       <h3>${t.changesTitle}</h3>
       <p class="hint">${t.changesHint}</p>
@@ -54,7 +66,11 @@ export function createAi(ctx: Ctx): Screen {
 
   const log = $(root, '#a-log'), code = $(root, '#a-code'), device = $(root, '#a-app');
   const build = $(root, '#a-build'), preview = $(root, '#a-preview'), wrap = $(root, '#a-changes-wrap'), changes = $(root, '#a-changes');
+  const bugWrap = $(root, '#a-bug-wrap'), bugBox = $(root, '#a-bug'), bugFb = $(root, '#a-bug-fb'), fixRow = $(root, '#a-fix-row');
+  const fixBtn = $<HTMLButtonElement>(root, '#a-fix');
   let run = 0;
+  let fixNow: (() => void) | null = null;
+  fixBtn.addEventListener('click', () => fixNow?.());
 
   function aiLog(text: string, ok = false) {
     const d = document.createElement('div');
@@ -77,6 +93,8 @@ export function createAi(ctx: Ctx): Screen {
     device.className = 'device empty';
     device.textContent = t.working;
     wrap.hidden = true;
+    bugWrap.hidden = true;
+    fixNow = null;
     const opts: AppOpts = {};
     const app: App = createApp(key, days);
     const half = Math.ceil(lines.length / 2);
@@ -91,6 +109,74 @@ export function createAi(ctx: Ctx): Screen {
     app.render(device, opts);
     ideaBuilt(s, key);
     ctx.reveal(preview);
+    showBug(key, my, app, opts);
+  }
+
+  // hledání chyby: stejně jako u dat špatná odpověď zmizí, po dvou špatných se ukáže správná
+  function showBug(key: IdeaKey, my: number, app: App, opts: AppOpts) {
+    const bug = t.ideas[key].bug;
+    $(root, '#a-bug-ctx').textContent = fill(bug.ctx, { den: testDay, times: busyTimes });
+    bugFb.hidden = true;
+    fixRow.hidden = true;
+    fixBtn.disabled = false;
+    fixBtn.textContent = bug.fix.label;
+    fixNow = () => applyFix(key, my, app, opts);
+    bugBox.innerHTML = '';
+    let wrong = 0;
+    const opt = bug.options.map(o => {
+      const b = el<HTMLButtonElement>('<button type="button" class="opt"></button>');
+      b.textContent = o.t;
+      bugBox.appendChild(b);
+      return b;
+    });
+    const okIdx = bug.options.findIndex(o => 'ok' in o && o.ok);
+    const found = () => {
+      opt.forEach(b => { b.disabled = true; });
+      fixRow.hidden = false;
+      const a = ctx.root.activeElement;
+      if (!a || bugBox.contains(a)) fixBtn.focus({ preventScroll: true });
+      ctx.reveal(fixRow);
+    };
+    opt.forEach((b, i) => b.addEventListener('click', () => {
+      const o = bug.options[i]!;
+      bugFb.hidden = false;
+      if (i === okIdx) {
+        b.classList.add('ok');
+        bugFb.className = 'feedback ok';
+        bugFb.textContent = t.bugOk + ' ' + o.why;
+        return found();
+      }
+      b.classList.add('no');
+      b.disabled = true;
+      bugFb.className = 'feedback no';
+      bugFb.textContent = o.why;
+      if (++wrong >= 2) {
+        opt[okIdx]!.classList.add('ok');
+        bugFb.textContent = o.why + ' ' + t.bugRevealed + ' ' + bug.options[okIdx]!.why;
+        found();
+      }
+    }));
+    bugWrap.hidden = false;
+  }
+
+  async function applyFix(key: IdeaKey, my: number, app: App, opts: AppOpts) {
+    if (fixBtn.disabled) return;
+    fixBtn.disabled = true;
+    aiLog(fill(t.logFix, { log: t.ideas[key].bug.fix.log }));
+    await ctx.wait(650);
+    if (my !== run) return;
+    aiLog(t.logCheck);
+    await ctx.wait(450);
+    if (my !== run) return;
+    opts.fixed = true;
+    app.render(device, opts);
+    aiLog(t.logFixed, true);
+    fixRow.hidden = true;
+    showChanges(key, my, app, opts);
+    ctx.reveal(preview);
+  }
+
+  function showChanges(key: IdeaKey, my: number, app: App, opts: AppOpts) {
     const list: Change[] = [...Object.entries(t.ideas[key].changes).map(([id, c]) => ({ id, ...c })), { id: 'dark', ...t.dark }];
     changes.innerHTML = '';
     for (const ch of list) {
@@ -100,6 +186,9 @@ export function createAi(ctx: Ctx): Screen {
       changes.appendChild(b);
     }
     wrap.hidden = false;
+    // fokus z tlačítka opravy, které právě zmizelo, na první úpravu
+    const a = ctx.root.activeElement;
+    if (!a || a === fixBtn) $<HTMLButtonElement>(changes, '.btn').focus({ preventScroll: true });
   }
 
   async function applyChange(key: IdeaKey, ch: Change, btn: HTMLButtonElement, my: number, app: App, opts: AppOpts) {

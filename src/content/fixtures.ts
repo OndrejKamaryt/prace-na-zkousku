@@ -9,12 +9,12 @@ export const SQL = "SELECT produkt, mesic, SUM(trzba) AS trzby\nFROM uctenky\nWH
 /** Kód, který „píše“ AI. Rezervace dostane dny, které aplikace opravdu ukazuje. */
 export function ideaCode(idea: IdeaKey, days: string[]): string[] {
   if (idea === 'uctenka') {
-    return ['<label>Útrata <input id="castka" value="1840"></label>', '<label>Počet lidí <input id="lidi" value="4"></label>', '<p id="vysledek"></p>', '', '<script>', 'function spocitej() {', '  const castka = Number(castkaInput.value);', '  const lidi = Number(lidiInput.value);', '  const naOsobu = lidi > 0 ? castka / lidi : 0;', '  vysledek.textContent = `Každý platí ${Math.round(naOsobu)} Kč`;', '}', '</script>'];
+    return ['<label>Útrata <input id="castka" value="1840"></label>', '<label>Počet lidí <input id="lidi" value="3"></label>', '<p id="vysledek"></p>', '', '<script>', 'function spocitej() {', '  const castka = Number(castkaInput.value);', '  const lidi = Number(lidiInput.value);', '  const naOsobu = lidi > 0 ? castka / lidi : 0;', '  vysledek.textContent = `Každý platí ${naOsobu} Kč`;', '}', '</script>'];
   }
   if (idea === 'kadernice') {
     return ['const dny = [' + days.map(d => "'" + d + "'").join(', ') + '];', "const casy = ['9:00', '10:30', '13:00', '14:30', '16:00'];", '', 'function vyberTermin(den, cas) {', '  vybrano = { den, cas };', '  prekreslit();', '}', '', 'function rezervuj() {', '  potvrzeni.textContent = `Rezervováno: ${vybrano.den} v ${vybrano.cas}`;', '}'];
   }
-  return ["const navyky = ['Posilovna', 'Učení 30 minut', 'Spát do 23:00'];", "const dny = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];", '', 'function prepni(navyk, den) {', '  splneno[navyk][den] = !splneno[navyk][den];', '  ulozit();', '  prekreslit();', '}', '', 'const celkem = splneno.flat().filter(Boolean).length;'];
+  return ["const navyky = ['Posilovna', 'Učení 30 minut', 'Spát do 23:00'];", "const dny = ['Ne', 'Po', 'Út', 'St', 'Čt', 'Pá', 'So'];", '', 'function prepni(navyk, den) {', '  splneno[navyk][den] = !splneno[navyk][den];', '  ulozit();', '  prekreslit();', '}', '', 'const celkem = splneno.flat().filter(Boolean).length;'];
 }
 
 /** Časy rezervací a obsazené termíny podle pořadí dne. */

@@ -226,6 +226,12 @@
     "logCheck": "Kontroluji, že všechno funguje",
     "logDone": "Hotovo, změna je v aplikaci",
     "done": "Hotovo, aplikace je podle tebe!",
+    "bugTitle": "Najdi chybu, kterou AI udělala",
+    "bugHint": "AI postaví aplikaci za pár vteřin, ale ne vždycky správně. Vyzkoušej ji a vyber, co je špatně.",
+    "bugOk": "Přesně tak.",
+    "bugRevealed": "Chyba je označená zeleně.",
+    "logFix": "Opravuji: {log}",
+    "logFixed": "Opraveno, chyba je pryč",
     "dark": {
       "label": "Přepni na tmavý vzhled",
       "log": "Měním barvy na tmavý vzhled"
@@ -242,13 +248,35 @@
           "Aplikace běží"
         ],
         "changes": {
+          "split": {
+            "label": "Rozpočítej podle toho, kdo co měl",
+            "log": "Přidávám položky a dělím společnou útratu na tři"
+          },
           "tip": {
             "label": "Přidej spropitné",
             "log": "Přidávám výběr spropitného 0, 5 a 10 %"
-          },
-          "round": {
-            "label": "Zaokrouhli na desetikoruny",
-            "log": "Upravuji výpočet: zaokrouhlení nahoru na desetikoruny"
+          }
+        },
+        "bug": {
+          "ctx": "Večeře stála 1 840 Kč a platíte ve třech. Kolik vyšlo na každého?",
+          "options": [
+            {
+              "t": "Částka na osobu má nesmyslně moc desetinných míst.",
+              "ok": true,
+              "why": "AI vyzkoušela jen 4 lidi, kde dělení vyšlo přesně. Ve třech nevyjde a nikdo neposílá zlomky haléřů."
+            },
+            {
+              "t": "Celková útrata je spočítaná špatně.",
+              "why": "Celkem sedí, 1 840 Kč. Podívej se na částku, kterou platí každý."
+            },
+            {
+              "t": "Nejde změnit počet lidí.",
+              "why": "Počet lidí změnit jde, zkus to. Chyba je jinde."
+            }
+          ],
+          "fix": {
+            "label": "Zaokrouhli částku nahoru na desetikoruny",
+            "log": "Zaokrouhluji částku nahoru na desetikoruny"
           }
         }
       },
@@ -263,12 +291,34 @@
           "Aplikace běží"
         ],
         "changes": {
+          "sms": {
+            "label": "Posílej potvrzení SMS",
+            "log": "Přidávám SMS s potvrzením rezervace"
+          },
           "service": {
             "label": "Přidej výběr služby",
             "log": "Přidávám služby: střih, barvení, foukaná"
-          },
-          "busy": {
-            "label": "Ukaž obsazené termíny",
+          }
+        },
+        "bug": {
+          "ctx": "Lucie už má na {den} obsazeno v {times}. Zkus si termín zarezervovat.",
+          "options": [
+            {
+              "t": "Nabízí i časy, které už má někdo objednané.",
+              "ok": true,
+              "why": "AI se nepodívala do Luciina kalendáře, takže by se dva zákazníci sešli ve stejnou chvíli."
+            },
+            {
+              "t": "Nejde vybrat jiný den.",
+              "why": "Den změnit jde, zkus to. Chyba je jinde."
+            },
+            {
+              "t": "Rezervace se nedá potvrdit.",
+              "why": "Tlačítko Rezervovat funguje. Zkus ho u času 9:00."
+            }
+          ],
+          "fix": {
+            "label": "Ukaž obsazené termíny a nenabízej je",
             "log": "Načítám obsazené termíny a zašedím je"
           }
         }
@@ -284,13 +334,35 @@
           "Aplikace běží"
         ],
         "changes": {
-          "streak": {
-            "label": "Počítej série dnů",
-            "log": "Přidávám počítání nejdelší série dnů"
+          "chart": {
+            "label": "Přidej graf pokroku",
+            "log": "Kreslím graf, kolik dní je splněno u každého návyku"
           },
           "add": {
             "label": "Přidej vlastní návyk",
             "log": "Přidávám políčko pro nový návyk"
+          }
+        },
+        "bug": {
+          "ctx": "Projdi si přehled a zkus odškrtnout pár dní.",
+          "options": [
+            {
+              "t": "Týden začíná nedělí, u nás začíná pondělím.",
+              "ok": true,
+              "why": "AI použila americký kalendář. U nás týden končí nedělí, jinak se víkend rozdělí do dvou týdnů."
+            },
+            {
+              "t": "Nejde odškrtnout splněný den.",
+              "why": "Odškrtnout jde, klepni na políčko. Chyba je jinde."
+            },
+            {
+              "t": "Počet splněných dnů nesedí.",
+              "why": "Součet sedí. Podívej se na dny v týdnu."
+            }
+          ],
+          "fix": {
+            "label": "Ať týden začíná pondělím",
+            "log": "Přepínám kalendář na týden od pondělí do neděle"
           }
         }
       }
@@ -323,7 +395,31 @@
         "each": "Každý platí {amount}",
         "rounded": "Zaokrouhleno nahoru na desetikoruny.",
         "total": "Celkem {total}.",
-        "totalTip": "Celkem {total} včetně spropitného {tip} %."
+        "totalTip": "Celkem {total} včetně spropitného {tip} %.",
+        "items": [
+          [
+            "Petr",
+            "pizza",
+            290
+          ],
+          [
+            "Jana",
+            "salát",
+            230
+          ],
+          [
+            "Ty",
+            "steak",
+            420
+          ]
+        ],
+        "shared": [
+          "víno a předkrm",
+          900
+        ],
+        "itemRow": "{name}: {what}",
+        "sharedRow": "Společně: {what}",
+        "splitNote": "Každý platí, co měl, a třetinu společného."
       },
       "kadernice": {
         "title": "Kadeřnictví U Lucie",
@@ -350,7 +446,10 @@
         "picked": "Vybráno: {den} v {cas}{what}.",
         "what": ", {service} {price}",
         "busyHint": "Obsazené časy jsou přeškrtnuté. Vyber volný čas.",
-        "pickTime": "Vyber čas."
+        "pickTime": "Vyber čas.",
+        "smsFrom": "SMS od Kadeřnictví U Lucie",
+        "smsText": "Dobrý den, potvrzujeme termín {den} v {cas}{what}. Těšíme se na vás!",
+        "smsWait": "Po rezervaci sem přijde potvrzení SMS."
       },
       "navyky": {
         "title": "Moje návyky",
@@ -368,16 +467,11 @@
           "So",
           "Ne"
         ],
-        "streak": "{n} {word} v řadě",
-        "streakWord": {
-          "one": "den",
-          "few": "dny",
-          "many": "dní"
-        },
         "cell": "{habit}, {day}",
         "progress": "Splněno {done} z {total}.",
         "newHabit": "Nový návyk",
-        "add": "Přidat"
+        "add": "Přidat",
+        "chartRow": "{done} z {total}"
       }
     }
   },

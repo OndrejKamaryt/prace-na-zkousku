@@ -93,19 +93,37 @@ test('A2: tři chyby v Datové analýze ukážou správnou odpověď', async ({ 
   await expect(page.locator('#r-reco .why')).toContainText('Správnou odpověď ukázal nástroj');
 });
 
-test('B: Stavění s AI, odznak až po první úpravě, nízkopříjmová skupina', async ({ page }) => {
+test('B: Stavění s AI, chyba k odhalení, odznak až po první úpravě, nízkopříjmová skupina', async ({ page }) => {
   await page.setViewportSize(MOBILE);
   const errors = trackErrors(page);
   await open(page, '/index.html?ukazka=ai');
   await page.locator('[data-idea="uctenka"]').click();
-  await expect(page.locator('#a-changes-wrap')).toBeVisible({ timeout: 10_000 });
-  await expect(page.locator('#a-app')).toContainText('Každý platí 460 Kč');
-  await expect(page.locator('#a-done')).toBeHidden();
+  await expect(page.locator('#a-bug-wrap')).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator('#a-app')).toContainText('Každý platí 613,3333333333334 Kč');
+  await expect(page.locator('#a-changes-wrap')).toBeHidden();
+  await expect(page.locator('#a-fix-row')).toBeHidden();
   await expect(page.locator('#a-own, #a-changes input')).toHaveCount(0);
 
-  await page.locator('#a-changes .btn').first().click();
+  // špatná odpověď zmizí, správná ukáže tlačítko opravy
+  await page.locator('#a-bug .opt').nth(2).click();
+  await expect(page.locator('#a-bug .opt').nth(2)).toBeDisabled();
+  await expect(page.locator('#a-bug-fb')).toHaveClass(/\bno\b/);
+  await expect(page.locator('#a-fix-row')).toBeHidden();
+  await page.locator('#a-bug .opt').nth(0).click();
+  await expect(page.locator('#a-bug-fb')).toContainText('Přesně tak.');
+  await expect(page.locator('#a-fix')).toHaveText('Zaokrouhli částku nahoru na desetikoruny');
+  await page.locator('#a-fix').click();
+  await expect(page.locator('#a-changes-wrap')).toBeVisible();
+  await expect(page.locator('#a-app')).toContainText('Každý platí 620 Kč');
+  await expect(page.locator('#a-fix-row')).toBeHidden();
+  await expect(page.locator('#a-done')).toBeHidden();
+  expect((await widgetState(page)).ai.status).not.toBe('done');
+
+  await page.locator('#a-changes .btn', { hasText: 'Rozpočítej podle toho, kdo co měl' }).click();
   await expect(page.locator('#a-done')).toBeVisible();
-  await expect(page.locator('#a-app [data-tip]')).toHaveCount(3);
+  // každý platí svoje a třetinu společného, zaokrouhleno nahoru na desetikoruny
+  await expect(page.locator('#ap-out li')).toHaveText([`Petr590${NBSP}Kč`, `Jana530${NBSP}Kč`, `Ty720${NBSP}Kč`]);
+  await expect(page.locator('#ap-sum')).toHaveCount(0);
   await page.locator('[data-claim="ai"]').click();
   await expect(page.locator('#cel-title')).toHaveText('Aplikace postavená');
   await page.locator('#cel-close').click();
@@ -134,13 +152,62 @@ test('B2: nové postavení aplikace začíná od nuly (A14)', async ({ page }) =
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page, '/index.html?ukazka=ai');
   await page.locator('[data-idea="uctenka"]').click();
+  await page.locator('#a-bug .opt').first().click();
+  await page.locator('#a-fix').click();
   await page.locator('#a-changes .btn', { hasText: 'Přidej spropitné' }).click();
   await page.locator('#a-app [data-tip="10"]').click();
   await expect(page.locator('#a-app')).toContainText('včetně spropitného 10');
   await page.locator('[data-idea="uctenka"]').click();
-  await expect(page.locator('#a-app')).toContainText('Každý platí 460 Kč');
+  // nová aplikace má zase chybu, žádné spropitné a úpravy čekají až na opravu
+  await expect(page.locator('#a-bug-wrap')).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator('#a-app')).toContainText('Každý platí 613,3333333333334 Kč');
   await expect(page.locator('#a-app [data-tip]')).toHaveCount(0);
+  await expect(page.locator('#a-bug .opt:enabled')).toHaveCount(3);
+  await expect(page.locator('#a-changes-wrap')).toBeHidden();
+  await page.locator('#a-bug .opt').first().click();
+  await page.locator('#a-fix').click();
   await expect(page.locator('#a-changes .btn:enabled')).toHaveCount(3);
+});
+
+test('B3: chyba v rezervaci a v návycích, po dvou špatných odpovědích se ukáže správná', async ({ page }) => {
+  await page.setViewportSize(MOBILE);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const errors = trackErrors(page);
+  await open(page, '/index.html?ukazka=ai');
+
+  // rezervace před opravou nabízí obsazený čas a potvrdí ho
+  await page.locator('[data-idea="kadernice"]').click();
+  await expect(page.locator('#a-bug-ctx')).toContainText(`obsazeno v${NBSP}9:00 a${NBSP}16:00`);
+  await page.locator('#a-app [data-time="9:00"]').click();
+  await page.locator('#ap-book').click();
+  await expect(page.locator('#ap-conf')).toContainText('Rezervace potvrzená');
+  await page.locator('#a-bug .opt').nth(1).click();
+  await expect(page.locator('#a-fix-row')).toBeHidden();
+  await page.locator('#a-bug .opt').nth(2).click();
+  await expect(page.locator('#a-bug .opt').nth(0)).toHaveClass(/\bok\b/);
+  await expect(page.locator('#a-bug-fb')).toContainText('Chyba je označená zeleně.');
+  await page.locator('#a-fix').click();
+  await expect(page.locator('#a-app [data-time="9:00"]')).toBeDisabled();
+  await expect(page.locator('#a-app [data-time="16:00"]')).toBeDisabled();
+  await page.locator('#a-changes .btn', { hasText: 'Posílej potvrzení SMS' }).click();
+  await expect(page.locator('#a-app .app-sms')).toContainText('Po rezervaci sem přijde potvrzení SMS.');
+  await page.locator('#a-app [data-time="13:00"]').click();
+  await page.locator('#ap-book').click();
+  await expect(page.locator('#a-app .app-sms')).toContainText('potvrzujeme termín');
+
+  // návyky před opravou začínají nedělí, po opravě pondělím a graf má řádek za každý návyk
+  await page.locator('[data-idea="navyky"]').click();
+  await expect(page.locator('#a-bug-wrap')).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator('#a-app .hd').first()).toHaveText('Ne');
+  await page.locator('#a-bug .opt').first().click();
+  await page.locator('#a-fix').click();
+  await expect(page.locator('#a-app .hd').first()).toHaveText('Po');
+  await expect(page.locator('#a-app .hd').last()).toHaveText('Ne');
+  await page.locator('#a-changes .btn', { hasText: 'Přidej graf pokroku' }).click();
+  await expect(page.locator('#a-app .hbar')).toHaveCount(3);
+  await expect(page.locator('#a-app .hbar').first()).toContainText(`5 z${NBSP}7`);
+  expect((await widgetState(page)).ai.status).toBe('done');
+  expect(errors).toEqual([]);
 });
 
 test('C: Kyberbezpečnost na notebooku a rozložení výsledku', async ({ page }) => {
@@ -193,6 +260,8 @@ test('C2: dvě hotové ukázky, otázka co bavilo nejvíc a Spíš ne jen u své
 
   await page.locator('#r-others [data-go="ai"]').click();
   await page.locator('[data-idea="navyky"]').click();
+  await page.locator('#a-bug .opt').first().click();
+  await page.locator('#a-fix').click();
   await page.locator('#a-changes .btn').first().click();
   await page.locator('[data-claim="ai"]').click();
   await page.locator('#cel [data-go="vysledek"]').click();

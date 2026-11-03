@@ -34,6 +34,15 @@ Shrnutí ze dne 3. 11. 2026. Rozhodnutí a jejich důvody jsou v `PLAN.md` (sekc
 - **Fokus (A11):** po přepnutí obrazovky na nadpis, v kyberbezpečnosti zůstává v panelu, ve výsledku na tlačítku odpovědi. Po zavření okna s odznakem na „Zkusit další práci“. Ve výsledku je cena a „Co dál“ v DOM před „Další práce“ (S8).
 - **Vývojové závislosti navíc:** `@playwright/test` 1.64.1 a `@types/node` 24 (jen pro vývoj a testy, runtime závislost žádná).
 
+## Stavění s AI: chyba k odhalení a výraznější úpravy (3. 11., Ondřej schválil směr)
+
+Ukázka byla moc pasivní a úpravy nenápadné. Nově AI postaví aplikaci s jednou viditelnou chybou, člověk ji najde mezi třemi možnostmi (po dvou špatných se ukáže správná) a tlačítkem ji nechá opravit. Teprve pak jdou úpravy, odznak je jako dřív po první dokončené úpravě. Prototyp se tu vědomě liší.
+
+- **Dělení útraty:** aplikace otevře 3 lidi a ukáže „613,3333333333334 Kč“ (AI zkoušela jen 4). Oprava je dřívější úprava „Zaokrouhli na desetikoruny“. Nová úprava „Rozpočítej podle toho, kdo co měl“ (Petr, Jana, Ty a společné víno), dál spropitné.
+- **Rezervační systém:** nabízí i obsazené časy a potvrdí je. Oprava je dřívější „Ukaž obsazené termíny“. Nová úprava „Posílej potvrzení SMS“, dál výběr služby.
+- **Tracker návyků:** týden začíná nedělí. Oprava „Ať týden začíná pondělím“. Nová úprava „Přidej graf pokroku“ místo série dnů, dál vlastní návyk.
+- Nové texty v `cs.json` (`ai.bug*`, `ai.logFix*`, `ai.ideas.*.bug`, nové úpravy a texty aplikací) čekají na Ondřejovo schválení. Do snímku stavu (`snapshot`) se nález chyby zatím nezapisuje, hodí se pro analytiku ve fázi 4.
+
 ## Otevřené otázky pro Ondřeje
 
 - Kapitola 9: hosting (1), adresa nástroje (2), formulář před nástrojem a deal nebo lead (3), DIGIkurzy při spuštění (4), osobní údaje (6).
