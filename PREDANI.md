@@ -41,7 +41,7 @@ Ukázka byla moc pasivní a úpravy nenápadné. Nově AI postaví aplikaci s je
 - **Dělení útraty:** aplikace otevře 3 lidi a ukáže „613,3333333333334 Kč“ (AI zkoušela jen 4). Oprava je dřívější úprava „Zaokrouhli na desetikoruny“. Nová úprava „Rozpočítej podle toho, kdo co měl“ (Petr, Jana, Ty a společné víno), dál spropitné.
 - **Rezervační systém:** nabízí i obsazené časy a potvrdí je. Oprava je dřívější „Ukaž obsazené termíny“. Nová úprava „Posílej potvrzení SMS“, dál výběr služby.
 - **Tracker návyků:** týden začíná nedělí. Oprava „Ať týden začíná pondělím“. Nová úprava „Přidej graf pokroku“ místo série dnů, dál vlastní návyk.
-- Nové texty v `cs.json` (`ai.bug*`, `ai.logFix*`, `ai.ideas.*.bug`, nové úpravy a texty aplikací) čekají na Ondřejovo schválení. Do snímku stavu (`snapshot`) se nález chyby zatím nezapisuje, hodí se pro analytiku ve fázi 4.
+- Nové texty v `cs.json` (`ai.bug*`, `ai.logFix*`, `ai.ideas.*.bug`, nové úpravy a texty aplikací) Ondřej schválil 3. 11. Do snímku stavu (`snapshot`) se nález chyby zatím nezapisuje, hodí se pro analytiku ve fázi 4.
 
 ## Otevřené otázky pro Ondřeje
 
