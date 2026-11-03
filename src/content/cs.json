@@ -507,7 +507,7 @@
     "tooHard": "Je to moc těžké? Dobrý level designér obtížnost ladí, zkus překážku posunout nebo přidat plošinu.",
     "retry": "Zmáčkni Hrát znovu a zkus to ještě jednou.",
     "winFirst": "Super, máš to! Mince: {coins}. Teď level navrhuješ ty: přidej bodce, mince nebo plošiny a zmáčkni Hrát.",
-    "winOwn": "Tvůj vlastní level je dohraný! Mince: {coins}. Klidně ho ještě ztiž.",
+    "winOwn": "Tvůj vlastní level je dohraný! Mince: {coins}. Zkus ho udělat ještě těžší.",
     "winDefault": "Dohráno! Mince: {coins}. Teď level uprav po svém a zkus ho znovu.",
     "coins": "{got}/{total}",
     "editHelp": "Klepni do mřížky a polož dílek. Až budeš chtít, zmáčkni Hrát.",
