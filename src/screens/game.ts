@@ -281,6 +281,8 @@ export function createGame(ctx: Ctx): Screen {
       resetBtn.hidden = phase < 2 || mode !== 'edit';
       jumpBtn.hidden = !playing;
       playBtn.hidden = playing;
+      // dokud člověk poprvé nehrál, Hrát jemně pulzuje, aby bylo jasné, kam klepnout
+      playBtn.classList.toggle('pulse', mode === 'idle' && s.hry.plays === 0);
       toolBtns.forEach(b => { b.disabled = mode !== 'edit'; });
       const done = s.hry.status === 'done', edited = s.hry.edits > 0;
       steps[0]!.className = 'gstep ' + (phase >= 2 ? 'ok' : 'on');

@@ -228,4 +228,7 @@ button, a, #g-canvas{-webkit-tap-highlight-color:transparent}
   .tab:hover{background:var(--bg)}
   .tab[aria-selected="true"]:hover{background:var(--dark)}
 }
-@media (prefers-reduced-motion: reduce){ *,*::before,*::after{transition:none !important; animation:none !important} }
+/* Pulse: tlačítko, na které se má klepnout, jemně dýchá a vysílá žlutý kruh */
+@keyframes pulse{0%{transform:scale(1); box-shadow:0 0 0 0 rgba(250,186,32,.6)} 35%{transform:scale(1.06)} 70%{transform:scale(1); box-shadow:0 0 0 14px rgba(250,186,32,0)} 100%{transform:scale(1); box-shadow:0 0 0 0 rgba(250,186,32,0)}}
+.btn.pulse{animation:pulse 1.6s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){ *,*::before,*::after{transition:none !important; animation:none !important} .btn.pulse{box-shadow:0 0 0 4px rgba(250,186,32,.45)} }

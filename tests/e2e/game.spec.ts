@@ -26,13 +26,19 @@ test('po pádu se hra nespouští, po třech pádech editor a vlastní level jde
   await open(page, '/index.html?ukazka=hry');
   await expect(page.locator('#g-status')).toHaveText('Postavička běží sama, ty jen skáčeš. Zmáčkni Hrát a pak klepni kamkoli do hry.');
 
+  // po pádu je Hrát znovu chvíli neaktivní; okno 900 ms se pod zátěží snadno mine, proto ho zapisuje pozorovatel
+  await page.evaluate(() => {
+    const b = document.querySelector('prace-na-zkousku')!.shadowRoot!.querySelector('#g-play')!;
+    new MutationObserver(() => { if (b.hasAttribute('disabled')) (window as unknown as { pnzHeld?: boolean }).pnzHeld = true; })
+      .observe(b, { attributes: true, attributeFilter: ['disabled'] });
+  });
   await dieOnce(page, 1);
   const status = page.locator('#g-status');
   await expect(status).toHaveText('Spadla do díry. Zmáčkni Hrát znovu a zkus to ještě jednou.');
   const play = page.locator('#g-play');
   await expect(play).toHaveText('Hrát znovu');
   await expect(play).toBeVisible();
-  await expect(play).toBeDisabled();
+  expect(await page.evaluate(() => (window as unknown as { pnzHeld?: boolean }).pnzHeld), 'Hrát znovu bylo po pádu neaktivní').toBe(true);
   await expect(page.locator('#g-jump')).toBeHidden();
   await expect(play).toBeEnabled({ timeout: 2_000 });
   await page.waitForTimeout(2_000);
@@ -57,6 +63,31 @@ test('po pádu se hra nespouští, po třech pádech editor a vlastní level jde
   expect((await widgetState(page)).hry).toMatchObject({ status: 'done', ownWon: true, winAttempt: 1, edits: 3 });
   await expect(page.locator('[data-gstep="3"]')).toHaveClass(/\bok\b/);
   expect(errors).toEqual([]);
+});
+
+test('Hrát pulzuje do prvního spuštění a hru spustí i klepnutí do ní', async ({ page }) => {
+  await page.setViewportSize(MOBILE);
+  await open(page, '/index.html?ukazka=hry');
+  const play = page.locator('#g-play');
+  await expect(play).toHaveClass(/\bpulse\b/);
+  expect(await play.evaluate(b => getComputedStyle(b).animationName)).toBe('pulse');
+  await page.locator('#g-canvas').click();
+  await expect(page.locator('#g-jump')).toBeVisible();
+  expect((await widgetState(page)).hry.plays).toBe(1);
+  await expect.poll(async () => (await widgetState(page)).hry.deaths, { timeout: 10_000 }).toBe(1);
+  await expect(play).toBeVisible();
+  await expect(play).not.toHaveClass(/\bpulse\b/);
+});
+
+test('bez animací má Hrát místo pulzování stálý žlutý kruh', async ({ page }) => {
+  await page.setViewportSize(MOBILE);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page, '/index.html?ukazka=hry');
+  const play = page.locator('#g-play');
+  await expect(play).toHaveClass(/\bpulse\b/);
+  const css = await play.evaluate(b => ({ anim: getComputedStyle(b).animationName, shadow: getComputedStyle(b).boxShadow }));
+  expect(css.anim).toBe('none');
+  expect(css.shadow).toContain('rgba(250, 186, 32, 0.45)');
 });
 
 test('mezerník skáče jen s fokusem ve widgetu', async ({ page }) => {
