@@ -1,0 +1,128 @@
+{
+  "paths": {
+    "data": {
+      "label": "Datová analýza",
+      "course": "Datový analytik",
+      "badge": "Detektivka vyřešená",
+      "desc": "Od Excelu přes databáze až po první skripty v Pythonu a práci s AI. Krok za krokem, od nuly až po juniorní pozici.",
+      "descUp": "Naučíš se rychle zpracovat data, dělat přehledné reporty a zrychlit si je s AI. Hodí se skoro do každé kanceláře.",
+      "nextText": "Nejbližší krok je dvoudenní minikurz zdarma. Vyzkoušíš si práci analytika naostro, s lektorem."
+    },
+    "ai": {
+      "label": "Stavění aplikací s AI",
+      "course": "Claude Code od A do Z",
+      "badge": "Aplikace postavená",
+      "desc": "Naučíš se stavět weby a aplikace tak, že kód píše AI a ty ji řídíš. Kurz je i pro úplné začátečníky.",
+      "descUp": "Naučíš se nechat AI postavit malé nástroje, které ti v práci ušetří čas, třeba kalkulačku nebo přehled z tabulky.",
+      "nextText": "Nejbližší krok je webinář zdarma, kde uvidíš, jak se s AI staví skutečné aplikace."
+    },
+    "hry": {
+      "label": "Tvorba her",
+      "course": "Game Developer",
+      "badge": "Level dohraný",
+      "desc": "Hry a herní světy v Unreal Enginu 5, bez znalosti programování.",
+      "descUp": "Naučíš se tvořit interaktivní 3D světy v Unreal Enginu 5. Hodí se i na vizualizace a prezentace.",
+      "nextText": "Nejbližší krok je webinář zdarma, kde se dozvíš víc o práci, která tě bavila."
+    },
+    "kyber": {
+      "label": "Kyberbezpečnost",
+      "course": "IT Administrator",
+      "badge": "Server ubráněný",
+      "desc": "Správa serverů a sítí a jejich ochrana před útoky. Od základů, krok za krokem.",
+      "descUp": "Naučíš se spravovat a zabezpečit počítače a servery. Hodí se každému, kdo se ve firmě stará o IT.",
+      "nextText": "Nejbližší krok je webinář zdarma, kde se dozvíš víc o práci, která tě bavila."
+    }
+  },
+  "cta": {
+    "webinar": "Webinář zdarma",
+    "minikurz": "Data Analyst Mini zdarma"
+  },
+  "ideas": {
+    "uctenka": "Dělení útraty",
+    "kadernice": "Rezervační systém",
+    "navyky": "Tracker návyků"
+  },
+  "why": {
+    "dataFirstTry": "Detektivka vyřešená na první pokus",
+    "dataTries": "Detektivka vyřešená na {tries}. pokus",
+    "dataRevealed": "Správnou odpověď ukázal nástroj",
+    "dataViews": "Prozkoumané pohledy na data: {seen} ze 4",
+    "time": "Čas: {min} min",
+    "aiBuilt": "Aplikace „{name}“ postavená",
+    "aiChanges": "Úpravy zadané AI: {changes}",
+    "aiIdeas": "Vyzkoušené nápady: {ideas}",
+    "hrySkipped": "Hra přeskočená",
+    "hryEdits": "Upravené dílky: {edits}",
+    "hryOwnWon": "Vlastní level dohraný na {attempt}. pokus",
+    "hryDefaultWon": "Výchozí level dohraný",
+    "hryPlays": "Pokusy o dohrání: {plays}",
+    "hryCoins": "Nejvíc mincí: {coins}",
+    "kyberDone": "Útok zastavený a napadený účet zamčený",
+    "kyberFirstOk": "Správná rozhodnutí napoprvé: {firstOk} ze 3"
+  },
+  "opener": {
+    "none": "Zatím nic nedokončeno.",
+    "notFun": "Vidím, že vás ukázka „{label}“ moc nechytla. Co by vás lákalo víc?",
+    "data": "Vidím, že máte za sebou datovou detektivku{firstTry}. Co vás na práci s daty bavilo?",
+    "dataFirstTry": ", a to hned napoprvé",
+    "ai": "Vidím, že vám AI agent postavil aplikaci „{name}“{changes}. Máte nápad, co by se vám hodilo postavit pro sebe nebo do práce?",
+    "aiChanges": " a dostal od vás {n} {word}",
+    "aiChangeWord": {
+      "one": "úpravu",
+      "few": "úpravy",
+      "many": "úprav"
+    },
+    "hry": "Vidím, že máte postavený vlastní level{won}. Které hry hrajete nejraději?",
+    "hryWon": " a dokonce dohraný",
+    "hrySkipped": "Vidím, že ukázku s tvorbou her máte rozehranou. Které hry hrajete nejraději?",
+    "kyber": "Vidím, že máte za sebou noční poplach na serveru{clean}. Co vás na kyberbezpečnosti láká?",
+    "kyberClean": " bez jediné chyby"
+  },
+  "sales": {
+    "firmHeadline": "Zájem o školení přes firmu, předat LifeScale Business",
+    "rows": {
+      "entry": "Vstup",
+      "page": "Stránka",
+      "recommended": "Doporučený směr",
+      "fav": "Nejvíc bavilo",
+      "goal": "Cíl",
+      "firm": "Školení přes firmu",
+      "time": "Čas v nástroji",
+      "lowIncome": "Nízkopříjmová skupina",
+      "opener": "Návrh první věty do telefonu"
+    },
+    "entry": {
+      "start": "úvodní stránka nástroje",
+      "url": "odkaz na ukázku {label}",
+      "attr": "stránka kurzu, ukázka {label}"
+    },
+    "recommended": "{label}, kurz {course}",
+    "recommendedNone": "zatím žádný",
+    "fav": {
+      "none": "bez odpovědi",
+      "unknown": "neví",
+      "not": "nebavilo ({label})"
+    },
+    "goal": {
+      "upskill": "zlepšit se ve stávající práci",
+      "switch": "změnit obor",
+      "none": "neuvedeno"
+    },
+    "firm": {
+      "yes": "má zájem, předat LifeScale Business",
+      "no": "ne"
+    },
+    "time": "{m} min {s} s",
+    "lowIncome": {
+      "yes": "ano, podle zaškrtnutí (ověří ÚP)",
+      "no": "ne",
+      "notAsked": "otázka se nezobrazila"
+    },
+    "status": {
+      "not_started": "nezkoušeno",
+      "in_progress": "rozpracováno",
+      "skipped": "přeskočeno",
+      "done": "hotovo"
+    }
+  }
+}

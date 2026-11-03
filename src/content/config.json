@@ -1,0 +1,38 @@
+{
+  "digikurzy": {
+    "rate": 0.7673,
+    "cap": 35000
+  },
+  "courses": {
+    "data": {
+      "price": 64000,
+      "digikurzy": true,
+      "url": "https://coderslab.cz/cz/kurzy/data-analyst",
+      "next": "minikurz"
+    },
+    "ai": {
+      "price": 24900,
+      "digikurzy": true,
+      "url": "https://coderslab.cz/cz/kurzy/agentic-coding",
+      "next": "webinar"
+    },
+    "hry": {
+      "price": 49000,
+      "digikurzy": true,
+      "url": "https://coderslab.cz/cz/kurzy/game-developer",
+      "next": "webinar"
+    },
+    "kyber": {
+      "price": 54000,
+      "digikurzy": true,
+      "url": "https://coderslab.cz/cz/kurzy/it-administrator",
+      "next": "webinar"
+    }
+  },
+  "links": {
+    "webinar": "https://coderslab.cz/cz/webinare",
+    "minikurz": "https://coderslab.cz/cz/kurzy/data-analyst-mini",
+    "konzultace": "https://coderslabczsk.pipedrive.com/scheduler/jqrrYdCX/online-schuzka-se-specialistou",
+    "skoleniFirmy": "https://coderslab.cz/cz/skoleni-pro-firmy"
+  }
+}
