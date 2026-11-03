@@ -6,7 +6,7 @@ Shrnutí ze dne 3. 11. 2026. Rozhodnutí a jejich důvody jsou v `PLAN.md` (sekc
 
 - **Fáze 1 a 2 (sloučená s fází 3) jsou hotové.** Skutečný widget `<prace-na-zkousku>` s otevřeným Shadow DOM, primárně pro vložení do stránky webu (`data-variant="embed"`, výchozí), samostatná stránka přes `data-variant="standalone"`.
 - **Testy:** 78 unit testů (Vitest) a 34 Playwright testů v Edge přes `http://localhost` (`npm run test:e2e`), jeden odložený do fáze 6 (`test.fixme`, dotykové cíle 44 px). Typecheck i build jsou čisté, widget má 38,9 kB gzip (cíl 80 kB).
-- **Demo:** https://ondrejkamaryt.github.io/prace-na-zkousku/ ukazuje skutečný widget vložený do napodobeniny coderslab.cz (`test-host.html`), dál `samostatna.html` a původní `prototyp.html`. Sestavuje ho `node scripts/build-site.ts` (spustí i `vite build`), nasazuje `.github/workflows/pages.yml` při pushi do `main`.
+- **Demo:** https://ondrejkamaryt.github.io/prace-na-zkousku/ je ukázka pro tým: jen widget ve variantě embed, tak jak ho uvidí návštěvník webu, bez napodobeniny webu kolem (`demo.html`). Odkazy vedou na `vlozeni.html` (widget v napodobenině coderslab.cz, `test-host.html`), `samostatna.html` a původní `prototyp.html`. Sestavuje ho `node scripts/build-site.ts` (spustí i `vite build`), nasazuje `.github/workflows/pages.yml` při pushi do `main`.
 - Snímky ze 3. 11. sedí s referenčními screenshoty (úvod, AI, kyber, výsledek a okno s odznakem jsem porovnal vedle sebe), rozdíl je jen ve vyřazených částech (štítek Prototyp, patička, panel obchodníka).
 
 ## Struktura
@@ -15,7 +15,7 @@ Shrnutí ze dne 3. 11. 2026. Rozhodnutí a jejich důvody jsou v `PLAN.md` (sekc
 - `src/screens/` obrazovky: `start`, `data`, `ai` a `ai-apps`, `game`, `kyber`, `result`. Stav mění jen funkcemi z `src/logic/state.ts`.
 - `src/ui/` styly (`styles.css`, `screens.css`, tokeny na `:host`, `@container` místo `@media`), okno s odznakem (`celebrate.ts`, `<dialog>` přes `showModal()`), měření hlavičky (`scroll.ts`), sdílené části a ikony.
 - `src/content/cs.json` všechny texty rozhraní, `config.json` ceny a odkazy, `fixtures.ts` technické ukázky (SQL, kód aplikací, výpisy terminálu), na které se typografie nevztahuje.
-- `index.html` samostatná stránka, `test-host.html` napodobenina webu (parametry `?podmenu=56|80|0`, `?start=`, `?offset=`, `?cookies=0`). Vite je při buildu zkopíruje do `dist/`.
+- `index.html` samostatná stránka, `demo.html` ukázka pro tým, `test-host.html` napodobenina webu (parametry `?podmenu=56|80|0`, `?start=`, `?offset=`, `?cookies=0`). Vite je při buildu zkopíruje do `dist/`.
 - `tests/e2e/` přepsané referenční testy (`flows`, `game`, `layout`) a testy vložení (`embed`).
 
 ## Jak se chová embed (ověřeno testy)

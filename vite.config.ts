@@ -2,9 +2,9 @@ import { readFileSync } from 'node:fs';
 import type { Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 
-/* V library mode Vite HTML nesestavuje. Samostatná stránka a testovací
-   napodobenina webu se proto do dist/ jen zkopírují a místo zdrojového
-   src/main.ts načtou sestavený prace-na-zkousku.js. */
+/* V library mode Vite HTML nesestavuje. Samostatná stránka, ukázka pro tým
+   a testovací napodobenina webu se proto do dist/ jen zkopírují a místo
+   zdrojového src/main.ts načtou sestavený prace-na-zkousku.js. */
 function pages(files: string[]): Plugin {
   return {
     name: 'pnz-pages',
@@ -20,7 +20,7 @@ function pages(files: string[]): Plugin {
 }
 
 export default defineConfig({
-  plugins: [pages(['index.html', 'test-host.html'])],
+  plugins: [pages(['index.html', 'demo.html', 'test-host.html'])],
   build: {
     lib: {
       entry: 'src/main.ts',
