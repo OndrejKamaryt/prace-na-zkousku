@@ -36,6 +36,8 @@ Shrnutí ze dne 3. 11. 2026. Rozhodnutí a jejich důvody jsou v `PLAN.md` (sekc
 
 ## Stavění s AI: chyba k odhalení a výraznější úpravy (3. 11., Ondřej schválil směr)
 
+Pozor: 4. 11. Ondřej rozhodl ukázku zatím schovat, dokud nevznikne vstupní kurz AI (`ZPETNA-VAZBA.md`). Kód zůstává.
+
 Ukázka byla moc pasivní a úpravy nenápadné. Nově AI postaví aplikaci s jednou viditelnou chybou, člověk ji najde mezi třemi možnostmi (po dvou špatných se ukáže správná) a tlačítkem ji nechá opravit. Teprve pak jdou úpravy, odznak je jako dřív po první dokončené úpravě. Prototyp se tu vědomě liší.
 
 - **Dělení útraty:** aplikace otevře 3 lidi a ukáže „613,3333333333334 Kč“ (AI zkoušela jen 4). Oprava je dřívější úprava „Zaokrouhli na desetikoruny“. Nová úprava „Rozpočítej podle toho, kdo co měl“ (Petr, Jana, Ty a společné víno), dál spropitné.
@@ -55,6 +57,7 @@ Ukázka byla moc pasivní a úpravy nenápadné. Nově AI postaví aplikaci s je
 
 ## Další kroky
 
+0. **Zjednodušení podle schůzky 4. 11.** (`ZPETNA-VAZBA.md`): odznaky ven, výsledek v jednom sloupci, Stavění s AI schovat, data jako klikačka po krocích, kyberbezpečnost v jednom sloupci, editor hry s ikonami a vysvětlením. Má přednost před fází 4.
 1. **Fáze 4:** události do `dataLayer` podle tabulky spouštěčů (ke schválení), odesílání snímku s debounce 2 s a `sendBeacon` jako `text/plain`. Čtení `?pnz` a UTM. Stav pro odeslání dává `host.state` a `buildPayload()`.
 2. **Fáze 5:** endpoint v `DRY_RUN`.
 3. **Fáze 6:** editor levelu z klávesnice (šipky, Enter, mezerník, číslice z `e.code`), dotykové cíle 44 px, fokus na tmavých plochách. Texty nápovědy ke schválení.
