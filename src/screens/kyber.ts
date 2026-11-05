@@ -1,5 +1,7 @@
 /* Kyberbezpečnost: noční poplach na serveru pekárny. Tři kroky, všechno
-   tlačítky. Panel se po každém kroku překreslí, fokus zůstane v panelu (A11). */
+   tlačítky. Jeden sloupec shora dolů (zadání, poplach, krok, hotovo), terminál je
+   jen ilustrace a patří bokem. Panel se po každém kroku překreslí, fokus zůstane
+   v panelu (A11). */
 import cs from '../content/cs.json';
 import { BANNER, PROMPT, commands } from '../content/fixtures.ts';
 import type { CmdKey } from '../content/fixtures.ts';
@@ -16,15 +18,18 @@ export function createKyber(ctx: Ctx): Screen {
   const t = cs.kyber, s = ctx.state;
   const CMD = commands(ctx.today);
   const root = el(`<section class="view t-sec" id="v-kyber" hidden><div class="container">
-  ${viewHead('kyber', cs.ui.duration, t.title, t.sub, `<div class="alert sec-alert"><span class="dot" aria-hidden="true"></span><p>${t.alert}</p></div>`)}
-  <div class="task">
+  <div class="sec-grid">
+    <div class="sec-main">
+      ${viewHead('kyber', cs.ui.duration, t.title, t.sub)}
+      <div class="alert sec-alert"><span class="dot" aria-hidden="true"></span><p>${t.alert}</p></div>
+      <div class="panel panel-soft stack" id="s-panel"></div>
+      ${doneBar('s-done')}
+    </div>
     <div class="term sec-term" aria-live="polite">
       <div class="term-bar"><i></i><i></i><i></i><span>${t.termBar}</span></div>
       <div class="sec-out" id="s-out"></div>
     </div>
-    <div class="panel panel-soft stack" id="s-panel"></div>
   </div>
-  ${doneBar('s-done')}
   ${moreSection('kyber')}
 </div></section>`);
   const out = $(root, '#s-out'), panel = $(root, '#s-panel');
@@ -114,6 +119,7 @@ export function createKyber(ctx: Ctx): Screen {
   }
   async function deploy(btn: HTMLButtonElement) {
     if (busy) return;
+    const focusIn = panel.contains(ctx.root.activeElement);
     const picked = t.q3Options.filter(o => $<HTMLInputElement>(panel, '#s-' + o.id).checked);
     t.q3Options.forEach(o => $(panel, '#lbl-' + o.id).classList.remove('no', 'ok'));
     if (picked.length !== 2) { feedback(t.pickTwo); return; }
@@ -133,10 +139,13 @@ export function createKyber(ctx: Ctx): Screen {
     await run('restart');
     busy = false;
     meter = 100;
-    const first = finish(s, 'kyber', ctx.now());
+    finish(s, 'kyber', ctx.now());
     phase = 'done';
     render();
-    ctx.completed('kyber', first);
+    // „Server je v bezpečí“ a tlačítko k výsledku pod ním mají být vidět naráz
+    ctx.completed('kyber', false);
+    ctx.alignTop(panel);
+    if (focusIn) $(root, '#s-done .btn').focus({ preventScroll: true });
   }
 
   line('c', BANNER);

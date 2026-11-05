@@ -34,8 +34,8 @@
       },
       "hry": {
         "field": "Tvorba her",
-        "title": "Zahraj si a postav level",
-        "desc": "Nejdřív si level zahraj, pak ho předělej podle sebe."
+        "title": "Zahraj si hru a uprav ji",
+        "desc": "Nejdřív si hru zahraj, pak ji předělej podle sebe."
       },
       "kyber": {
         "field": "Kyberbezpečnost",
@@ -482,45 +482,57 @@
     }
   },
   "hry": {
-    "title": "Zahraj si level a pak ho postav po svém",
+    "title": "Zahraj si hru a pak ji uprav",
     "stepsLabel": "Postup",
     "steps": [
       "Zahraj si",
-      "Uprav level",
-      "Dohraj svůj level"
+      "Uprav hru",
+      "Dohraj svou verzi"
     ],
-    "toolsLabel": "Dílky",
+    "toolsLabel": "Nástroje",
     "tools": {
-      "solid": "Plošina",
-      "spike": "Bodce",
-      "coin": "Mince",
-      "eraser": "Guma"
+      "solid": {
+        "name": "Přidej plošinu",
+        "desc": "Postava po ní běží a dá se na ni vyskočit."
+      },
+      "spike": {
+        "name": "Přidej nástrahu",
+        "desc": "Když se jí postava dotkne, přijde o život."
+      },
+      "coin": {
+        "name": "Přidej mince",
+        "desc": "Jsou odměna, sbíráš za ně body."
+      },
+      "eraser": {
+        "name": "Smazat",
+        "desc": "Klepni na věc ve hře a zmizí."
+      }
     },
-    "canvasLabel": "Herní level. Ve hře klepnutím skáčeš, při úpravách klepnutím pokládáš dílky.",
+    "canvasLabel": "Hra. Při hraní klepnutím skáčeš, při úpravách klepnutím přidáváš věci do hry.",
     "intro": "Postavička běží sama, ty jen skáčeš. Zmáčkni Hrát a pak klepni kamkoli do hry.",
     "jump": "Skok",
     "play": "Hrát",
     "playAgain": "Hrát znovu",
-    "edit": "Upravit level",
-    "reset": "Výchozí level",
+    "edit": "Upravit hru",
+    "reset": "Vrátit původní hru",
     "skip": "Stačí, chci výsledek",
     "jumpHere": "Tady skoč!",
     "playing": "Klepni kamkoli do hry, tlačítkem Skok nebo mezerníkem skočíš.",
     "deathWall": "Postavička narazila do zdi.",
     "deathSpikes": "Au, bodce!",
     "deathHole": "Spadla do díry.",
-    "unlock": "Nevadí, i herní designéři ladí obtížnost. Uprav level, aby šel projít, třeba zasyp díru plošinou.",
-    "tooHard": "Je to moc těžké? Dobrý level designér obtížnost ladí, zkus překážku posunout nebo přidat plošinu.",
+    "unlock": "Nevadí, i herní designéři ladí obtížnost. Uprav hru, aby šla projít, třeba zasyp díru plošinou.",
+    "tooHard": "Je to moc těžké? Herní designér obtížnost ladí, zkus nástrahu posunout nebo přidat plošinu.",
     "retry": "Zmáčkni Hrát znovu a zkus to ještě jednou.",
-    "winFirst": "Super, máš to! Mince: {coins}. Teď level navrhuješ ty: přidej bodce, mince nebo plošiny a zmáčkni Hrát.",
-    "winOwn": "Tvůj vlastní level je dohraný! Mince: {coins}. Zkus ho udělat ještě těžší.",
-    "winDefault": "Dohráno! Mince: {coins}. Teď level uprav po svém a zkus ho znovu.",
+    "winFirst": "Super, máš to! Mince: {coins}. Teď hru navrhuješ ty: přidej nástrahy, mince nebo plošiny a zmáčkni Hrát.",
+    "winOwn": "Tvoje verze hry je dohraná! Mince: {coins}. Zkus ji udělat ještě těžší.",
+    "winDefault": "Dohráno! Mince: {coins}. Teď hru uprav po svém a zkus ji znovu.",
     "coins": "{got}/{total}",
-    "editHelp": "Klepni do mřížky a polož dílek. Až budeš chtít, zmáčkni Hrát.",
-    "locked": "Tohle pole patří startu nebo cíli, polož dílek jinam.",
-    "resetDone": "Level je zase ve výchozí podobě.",
-    "stats": "Pokusy: {plays}, upravené dílky: {edits}",
-    "done": "Hotovo, tvůj level je dohraný! V Unreal Enginu 5 se stejně skládají celé herní světy, ve 3D a bez programování."
+    "editHelp": "Vyber, co chceš přidat, a klepni do hry. Až budeš chtít, zmáčkni Hrát.",
+    "locked": "Tady je start nebo cíl, polož to jinam.",
+    "resetDone": "Hra je zase v původní podobě.",
+    "stats": "Pokusy: {plays}, úpravy: {edits}",
+    "done": "Hotovo, tvoje verze hry je dohraná! V Unreal Enginu 5 se stejně skládají celé herní světy, ve 3D a bez programování."
   },
   "kyber": {
     "title": "Někdo se dobývá do serveru pekárny",

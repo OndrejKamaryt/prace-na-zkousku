@@ -1,6 +1,14 @@
 /* Ikony a kresby z prototypu (beze změny). */
 import type { PathKey } from '../logic/types.ts';
 
+/** Ikony nástrojů editoru hry, kreslené stejně jako věci na plátně. */
+export const TOOL_ICON = {
+  solid: '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="4" fill="#212529"/><path d="M3 10V7a4 4 0 0 1 4-4h18a4 4 0 0 1 4 4v3z" fill="#69CCEA"/></svg>',
+  spike: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 29l4.3-20 4.4 20zM11.7 29L16 9l4.3 20zM20.3 29l4.4-20L29 29z" fill="#E9225B"/></svg>',
+  coin: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="#FABA20" stroke="#C98A00" stroke-width="3"/></svg>',
+  eraser: '<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="#212529" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 27h15"/><path d="M6.6 19.6l11-11a2.5 2.5 0 0 1 3.5 0l5.3 5.3a2.5 2.5 0 0 1 0 3.5L16.8 27h-4.6l-5.6-5.4a1.4 1.4 0 0 1 0-2z" fill="#FFFFFF"/><path d="M12 14.2l8 8"/></svg>',
+};
+
 /** Třída tématu ukázky, stejně jako META.cls v prototypu. */
 export const THEME: Record<PathKey, string> = { data: 't-data', ai: 't-ai', hry: 't-game', kyber: 't-sec' };
 

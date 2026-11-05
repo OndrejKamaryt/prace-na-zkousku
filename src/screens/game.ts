@@ -1,12 +1,14 @@
-/* Tvorba her: nejdřív zahrát, pak upravit a dohrát vlastní level. Fyzika,
-   level a časování jsou z prototypu 1:1. Plátno se inicializuje až při
-   prvním otevření ukázky, smyčka stojí, když je obrazovka skrytá, a klávesy
-   bere jen z widgetu, ne z celé stránky webu (A10). */
+/* Tvorba her: nejdřív zahrát, pak upravit a dohrát vlastní verzi. Fyzika,
+   herní plocha a časování jsou z prototypu 1:1. Plátno má celou šířku rámečku:
+   plocha 12 × 7 je uprostřed a po stranách pokračuje obloha a zem jako kulisa.
+   Plátno se inicializuje až při prvním otevření ukázky, smyčka stojí, když je
+   obrazovka skrytá, a klávesy bere jen z widgetu, ne z celé stránky webu (A10). */
 import cs from '../content/cs.json';
 import { gameDeath, gameEdit, gamePlay, gameSkip, gameWin } from '../logic/state.ts';
 import { fill } from '../logic/text.ts';
 import type { Ctx, Screen } from '../ui/ctx.ts';
 import { $, $$, el } from '../ui/dom.ts';
+import { TOOL_ICON } from '../ui/icons.ts';
 import { doneBar, moreSection, viewHead } from '../ui/parts.ts';
 
 const COLS = 12, ROWS = 7;
@@ -15,7 +17,7 @@ const START = { x: 0.15, y: 5.15 };
 const FLAG = { c: 11, r: 5 };
 const SPEED = 4.0, GRAV = 30, JUMP = 12, PW = 0.7, PH = 0.85;
 const COL = {
-  sky1: '#DDF2FA', sky2: '#FFFFFF', grid: 'rgba(33,37,41,.08)', lock: 'rgba(23,73,111,.10)', solid: '#212529', grass: '#69CCEA',
+  sky1: '#DDF2FA', sky2: '#FFFFFF', grid: 'rgba(33,37,41,.08)', lock: 'rgba(23,73,111,.10)', veil: 'rgba(255,255,255,.6)', solid: '#212529', grass: '#69CCEA',
   spike: '#E9225B', coin: '#FABA20', coinEdge: '#C98A00', flag: '#17496F', pole: '#212529', player: '#FABA20', outline: '#212529',
 };
 type Mode = 'idle' | 'play' | 'dead' | 'won' | 'edit';
@@ -23,17 +25,17 @@ interface Player { x: number; y: number; vy: number; ground: boolean }
 
 export function createGame(ctx: Ctx): Screen {
   const t = cs.hry, s = ctx.state;
-  const tool = (v: number, name: string, sw: string, on = false) =>
-    `<button class="tool" type="button" data-tool="${v}" aria-pressed="${on}"><span class="sw" style="${sw}"></span>${name}</button>`;
+  const toolBtn = (v: number, key: keyof typeof t.tools, on = false) =>
+    `<button class="tool" type="button" data-tool="${v}" aria-pressed="${on}"><span class="tool-ico">${TOOL_ICON[key]}</span><span class="tool-text"><b>${t.tools[key].name}</b><small>${t.tools[key].desc}</small></span></button>`;
   const root = el(`<section class="view t-game" id="v-hry" hidden><div class="container">
   ${viewHead('hry', cs.ui.duration, t.title)}
   <div class="panel">
     <div class="game-steps" aria-label="${t.stepsLabel}">${t.steps.map((x, i) => `<span class="gstep${i ? '' : ' on'}" data-gstep="${i + 1}"><b>${i + 1}</b>${x}</span>`).join('')}</div>
-    <div class="toolbar" id="g-tools" role="group" aria-label="${t.toolsLabel}" hidden>
-      ${tool(SOLID, t.tools.solid, 'background:var(--ink)', true)}${tool(SPIKE, t.tools.spike, 'background:var(--bad)')}${tool(COIN, t.tools.coin, 'background:var(--brand); border-radius:50%')}${tool(EMPTY, t.tools.eraser, 'background:var(--surface-2); border:1px solid var(--line-strong)')}
-    </div>
     <div class="canvas-box"><canvas id="g-canvas" tabindex="-1" aria-label="${t.canvasLabel}"></canvas></div>
     <p class="game-status" id="g-status" aria-live="polite">${t.intro}</p>
+    <div class="toolbar" id="g-tools" role="group" aria-label="${t.toolsLabel}" hidden>
+      ${toolBtn(SOLID, 'solid', true)}${toolBtn(SPIKE, 'spike')}${toolBtn(COIN, 'coin')}${toolBtn(EMPTY, 'eraser')}
+    </div>
     <div class="btn-row" style="margin-top:10px; align-items:center">
       <button class="btn btn-dark jump" id="g-jump" type="button" hidden>${t.jump}</button>
       <button class="btn btn-primary" id="g-play" type="button">${t.play}</button>
@@ -70,6 +72,8 @@ export function createGame(ctx: Ctx): Screen {
     let grid: number[] = [], tool = SOLID, mode: Mode = 'idle', phase = 1, raf = 0, last = 0, p: Player | null = null, got = new Set<number>();
     let buffer = 0, coyote = 0, stuckT = 0, lastX = 0, holdTimer = 0, readyT = 0, diesSinceEdit = 0;
     let dpr = 1, visible = false, painting = false, paintVal = SOLID, lastCell = -1;
+    /** Kolik dlaždic plátna je vlevo a vpravo od herní plochy. */
+    let side = 0;
 
     const at = (c: number, r: number) => grid[r * COLS + c]!;
     const put = (c: number, r: number, v: number) => { grid[r * COLS + c] = v; };
@@ -95,11 +99,18 @@ export function createGame(ctx: Ctx): Screen {
       if (g.roundRect) g.roundRect(x, y, w, h, r);
       else { g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
     }
+    function block(c: number, r: number, top: boolean) {
+      g.fillStyle = COL.solid; rr(c + 0.02, r + 0.02, 0.96, 0.96, 0.12); g.fill();
+      if (top) { g.fillStyle = COL.grass; rr(c + 0.02, r + 0.02, 0.96, 0.22, 0.1); g.fill(); }
+    }
     function draw() {
       const grad = g.createLinearGradient(0, 0, 0, ROWS);
       grad.addColorStop(0, COL.sky1); grad.addColorStop(1, COL.sky2);
-      g.fillStyle = grad; g.fillRect(0, 0, COLS, ROWS);
+      g.fillStyle = grad; g.fillRect(-side, 0, COLS + 2 * side, ROWS);
+      // zem po stranách je jen kulisa, postava na ni nedoběhne a nejde upravit
+      for (let i = 1; i <= Math.ceil(side); i++) { block(-i, ROWS - 1, true); block(COLS - 1 + i, ROWS - 1, true); }
       if (mode === 'edit') {
+        g.fillStyle = COL.veil; g.fillRect(-side, 0, side, ROWS); g.fillRect(COLS, 0, side, ROWS);
         g.fillStyle = COL.lock; g.fillRect(0, 3, 1, 3); g.fillRect(FLAG.c, 4, 1, 2);
         g.strokeStyle = COL.grid; g.lineWidth = 0.03; g.beginPath();
         for (let c = 1; c < COLS; c++) { g.moveTo(c, 0); g.lineTo(c, ROWS); }
@@ -108,10 +119,8 @@ export function createGame(ctx: Ctx): Screen {
       }
       for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
         const v = at(c, r);
-        if (v === SOLID) {
-          g.fillStyle = COL.solid; rr(c + 0.02, r + 0.02, 0.96, 0.96, 0.12); g.fill();
-          if (r === 0 || at(c, r - 1) !== SOLID) { g.fillStyle = COL.grass; rr(c + 0.02, r + 0.02, 0.96, 0.22, 0.1); g.fill(); }
-        } else if (v === SPIKE) {
+        if (v === SOLID) block(c, r, r === 0 || at(c, r - 1) !== SOLID);
+        else if (v === SPIKE) {
           g.fillStyle = COL.spike; g.beginPath();
           for (let i = 0; i < 3; i++) { const x0 = c + 0.08 + i * 0.28; g.moveTo(x0, r + 1); g.lineTo(x0 + 0.14, r + 0.38); g.lineTo(x0 + 0.28, r + 1); }
           g.closePath(); g.fill();
@@ -144,12 +153,13 @@ export function createGame(ctx: Ctx): Screen {
       const w = canvas.parentElement?.clientWidth || 0;
       if (!w) return;
       const tile = Math.min(w / COLS, ((innerHeight - ctx.topOffset()) * 0.48) / ROWS);
-      canvas.style.width = tile * COLS + 'px';
+      side = (w / tile - COLS) / 2;
+      canvas.style.width = w + 'px';
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(tile * COLS * dpr);
+      canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(tile * ROWS * dpr);
       canvas.style.height = tile * ROWS + 'px';
-      g.setTransform(dpr * tile, 0, 0, dpr * tile, 0, 0);
+      g.setTransform(dpr * tile, 0, 0, dpr * tile, dpr * tile * side, 0);
       draw();
     }
 
@@ -217,7 +227,7 @@ export function createGame(ctx: Ctx): Screen {
       phase = 2;
       edit(true);
       status(msg);
-      ctx.reveal(tools);
+      ctx.keepVisible(tools);
     }
     function die(msg: string) {
       mode = 'dead';
@@ -277,14 +287,14 @@ export function createGame(ctx: Ctx): Screen {
     function ui() {
       const playing = mode === 'play';
       playBtn.textContent = mode === 'play' || mode === 'dead' || mode === 'won' ? t.playAgain : t.play;
-      tools.hidden = phase < 2;
+      // nástroje jen při úpravách, plátno přitom zůstává na místě
+      tools.hidden = mode !== 'edit';
       editBtn.hidden = phase < 2 || mode === 'edit';
       resetBtn.hidden = phase < 2 || mode !== 'edit';
       jumpBtn.hidden = !playing;
       playBtn.hidden = playing;
       // dokud člověk poprvé nehrál, Hrát jemně pulzuje, aby bylo jasné, kam klepnout
       playBtn.classList.toggle('pulse', mode === 'idle' && s.hry.plays === 0);
-      toolBtns.forEach(b => { b.disabled = mode !== 'edit'; });
       const done = s.hry.status === 'done', edited = s.hry.edits > 0;
       steps[0]!.className = 'gstep ' + (phase >= 2 ? 'ok' : 'on');
       steps[1]!.className = 'gstep ' + (edited ? 'ok' : phase >= 2 ? 'on' : '');
@@ -294,8 +304,9 @@ export function createGame(ctx: Ctx): Screen {
     }
     function cellFrom(e: PointerEvent) {
       const rect = canvas.getBoundingClientRect();
-      const c = Math.floor((e.clientX - rect.left) / rect.width * COLS);
-      const r = Math.floor((e.clientY - rect.top) / rect.height * ROWS);
+      const tile = rect.height / ROWS;
+      const c = Math.floor((e.clientX - rect.left) / tile - side);
+      const r = Math.floor((e.clientY - rect.top) / tile);
       return c < 0 || c >= COLS || r < 0 || r >= ROWS ? null : { c, r };
     }
     function paint(cell: { c: number; r: number } | null, first: boolean) {
