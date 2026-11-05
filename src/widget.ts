@@ -1,11 +1,13 @@
 /* Custom element <prace-na-zkousku>. Otevřený shadow root, vlastní stav místo
    hashe stránky, posluchače na shadow root, ne na document (Z6, A4).
-   Atributy: data-variant (embed | standalone), data-start (start | data | ai |
-   hry | kyber), data-scroll-offset (auto | číslo v px). Z adresy stránky čte
-   ?ukazka, které má přednost před data-start. Hash ani jiný stav hostitelské
-   stránky nemění. */
+   Atributy: data-variant (embed | standalone), data-start (start nebo klíč ukázky),
+   data-scroll-offset (auto | číslo v px), data-ukazky (které ukázky nabízet, výchozí
+   je config.offered). Z adresy stránky čte ?ukazka, které má přednost před data-start.
+   Ukázka, která se nenabízí, se neotevře. Hash ani jiný stav hostitelské stránky
+   nemění. */
 import cs from './content/cs.json';
-import { badgeCount, createState, isDone, openPath } from './logic/state.ts';
+import config from './content/config.json';
+import { createState, openPath } from './logic/state.ts';
 import type { State } from './logic/state.ts';
 import { PATHS } from './logic/types.ts';
 import type { EntrySource, PathKey, Screen as Entry } from './logic/types.ts';
@@ -15,21 +17,24 @@ import { createGame } from './screens/game.ts';
 import { createKyber } from './screens/kyber.ts';
 import { createResult } from './screens/result.ts';
 import { createStart } from './screens/start.ts';
-import { createCelebrate } from './ui/celebrate.ts';
-import type { Celebrate } from './ui/celebrate.ts';
-import { VIEWS } from './ui/ctx.ts';
 import type { Ctx, Screen, Variant, View } from './ui/ctx.ts';
-import { $, el } from './ui/dom.ts';
-import { BADGE_ICON, THEME } from './ui/icons.ts';
-import { badgeHtml } from './ui/parts.ts';
+import { $, $$, el } from './ui/dom.ts';
+import { otherCards } from './ui/parts.ts';
 import { measureBottom, measureTop, resetPinnedCache, scrollPage } from './ui/scroll.ts';
 import baseCss from './ui/styles.css?inline';
 import screensCss from './ui/screens.css?inline';
 
-const CLAIM_BAR: Record<PathKey, string> = { data: '#d-done', ai: '#a-done', hry: '#g-done', kyber: '#s-done' };
+const DONE_BAR: Record<PathKey, string> = { data: '#d-done', ai: '#a-done', hry: '#g-done', kyber: '#s-done' };
+const SCREENS: Record<PathKey, (ctx: Ctx) => Screen> = { data: createData, ai: createAi, hry: createGame, kyber: createKyber };
 /** Mezera nad prvkem nebo pod ním po posunu stránky, v px. */
 const TOP_GAP = 8;
-const isPath = (v: string): v is PathKey => (PATHS as readonly string[]).includes(v);
+
+/** Nabízené ukázky v pořadí PATHS. Atribut slouží testům a pozdějšímu návratu schované ukázky, jinak platí config.offered. */
+function readOffered(attr: string | undefined): readonly PathKey[] {
+  const list = (attr ?? '').split(/[\s,]+/);
+  const picked = PATHS.filter(k => list.includes(k));
+  return picked.length ? picked : PATHS.filter(k => config.offered.includes(k));
+}
 
 let sharedSheet: CSSStyleSheet | null = null;
 function adoptStyles(root: ShadowRoot) {
@@ -48,10 +53,11 @@ function adoptStyles(root: ShadowRoot) {
 }
 
 /** ?ukazka z odkazu v reklamě má přednost před data-start na stránce kurzu. */
-function readEntry(attr: string | undefined): { entry: Entry; source: EntrySource } {
+function readEntry(attr: string | undefined, offered: readonly PathKey[]): { entry: Entry; source: EntrySource } {
+  const isOffered = (v: string | undefined): v is PathKey => (offered as readonly (string | undefined)[]).includes(v);
   const fromUrl = new URLSearchParams(location.search).get('ukazka') ?? '';
-  if (isPath(fromUrl)) return { entry: fromUrl, source: 'url' };
-  if (attr && isPath(attr)) return { entry: attr, source: 'attr' };
+  if (isOffered(fromUrl)) return { entry: fromUrl, source: 'url' };
+  if (isOffered(attr)) return { entry: attr, source: 'attr' };
   return { entry: 'start', source: 'default' };
 }
 
@@ -61,8 +67,10 @@ export class PraceNaZkousku extends HTMLElement {
   #variant: Variant = 'embed';
   #reduce = false;
   #view: View = 'start';
-  #screens!: Record<View, Screen>;
-  #cel!: Celebrate;
+  #offered: readonly PathKey[] = [];
+  #views: readonly View[] = [];
+  #screens!: Partial<Record<View, Screen>>;
+  #progBox!: HTMLElement;
   #resizeFns = new Set<() => void>();
   #ro: ResizeObserver | null = null;
   #lastWidth = 0;
@@ -81,14 +89,13 @@ export class PraceNaZkousku extends HTMLElement {
       this.#resizeFns.forEach(fn => fn());
     });
     this.#ro.observe(this);
-    this.#screens[this.#view].show?.();
+    this.#screens[this.#view]?.show?.();
   }
 
   disconnectedCallback() {
     window.removeEventListener('resize', this.#onWindowResize);
     this.#ro?.disconnect();
-    this.#cel.close(false);
-    this.#screens[this.#view].hide?.();
+    this.#screens[this.#view]?.hide?.();
   }
 
   /** Stav návštěvníka pro testy a pozdější odesílání (fáze 4). */
@@ -101,7 +108,9 @@ export class PraceNaZkousku extends HTMLElement {
     adoptStyles(root);
     this.#variant = this.dataset.variant === 'standalone' ? 'standalone' : 'embed';
     this.#reduce = !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    const { entry, source } = readEntry(this.dataset.start);
+    this.#offered = readOffered(this.dataset.ukazky);
+    this.#views = ['start', ...this.#offered, 'vysledek'];
+    const { entry, source } = readEntry(this.dataset.start, this.#offered);
     this.#state = createState(entry, source, location.pathname);
 
     const ctx: Ctx = {
@@ -109,6 +118,7 @@ export class PraceNaZkousku extends HTMLElement {
       root,
       state: this.#state,
       variant: this.#variant,
+      offered: this.#offered,
       reduce: this.#reduce,
       today: new Date(),
       now: () => Date.now(),
@@ -128,24 +138,18 @@ export class PraceNaZkousku extends HTMLElement {
     };
 
     const ui = cs.ui;
-    const prog = '<button class="prog" type="button" data-go="vysledek" aria-label="' + ui.progLabel + '"><span class="minis" id="prog-minis"></span><span id="prog-text"></span></button>';
+    const prog = '<button class="prog" type="button" data-go="vysledek">' + ui.myResult + '</button>';
     const top = this.#variant === 'standalone'
       ? '<header class="site"><div class="container site-in"><button class="logo" type="button" data-go="start" aria-label="' + ui.logoLabel + '"><span class="logo-mark" aria-hidden="true"><b>C</b><span>L</span></span><span class="tool-name">' + ui.toolName + '</span></button>' + prog + '</div></header>'
       : '<div class="pnz-bar"><div class="container">' + prog + '</div></div>';
     const wrap = el('<div class="pnz">' + top + '<main></main></div>');
     const main = $(wrap, 'main');
+    this.#progBox = wrap.querySelector<HTMLElement>('.pnz-bar') ?? $(wrap, '.prog');
 
-    this.#screens = {
-      start: createStart(),
-      data: createData(ctx),
-      ai: createAi(ctx),
-      hry: createGame(ctx),
-      kyber: createKyber(ctx),
-      vysledek: createResult(ctx),
-    };
-    for (const v of VIEWS) main.appendChild(this.#screens[v].el);
-    this.#cel = createCelebrate(ctx);
-    root.append(wrap, this.#cel.el);
+    this.#screens = { start: createStart(this.#offered), vysledek: createResult(ctx) };
+    for (const k of this.#offered) this.#screens[k] = SCREENS[k](ctx);
+    for (const v of this.#views) main.appendChild(this.#screens[v]!.el);
+    root.append(wrap);
 
     root.addEventListener('click', e => {
       const t = e.target as Element;
@@ -153,14 +157,6 @@ export class PraceNaZkousku extends HTMLElement {
       if (go) {
         e.preventDefault();
         this.#go(go.dataset.go as View, true);
-        return;
-      }
-      const claim = t.closest<HTMLElement>('[data-claim]');
-      if (claim) {
-        const bar = claim.parentElement;
-        this.#cel.open(claim.dataset.claim as PathKey, bar);
-        claim.hidden = true;
-        if (bar) for (const b of Array.from(bar.children) as HTMLElement[]) if (b !== claim) b.hidden = false;
       }
     });
 
@@ -169,35 +165,37 @@ export class PraceNaZkousku extends HTMLElement {
   }
 
   #go(view: View, user: boolean) {
-    if (!VIEWS.includes(view)) view = 'start';
-    this.#cel.close(false);
+    if (!this.#views.includes(view)) view = 'start';
     const prev = this.#view;
-    for (const v of VIEWS) this.#screens[v].el.hidden = v !== view;
-    if (prev !== view) this.#screens[prev].hide?.();
-    if (isPath(view)) openPath(this.#state, view, Date.now());
+    for (const v of this.#views) this.#screens[v]!.el.hidden = v !== view;
+    if (prev !== view) this.#screens[prev]?.hide?.();
+    if (view !== 'start' && view !== 'vysledek') openPath(this.#state, view, Date.now());
     this.#view = view;
     this.#renderProgress();
-    this.#screens[view].show?.();
+    this.#screens[view]?.show?.();
     if (!user) return;
     // widget na svůj začátek pod lepicí hlavičku webu, ne na začátek stránky
     const top = this.getBoundingClientRect().top, off = this.#topOffset();
     if (top < off) scrollPage(scrollY + top - off, false);
-    this.#screens[view].heading?.focus({ preventScroll: true });
+    this.#screens[view]?.heading?.focus({ preventScroll: true });
   }
 
-  #completed(k: PathKey, first: boolean) {
+  #completed(k: PathKey, reveal: boolean) {
     this.#renderProgress();
-    const bar = $(this.#root!, CLAIM_BAR[k]);
+    const bar = $(this.#root!, DONE_BAR[k]);
     bar.hidden = false;
-    if (first) setTimeout(() => this.#reveal(bar), 400);
+    if (reveal) setTimeout(() => this.#reveal(bar), 400);
   }
 
   #renderProgress() {
     const root = this.#root!, s = this.#state;
-    $(root, '#prog-minis').innerHTML = PATHS.map(k => '<span class="mini ' + THEME[k] + (isDone(s, k) ? ' got' : '') + '">' + BADGE_ICON[k] + '</span>').join('');
-    $(root, '#prog-text').innerHTML = '<span class="lg">' + cs.ui.progWord + ' </span>' + badgeCount(s) + '/4';
-    $(root, '#start-badges').innerHTML = PATHS.map(k => badgeHtml(k, isDone(s, k))).join('');
-    for (const k of PATHS) {
+    // „Můj výsledek“ v hlavičce až ve chvíli, kdy je co ukázat
+    this.#progBox.hidden = !this.#offered.some(k => s[k].status === 'done' || s[k].status === 'skipped');
+    for (const box of $$(root, '[data-more]')) {
+      box.innerHTML = otherCards(box.dataset.more as PathKey, this.#offered, s);
+      box.parentElement!.hidden = !box.innerHTML;
+    }
+    for (const k of this.#offered) {
       const tag = $(root, '[data-state="' + k + '"]');
       const st = s[k].status;
       tag.className = st === 'done' ? 'state-done' : st === 'skipped' ? 'state-skip' : 'go';

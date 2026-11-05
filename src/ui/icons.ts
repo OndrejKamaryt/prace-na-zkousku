@@ -1,14 +1,6 @@
 /* Ikony a kresby z prototypu (beze změny). */
 import type { PathKey } from '../logic/types.ts';
 
-/** Ikony odznaků: v pruhu s odznaky, na úvodu, ve výsledku a v okně s odznakem. */
-export const BADGE_ICON: Record<PathKey, string> = {
-  data: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg>',
-  ai: '<svg viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>',
-  hry: '<svg viewBox="0 0 24 24"><rect x="2.5" y="7" width="19" height="11" rx="5"/><path d="M7.5 10.5v4M5.5 12.5h4"/><path d="M15.5 11.5h.01M18 14h.01"/></svg>',
-  kyber: '<svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-3 8-7 10-4-2-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>',
-};
-
 /** Třída tématu ukázky, stejně jako META.cls v prototypu. */
 export const THEME: Record<PathKey, string> = { data: 't-data', ai: 't-ai', hry: 't-game', kyber: 't-sec' };
 

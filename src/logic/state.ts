@@ -1,7 +1,7 @@
 /* Stav návštěvníka ve widgetu. Obrazovky volají tyto funkce, nic víc stav
    nemění. Funkce stav mění na místě, stejně jako prototyp mění objekt S.
    Čas se předává zvenku (now v ms), aby šly funkce testovat. */
-import { IDEAS, PATHS } from './types.ts';
+import { IDEAS } from './types.ts';
 import type {
   AiSnap, DataSnap, EntrySource, Fav, Goal, HrySnap, IdeaKey, KyberSnap, PathKey, Screen, Snapshot, Status, Utm,
 } from './types.ts';
@@ -60,7 +60,7 @@ export function touch(s: State, k: PathKey, now: number): void {
   if (s[k].status === NOT_STARTED) s[k].status = 'in_progress';
 }
 
-/** Ukázka je hotová. Vrací true jen poprvé, kdy se má ukázat oslava. */
+/** Ukázka je hotová. Vrací true jen poprvé. */
 export function finish(s: State, k: PathKey, now: number): boolean {
   touch(s, k, now);
   const p = s[k];
@@ -69,9 +69,6 @@ export function finish(s: State, k: PathKey, now: number): boolean {
   p.t1 = now;
   return true;
 }
-
-export const isDone = (s: State, k: PathKey) => s[k].status === 'done';
-export const badgeCount = (s: State) => PATHS.filter(k => isDone(s, k)).length;
 
 /* ---------- Datová analýza ---------- */
 export type DataOutcome = 'wrong' | 'solved' | 'revealed' | 'ignored';
@@ -105,7 +102,7 @@ export function ideaBuilt(s: State, idea: IdeaKey): void {
   const app = s.ai.apps[idea];
   if (app) app.built = true;
 }
-/** Volat až po provedení úpravy. Stejná úprava téže aplikace se počítá jednou. Vrací true při prvním odznaku. */
+/** Volat až po provedení úpravy. Stejná úprava téže aplikace se počítá jednou. Vrací true poprvé, kdy je ukázka hotová. */
 export function changeApplied(s: State, idea: IdeaKey, changeId: string, now: number): boolean {
   const app = s.ai.apps[idea];
   if (!app || !app.built) return false;
@@ -127,7 +124,7 @@ export function gameEdit(s: State, now: number): void {
   touch(s, 'hry', now);
   s.hry.edits++;
 }
-/** Vrací true, když dohrání vlastního levelu přineslo první odznak. */
+/** Vrací true, když dohrání vlastní verze ukázku poprvé dokončilo. */
 export function gameWin(s: State, own: boolean, coins: number, now: number): boolean {
   const h = s.hry;
   h.bestCoins = Math.max(h.bestCoins, coins);
@@ -139,7 +136,7 @@ export function gameWin(s: State, own: boolean, coins: number, now: number): boo
   if (!h.winAttempt) h.winAttempt = Math.max(1, h.ownPlays);
   return finish(s, 'hry', now);
 }
-/** „Stačí, chci výsledek“: bez odznaku, ukázka je přeskočená. */
+/** „Stačí, chci výsledek“: ukázka není hotová, ale přeskočená. */
 export function gameSkip(s: State, now: number): void {
   touch(s, 'hry', now);
   if (s.hry.status === 'done') return;

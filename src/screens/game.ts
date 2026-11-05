@@ -7,7 +7,7 @@ import { gameDeath, gameEdit, gamePlay, gameSkip, gameWin } from '../logic/state
 import { fill } from '../logic/text.ts';
 import type { Ctx, Screen } from '../ui/ctx.ts';
 import { $, $$, el } from '../ui/dom.ts';
-import { claimBar, viewHead } from '../ui/parts.ts';
+import { doneBar, moreSection, viewHead } from '../ui/parts.ts';
 
 const COLS = 12, ROWS = 7;
 const EMPTY = 0, SOLID = 1, SPIKE = 2, COIN = 3;
@@ -43,7 +43,8 @@ export function createGame(ctx: Ctx): Screen {
     </div>
     <p class="game-stats" id="g-stats"></p>
   </div>
-  ${claimBar('hry', 'g-done', t.done)}
+  ${doneBar('g-done', t.done)}
+  ${moreSection('hry')}
 </div></section>`);
 
   let engine: ReturnType<typeof createEngine> | null = null;

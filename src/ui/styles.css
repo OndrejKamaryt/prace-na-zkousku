@@ -2,8 +2,7 @@
    coderslab.cz). Proti prototypu:
    - tokeny a základ jsou na :host, který zároveň odřízne děděné vlastnosti webu (all: initial),
    - rozložení podle šířky řídí @container (šířka widgetu), ne @media (šířka okna), vw je cqi,
-   - okno s odznakem je <dialog> v top layer,
-   - v režimu embed je místo tmavé hlavičky světlý pruh s odznaky. */
+   - v režimu embed je místo tmavé hlavičky světlý pruh s tlačítkem Můj výsledek. */
 :host{
   all:initial;
   display:block; width:100%; box-sizing:border-box; container-type:inline-size;
@@ -31,7 +30,6 @@
   --ico-x:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B8123F' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M7 7l10 10M17 7L7 17'/%3E%3C/svg%3E");
   --ico-chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23212529' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.5 6l6 6-6 6'/%3E%3C/svg%3E");
   --ico-play:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 6.5v11l9-5.5z' fill='%23212529'/%3E%3C/svg%3E");
-  --ico-medal:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23212529' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='9' r='5.5' fill='%23ffffff'/%3E%3Cpath d='M8.6 13.6L7.2 21l4.8-2.5 4.8 2.5-1.4-7.4'/%3E%3Cpath d='M10 9.2l1.4 1.4 2.8-2.8'/%3E%3C/svg%3E");
   color-scheme:light;
   background:var(--bg); color:var(--ink); font:16px/1.6 var(--font); text-align:left;
   -webkit-font-smoothing:antialiased; -webkit-text-size-adjust:100%;
@@ -56,28 +54,15 @@ button{font-family:inherit}
 .logo-mark b{color:#4D4D4D; font-weight:700} .logo-mark span{color:#FFFFFF}
 .tool-name{font:500 18px var(--head)}
 .site :focus-visible{outline-color:var(--yellow)}
-.prog{margin-left:auto; display:inline-flex; align-items:center; gap:8px; min-height:40px; padding:4px 14px 4px 6px; border:1px solid var(--yellow); border-radius:999px; background:transparent; color:var(--yellow); font:500 15px var(--head); text-decoration:none; white-space:nowrap; cursor:pointer; transition:background .15s, color .15s}
+.prog{margin-left:auto; display:inline-flex; align-items:center; min-height:40px; padding:4px 16px; border:1px solid var(--yellow); border-radius:999px; background:transparent; color:var(--yellow); font:500 15px var(--head); text-decoration:none; white-space:nowrap; cursor:pointer; transition:background .15s, color .15s}
 .prog:hover{background:var(--yellow); color:var(--dark)}
-.minis{display:inline-flex; gap:4px}
-.mini{width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.12); display:inline-grid; place-items:center}
-.mini svg{width:14px; height:14px; stroke:rgba(255,255,255,.7); fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round}
-.mini.got{background:var(--yellow)}
-.mini.got svg{stroke:var(--dark)}
-.prog:hover .mini{background:rgba(33,37,41,.12)} .prog:hover .mini svg{stroke:var(--dark)}
-.prog:hover .mini.got{background:var(--dark)} .prog:hover .mini.got svg{stroke:var(--yellow)}
 @container (max-width:560px){ .tool-name{display:none} .logo-mark{width:48px; font-size:24px} .site-in{min-height:52px} }
-@container (max-width:419px){ .prog .lg{display:none} .prog{padding-right:12px} }
 
-/* embed: světlý pruh s odznaky místo tmavé hlavičky, jak ho ukazovalo demo z 3. 11. */
+/* embed: světlý pruh s tlačítkem Můj výsledek místo tmavé hlavičky */
 .pnz-bar{background:var(--light); border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
 .pnz-bar .container{display:flex; justify-content:flex-end; padding-top:8px; padding-bottom:8px}
 .pnz-bar .prog{color:var(--dark); border-color:var(--line-strong); background:#FFFFFF}
-.pnz-bar .mini{background:var(--surface-2)}
-.pnz-bar .mini svg{stroke:var(--gray)}
-.pnz-bar .mini.got{background:var(--yellow)}
-.pnz-bar .mini.got svg{stroke:var(--dark)}
 .pnz-bar .prog:hover{background:var(--yellow); border-color:var(--yellow)}
-.pnz-bar .prog:hover .mini.got{background:var(--dark)} .pnz-bar .prog:hover .mini.got svg{stroke:var(--yellow)}
 
 /* tlačítka jako na webu: pilulky, Ubuntu, bez kapitálek */
 .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:9px 22px; border-radius:999px; border:1px solid transparent; font:500 16px/1.2 var(--head); cursor:pointer; text-decoration:none; text-align:center; transition:background .15s, border-color .15s, color .15s}
@@ -91,9 +76,6 @@ button{font-family:inherit}
 .btn-row{display:flex; flex-wrap:wrap; gap:10px}
 .linkish{background:none; border:0; padding:8px 0; font:500 15px var(--head); color:var(--gray); cursor:pointer; text-decoration:underline; text-underline-offset:3px}
 .linkish:hover{color:var(--dark)}
-.back{display:inline-flex; align-items:center; gap:4px; text-decoration:none}
-.back::before{content:""; width:16px; height:16px; background:var(--ico-chev) center/16px no-repeat; transform:scaleX(-1); opacity:.7}
-.back:hover{text-decoration:underline}
 
 /* úvod: světle modrý pás jako pozvánka na talentový test */
 .band-sky{background:var(--sky); position:relative; overflow:hidden; isolation:isolate}
@@ -132,8 +114,7 @@ button{font-family:inherit}
 @container (max-width:560px){ .sec-title{margin:18px 0 10px} }
 
 /* karty cest: bílá karta, žlutá skvrna v rohu a čárová ikona jako u Možností financování */
-.paths{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:16px}
-@container (max-width:1000px){ .paths{grid-template-columns:repeat(2, minmax(0,1fr))} }
+.paths{display:grid; grid-template-columns:repeat(var(--cards, 3), minmax(0,1fr)); gap:16px}
 .path-card{position:relative; display:flex; flex-direction:column; gap:6px; background:var(--bg); border:1px solid var(--line); border-radius:var(--r-card); padding:116px 18px 18px; text-align:left; cursor:pointer; font:inherit; color:inherit; overflow:hidden; transition:border-color .15s, box-shadow .15s}
 .path-card:hover{border-color:var(--yellow); box-shadow:var(--float)}
 .path-card .blob{position:absolute; top:0; left:0; width:156px; height:108px}
@@ -145,31 +126,22 @@ button{font-family:inherit}
 .path-card .go{background:var(--yellow); color:var(--dark); border-radius:999px; padding:6px 16px; font:500 15px var(--head)}
 .path-card .state-done{color:var(--green-ink); font:700 14px var(--head)}
 .path-card .state-skip{color:var(--gray); font:700 14px var(--head)}
-@container (max-width:560px){
-  .paths{gap:10px}
-  .path-card{padding:74px 12px 12px; gap:2px}
-  .path-card .blob{width:108px; height:72px}
-  .path-card .ico{top:12px; left:13px; width:40px; height:40px}
+/* na mobilu pod sebou a na šířku, ikona vlevo: všechny karty se vejdou na první obrazovku */
+@container (max-width:720px){
+  .paths{grid-template-columns:minmax(0,1fr); gap:10px}
+  .path-card{padding:12px 12px 12px 78px; gap:2px}
+  .path-card .blob{width:70px; height:48px}
+  .path-card .ico{top:10px; left:14px; width:40px; height:40px}
   .path-card .field-name{font-size:13px}
   .path-card h3{font-size:16px}
   .path-card .desc{display:none}
-  .path-card .foot{font-size:13px; padding-top:8px}
+  .path-card .foot{font-size:13px; padding-top:6px}
   .path-card .go{padding:5px 12px; font-size:14px}
 }
-
-/* odznaky */
-.badges{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px}
-.badge{display:inline-flex; align-items:center; gap:8px; font:500 14px var(--head); color:var(--gray); background:var(--bg); border:1px dashed var(--line-strong); border-radius:999px; padding:4px 14px 4px 4px}
-.badge i{width:30px; height:30px; border-radius:50%; background:#E9ECEF; display:inline-grid; place-items:center; flex:none}
-.badge svg{width:16px; height:16px; stroke:var(--gray); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
-.badge.got{border-style:solid; border-color:var(--yellow); color:var(--dark)}
-.badge.got i{background:var(--yellow)}
-.badge.got svg{stroke:var(--dark)}
 
 /* hlavička úkolu */
 .t-data, .t-ai, .t-game, .t-sec{--c:var(--dark); --c-soft:var(--light)}
 .view-head{padding-top:12px; margin-bottom:16px}
-.vh-top{display:flex; flex-wrap:wrap; align-items:center; gap:4px 20px}
 .vtag{display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; font:500 14px var(--head); color:var(--gray)}
 .view-head h2{font:500 clamp(26px,3.4cqi,40px)/1.15 var(--head); margin:8px 0 0; color:var(--ink-strong)}
 .view-head .sub{color:var(--gray); margin-top:10px; max-width:62ch; font-size:17px}
@@ -206,8 +178,12 @@ details.more summary{cursor:pointer; font:500 15px var(--head); color:var(--dark
 .fine p + p, .fine p + ol, .fine ol + p{margin-top:10px}
 
 /* hotovo: krémový pruh jako kalkulačka výdělku na webu */
-.claim{display:flex; flex-wrap:wrap; gap:14px 18px; align-items:center; margin-top:18px; padding:16px 18px; border-radius:var(--r-panel); background:var(--cream)}
-.claim::before{content:""; flex:none; width:54px; height:54px; border-radius:50%; background:var(--yellow) var(--ico-medal) center/30px no-repeat}
-.claim p{font:700 18px/1.35 var(--head); flex:1 1 240px; max-width:60ch; color:var(--ink-strong)}
-.claim .btn-primary{background:var(--dark); border-color:var(--dark); color:var(--on-dark)}
-.claim .btn-primary:hover{background:#000; border-color:#000}
+.done-bar{display:flex; flex-wrap:wrap; gap:14px 18px; align-items:center; margin-top:18px; padding:16px 18px; border-radius:var(--r-panel); background:var(--cream)}
+.done-bar p{font:700 18px/1.35 var(--head); flex:1 1 240px; max-width:60ch; color:var(--ink-strong)}
+.done-bar .btn-primary{background:var(--dark); border-color:var(--dark); color:var(--on-dark)}
+.done-bar .btn-primary:hover{background:#000; border-color:#000}
+.done-bar.bare{background:none; padding:0}
+
+/* další příklady pod ukázkou i pod výsledkem */
+.more-ex{margin-top:28px}
+.more-ex h3{font:500 20px/1.3 var(--head); margin:0; color:var(--ink-strong)}

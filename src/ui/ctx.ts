@@ -1,10 +1,9 @@
 /* Co obrazovky dostanou od widgetu. Stav mění jen funkcemi z logic/state.ts,
-   navigaci, posouvání a oslavu odznaku řeší widget. */
+   navigaci a posouvání řeší widget. */
 import type { State } from '../logic/state.ts';
 import type { PathKey } from '../logic/types.ts';
 
 export type View = 'start' | PathKey | 'vysledek';
-export const VIEWS: readonly View[] = ['start', 'data', 'ai', 'hry', 'kyber', 'vysledek'];
 export type Variant = 'embed' | 'standalone';
 
 export interface Ctx {
@@ -12,15 +11,17 @@ export interface Ctx {
   readonly root: ShadowRoot;
   readonly state: State;
   readonly variant: Variant;
-  /** prefers-reduced-motion: bez animací, čekání a konfet */
+  /** Ukázky, které se návštěvníkovi nabízejí (config.offered nebo atribut data-ukazky). */
+  readonly offered: readonly PathKey[];
+  /** prefers-reduced-motion: bez animací a čekání */
   readonly reduce: boolean;
   /** Dnešek pro data v ukázkách (rozhodnutí 19). */
   readonly today: Date;
   now(): number;
   /** Přepnutí obrazovky na pokyn návštěvníka: posune widget pod hlavičku webu a dá fokus na nadpis. */
   go(view: View): void;
-  /** Ukázka je hotová: odznak k vyzvednutí, stav na kartách, pruh s odznaky. first = poprvé. */
-  completed(k: PathKey, first: boolean): void;
+  /** Ukázka je hotová: pruh s cestou k výsledku a stav na kartách. reveal = pruh hned odkrýt. */
+  completed(k: PathKey, reveal: boolean): void;
   /** Posune stránku tak, aby byl prvek vidět pod lepicí hlavičkou (reveal() z prototypu). */
   reveal(el: Element | null | undefined): void;
   /** Posune stránku tak, aby prvek začínal hned pod lepicí hlavičkou (nový krok, výsledek ukázky). */

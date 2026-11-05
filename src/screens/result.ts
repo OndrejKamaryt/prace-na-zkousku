@@ -1,19 +1,18 @@
-/* Výsledek: doporučený směr, cena s příspěvkem, další krok a ostatní ukázky.
-   Panel „Pohled obchodníka“ z prototypu se nepřebírá, jeho obsah jde do
-   Pipedrivu (fáze 4 a 5). Pořadí bloků v DOM odpovídá mobilu (S8). */
+/* Výsledek v jednom sloupci: doporučený obor, cena s příspěvkem, Co dál a další
+   příklady. Panel „Pohled obchodníka“ z prototypu se nepřebírá, jeho obsah jde
+   do Pipedrivu (fáze 4 a 5). Otázky co bavilo, co od kurzu čekáš a školení přes
+   firmu jsou od 4. 11. pryč, ve stavu a snímku zůstávají prázdné. */
 import cs from '../content/cs.json';
 import config from '../content/config.json';
 import { lowIncomeMatters, priceFor } from '../logic/price.ts';
-import { candidates, notFun, recommend, why } from '../logic/recommend.ts';
-import { isDone, lowIncomeShown, setFav, setFirm, setGoal, setLowIncome, snapshot } from '../logic/state.ts';
+import { candidates, recommend } from '../logic/recommend.ts';
+import { lowIncomeShown, setLowIncome, snapshot } from '../logic/state.ts';
 import { fill, kc } from '../logic/text.ts';
 import { NBSP } from '../logic/typography.ts';
-import { PATHS } from '../logic/types.ts';
-import type { Fav, Goal, PathKey } from '../logic/types.ts';
+import type { PathKey } from '../logic/types.ts';
 import type { Ctx, Screen } from '../ui/ctx.ts';
-import { $, el, esc } from '../ui/dom.ts';
-import { THEME } from '../ui/icons.ts';
-import { badgeHtml } from '../ui/parts.ts';
+import { $, el } from '../ui/dom.ts';
+import { otherCards } from '../ui/parts.ts';
 
 const LINK = 'target="_blank" rel="noopener"';
 const rate = (r: number) => (r * 100).toLocaleString('cs-CZ', { maximumFractionDigits: 2 }) + NBSP + '%';
@@ -26,29 +25,26 @@ export function createResult(ctx: Ctx): Screen {
     <p class="hint">${t.emptyHint}</p>
     <button class="btn btn-primary" data-go="start" type="button">${t.emptyCta}</button>
   </div>
-  <div id="r-full" hidden>
-    <div class="result-grid">
-      <div class="reco" id="r-reco"></div>
-      <div class="r-side" id="r-side">
-        <div class="panel" id="r-price-box">
-          <h3 id="r-price-title">${t.priceTitleDefault}</h3>
-          <div class="price" id="r-price"></div>
-          <ul class="facts">${t.facts.map(f => '<li>' + f + '</li>').join('')}</ul>
-          <label class="lowinc"><input type="checkbox" id="r-lowinc"><span>${t.lowIncome}</span></label>
-          <details class="more"><summary>${t.fineSummary}</summary><div class="fine" id="r-fine" style="margin-top:10px"></div></details>
-          <p class="proof">${t.proof}</p>
-        </div>
-        <div class="panel" id="r-next-box">
-          <h3>${t.nextTitle}</h3>
-          <p class="hint" id="r-next-text"></p>
-          <div class="btn-row" style="margin-top:12px" id="r-next"></div>
-          <p class="small-link">${t.consultIntro} <a href="${config.links.konzultace}" ${LINK}>${t.consultLink}</a>.</p>
-        </div>
-      </div>
-      <div class="panel" id="r-others-box">
-        <h3>${t.othersTitle}</h3>
-        <div class="others" id="r-others"></div>
-      </div>
+  <div id="r-full" class="result-col" hidden>
+    <div class="reco" id="r-reco"></div>
+    <div class="panel" id="r-price-box">
+      <h3 id="r-price-title">${t.priceTitleDefault}</h3>
+      <div class="price" id="r-price"></div>
+      <ul class="facts">${t.facts.map(f => '<li>' + f + '</li>').join('')}</ul>
+      <label class="lowinc"><input type="checkbox" id="r-lowinc"><span>${t.lowIncome}</span></label>
+      <details class="more"><summary>${t.fineSummary}</summary><div class="fine" id="r-fine" style="margin-top:10px"></div></details>
+      <p class="proof">${t.proof}</p>
+    </div>
+    <div class="panel" id="r-next-box">
+      <h3>${t.nextTitle}</h3>
+      <p class="hint" id="r-next-text"></p>
+      <div class="btn-row" style="margin-top:12px" id="r-next"></div>
+      <p class="small-link" id="r-new-tab">${t.newTab}</p>
+      <p class="small-link">${t.consultIntro} <a href="${config.links.konzultace}" ${LINK}>${t.consultLink}</a>.</p>
+    </div>
+    <div class="more-ex" id="r-others-box">
+      <h3>${cs.ui.moreTitle}</h3>
+      <div class="others" id="r-others"></div>
     </div>
   </div>
 </div></section>`);
@@ -76,7 +72,7 @@ export function createResult(ctx: Ctx): Screen {
       '<p>' + fill(t.fineLimit, { cap }) + '</p>';
   }
 
-  function render(focus?: string) {
+  function render() {
     const snap = snapshot(s, ctx.now());
     const ds = candidates(snap);
     empty.hidden = ds.length > 0;
@@ -84,58 +80,19 @@ export function createResult(ctx: Ctx): Screen {
     const k = recommend(snap);
     current = k;
     if (!k) return;
-    const p = cs.paths[k], nope = notFun(snap, k);
-    let h = '<p class="tagline">' + (nope ? t.taglineNotFun : ds.length > 1 ? t.taglineStrong : t.taglineFirst) + '</p><h2 tabindex="-1">' + p.label + '</h2>' +
-      '<p class="desc">' + (nope ? t.notFunDesc : s.goal === 'upskill' ? p.descUp : p.desc) + '</p>' +
-      '<ul class="why">' + why(k, snap).map(x => '<li>' + esc(x) + '</li>').join('') +
-      (s.fav === k ? '<li>' + (ds.length > 1 ? t.favMost : t.favOne) + '</li>' : '') + '</ul>' +
-      '<div class="badges">' + PATHS.map(x => badgeHtml(x, isDone(s, x))).join('') + '</div>';
-    const favBtn = (value: string, label: string) => '<button type="button" data-fav="' + value + '" aria-pressed="' + (s.fav === value) + '">' + label + '</button>';
-    if (ds.length >= 2) {
-      h += '<p class="fav-q">' + t.qFavMany + '</p><div class="fav">' + ds.map(x => favBtn(x, cs.paths[x].label)).join('') + favBtn('unknown', t.favUnknown) + '</div>';
-    } else {
-      h += '<p class="fav-q">' + t.qFavOne + '</p><div class="fav">' + favBtn(ds[0]!, t.favYes) + favBtn('not:' + ds[0], t.favNo) + '</div>';
-    }
-    const goalBtn = (value: string, label: string) => '<button type="button" data-goal="' + value + '" aria-pressed="' + (s.goal === value) + '">' + label + '</button>';
-    h += '<p class="fav-q">' + t.qGoal + '</p><div class="goal">' + goalBtn('switch', t.goalSwitch) + goalBtn('upskill', t.goalUpskill) + '</div>';
-    if (s.goal === 'upskill') {
-      h += '<div class="firm"><h4>' + t.firmTitle + '</h4><p class="hint">' + t.firmText + '</p>' +
-        '<label class="lowinc"><input type="checkbox" id="r-firm"' + (s.firm ? ' checked' : '') + '><span>' + t.firmCheck + '</span></label>' +
-        '<p class="small-link"><a href="' + config.links.skoleniFirmy + '" ' + LINK + '>' + t.firmLink + '</a></p></div>';
-    }
-    reco.className = 'reco ' + THEME[k];
-    reco.innerHTML = h;
-    if (focus) reco.querySelector<HTMLElement>(focus)?.focus({ preventScroll: true });
+    const p = cs.paths[k];
+    reco.innerHTML = '<p class="tagline">' + (ds.length > 1 ? t.taglineStrong : t.taglineFirst) + '</p><h2 tabindex="-1">' + p.label + '</h2><p class="desc">' + p.desc + '</p>';
 
     const next = config.courses[k].next as keyof typeof cs.cta;
     $(root, '#r-next-text').textContent = p.nextText;
     $(root, '#r-next').innerHTML = '<a class="btn btn-primary" href="' + config.links[next] + '" ' + LINK + '>' + cs.cta[next] + '</a>' +
       '<a class="btn btn-ghost" href="' + config.courses[k].url + '" ' + LINK + '>' + t.detail + '</a>';
-    $(root, '#r-others').innerHTML = PATHS.filter(x => x !== k).map(x => {
-      const st = s[x].status;
-      const label = st === 'done' ? cs.ui.done : st === 'skipped' ? cs.ui.skipped : t.otherTime;
-      return '<button type="button" class="other ' + THEME[x] + '" data-go="' + x + '"><span>' + cs.paths[x].label + '</span><span class="st' + (st === 'done' ? ' done' : '') + '">' + label + '</span></button>';
-    }).join('');
+    const others = otherCards(k, ctx.offered, s);
+    $(root, '#r-others').innerHTML = others;
+    $(root, '#r-others-box').hidden = !others;
     renderPrice(k);
   }
 
-  reco.addEventListener('click', e => {
-    const tg = e.target as Element;
-    const f = tg.closest<HTMLElement>('[data-fav]');
-    if (f) {
-      setFav(s, f.dataset.fav as Fav);
-      return render('[data-fav="' + f.dataset.fav + '"]');
-    }
-    const g = tg.closest<HTMLElement>('[data-goal]');
-    if (g) {
-      setGoal(s, g.dataset.goal as Goal);
-      render('[data-goal="' + g.dataset.goal + '"]');
-    }
-  });
-  reco.addEventListener('change', e => {
-    const tg = e.target as HTMLInputElement;
-    if (tg.id === 'r-firm') setFirm(s, tg.checked);
-  });
   lowinc.addEventListener('change', () => {
     setLowIncome(s, lowinc.checked);
     if (current) renderPrice(current);

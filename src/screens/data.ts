@@ -7,7 +7,7 @@ import { answerData, finishData } from '../logic/state.ts';
 import { fill, kc } from '../logic/text.ts';
 import type { Ctx, Screen } from '../ui/ctx.ts';
 import { $, $$, el } from '../ui/dom.ts';
-import { claimBar, viewHead } from '../ui/parts.ts';
+import { doneBar, moreSection, viewHead } from '../ui/parts.ts';
 
 type Step = (typeof cs.data.steps)[number];
 type Row = [label: string, a: number, b?: number];
@@ -37,7 +37,8 @@ export function createData(ctx: Ctx): Screen {
   ${viewHead('data', cs.ui.duration, t.title)}
   <div class="mission"><span class="who" aria-hidden="true">${t.who}</span><p>${t.mission}</p></div>
   <div class="panel data-step" id="d-step"></div>
-  ${claimBar('data', 'd-done', t.done)}
+  ${doneBar('d-done', t.done)}
+  ${moreSection('data')}
 </div></section>`);
   const panel = $(root, '#d-step');
   let current = 0;

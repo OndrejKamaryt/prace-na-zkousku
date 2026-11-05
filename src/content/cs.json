@@ -2,21 +2,17 @@
   "ui": {
     "toolName": "Práce na zkoušku",
     "logoLabel": "Práce na zkoušku, úvodní stránka",
-    "progLabel": "Moje odznaky a výsledek",
-    "progWord": "Odznaky",
-    "badgesLabel": "Moje odznaky",
-    "back": "Zpět na výběr",
     "duration": "5 minut",
     "try": "Zkusit",
     "done": "Hotovo ✓",
     "skipped": "Přeskočeno",
-    "claim": "Vyzvednout odznak",
-    "nextWork": "Zkusit další práci",
-    "myResult": "Můj výsledek"
+    "myResult": "Můj výsledek",
+    "moreTitle": "Zkus si další příklady",
+    "moreTime": "asi 5 minut"
   },
   "start": {
     "title": "Vyzkoušej si práci v IT dřív, než se rozhodneš",
-    "lede": "Čtyři pětiminutové ukázky skutečné práce. Stačí zkusit jednu a hned uvidíš, co ti sedí.",
+    "lede": "Tři pětiminutové ukázky skutečné práce. Stačí zkusit jednu a hned uvidíš, co ti sedí.",
     "meta": [
       "Bez registrace",
       "Bez znalosti programování",
@@ -622,33 +618,14 @@
       "Přihlašování heslem vypnuté, fail2ban hlídá další pokusy",
       "Správná rozhodnutí napoprvé: {n} ze 3"
     ],
-    "doneHint": "Přesně tohle se učí IT administrátoři: Linux, sítě a zabezpečení serverů.",
-    "done": "Hotovo, server je v bezpečí!"
+    "doneHint": "Přesně tohle se učí IT administrátoři: Linux, sítě a zabezpečení serverů."
   },
   "result": {
-    "emptyTitle": "Zatím nemáš žádný odznak",
+    "emptyTitle": "Zatím nemáš hotovou žádnou ukázku",
     "emptyHint": "Vyber si jednu práci, zabere asi pět minut. Výsledek uvidíš hned potom.",
     "emptyCta": "Vybrat práci",
     "taglineStrong": "Tvůj nejsilnější směr",
     "taglineFirst": "Tvoje první práce na zkoušku",
-    "taglineNotFun": "Zatím ti nejvíc sedí",
-    "notFunDesc": "Podle tvé odpovědi tě tahle práce moc nebavila. Zkus ještě jinou, každá zabere asi pět minut.",
-    "favMost": "Bavilo tě to ze všeho nejvíc",
-    "favOne": "Bavilo tě to",
-    "qFavMany": "Co tě bavilo nejvíc?",
-    "qFavOne": "Bavilo tě to?",
-    "favUnknown": "Nevím",
-    "favYes": "Ano",
-    "favNo": "Spíš ne",
-    "qGoal": "Co od kurzu čekáš?",
-    "goalSwitch": "Chci změnit obor",
-    "goalUpskill": "Chci se zlepšit ve své práci",
-    "firmTitle": "Jiná cesta: školení přes firmu",
-    "firmText": "Když se chceš zlepšit ve své práci, může školení zařídit i tvůj zaměstnavatel. Firmy na to můžou čerpat dotaci Vzdělávání pro firmy, až přes 38 000 Kč na zaměstnance. Školení připravíme na míru pro tebe i kolegy.",
-    "firmCheck": "Zajímá mě školení přes firmu",
-    "firmLink": "Víc o školení pro firmy",
-    "othersTitle": "Další práce na zkoušku",
-    "otherTime": "asi 5 minut",
     "priceTitleDefault": "Kurz s příspěvkem od státu",
     "priceTitle": "Kurz {course} s příspěvkem",
     "payLabel": "Kolik zaplatíš",
@@ -676,47 +653,32 @@
     "nextTitle": "Co dál",
     "detail": "Detail kurzu",
     "consultIntro": "Chceš si o tom popovídat s někým zkušeným?",
-    "consultLink": "Domluv si nezávaznou konzultaci"
-  },
-  "celebrate": {
-    "new": "Nový odznak",
-    "countAll": "Máš všechny čtyři odznaky. Paráda!",
-    "count": "Máš {n} ze 4 odznaků. Výsledek už na tebe čeká.",
-    "more": "Další práce",
-    "result": "Můj výsledek",
-    "stay": "Zůstat tady"
+    "consultLink": "Domluv si nezávaznou konzultaci",
+    "newTab": "Odkazy se otevřou v nové záložce, tvůj výsledek tady zůstane."
   },
   "paths": {
     "data": {
       "label": "Datová analýza",
       "course": "Datový analytik",
-      "badge": "Detektivka vyřešená",
       "desc": "Od Excelu přes databáze až po první skripty v Pythonu a práci s AI. Krok za krokem, od nuly až po juniorní pozici.",
-      "descUp": "Naučíš se rychle zpracovat data, dělat přehledné reporty a zrychlit si je s AI. Hodí se skoro do každé kanceláře.",
       "nextText": "Nejbližší krok je dvoudenní minikurz zdarma. Vyzkoušíš si práci analytika naostro, s lektorem."
     },
     "ai": {
       "label": "Stavění aplikací s AI",
       "course": "Claude Code od A do Z",
-      "badge": "Aplikace postavená",
       "desc": "Naučíš se stavět weby a aplikace tak, že kód píše AI a ty ji řídíš. Kurz je i pro úplné začátečníky.",
-      "descUp": "Naučíš se nechat AI postavit malé nástroje, které ti v práci ušetří čas, třeba kalkulačku nebo přehled z tabulky.",
       "nextText": "Nejbližší krok je webinář zdarma, kde uvidíš, jak se s AI staví skutečné aplikace."
     },
     "hry": {
       "label": "Tvorba her",
       "course": "Game Developer",
-      "badge": "Level dohraný",
       "desc": "Hry a herní světy v Unreal Enginu 5, bez znalosti programování.",
-      "descUp": "Naučíš se tvořit interaktivní 3D světy v Unreal Enginu 5. Hodí se i na vizualizace a prezentace.",
       "nextText": "Nejbližší krok je webinář zdarma, kde se dozvíš víc o práci, která tě bavila."
     },
     "kyber": {
       "label": "Kyberbezpečnost",
       "course": "IT Administrator",
-      "badge": "Server ubráněný",
       "desc": "Správa serverů a sítí a jejich ochrana před útoky. Od základů, krok za krokem.",
-      "descUp": "Naučíš se spravovat a zabezpečit počítače a servery. Hodí se každému, kdo se ve firmě stará o IT.",
       "nextText": "Nejbližší krok je webinář zdarma, kde se dozvíš víc o práci, která tě bavila."
     }
   },

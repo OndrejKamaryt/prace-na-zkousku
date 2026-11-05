@@ -34,8 +34,8 @@ describe('cs.json', () => {
     expect(text).not.toContain('—');
     expect(text).not.toMatch(/\s[·•]\s/);
   });
-  it('má neutrální názvy odznaků', () => {
-    expect([cs.paths.data.badge, cs.paths.ai.badge, cs.paths.hry.badge, cs.paths.kyber.badge])
-      .toEqual(['Detektivka vyřešená', 'Aplikace postavená', 'Level dohraný', 'Server ubráněný']);
+  it('návštěvník nevidí odznaky, viníka, detektivku ani krádež (ZPETNA-VAZBA.md)', () => {
+    const visitor = JSON.stringify([cs.ui, cs.start, cs.data, cs.result, cs.paths]);
+    expect(visitor).not.toMatch(/odznak|vin[ií]k|detektiv|ztratil|zmizelo/i);
   });
 });

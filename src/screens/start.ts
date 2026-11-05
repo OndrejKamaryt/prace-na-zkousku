@@ -1,9 +1,8 @@
-/* Úvod: modrý pás a čtyři karty ukázek. Stav na kartách a odznaky
-   překresluje widget (renderProgress). */
+/* Úvod: modrý pás a karty nabízených ukázek. Stav na kartách překresluje
+   widget (renderProgress). */
 import cs from '../content/cs.json';
 import config from '../content/config.json';
 import { fill, kc } from '../logic/text.ts';
-import { PATHS } from '../logic/types.ts';
 import type { PathKey } from '../logic/types.ts';
 import type { Screen } from '../ui/ctx.ts';
 import { $, el } from '../ui/dom.ts';
@@ -16,7 +15,7 @@ function card(k: PathKey): string {
     '<span class="foot"><span>' + cs.ui.duration + '</span><span class="go" data-state="' + k + '">' + cs.ui.try + '</span></span></button>';
 }
 
-export function createStart(): Screen {
+export function createStart(offered: readonly PathKey[]): Screen {
   const t = cs.start;
   const root = el(`<section class="view" id="v-start">
   <div class="band-sky">${DOODLES}
@@ -32,8 +31,7 @@ export function createStart(): Screen {
   </div>
   <div class="container">
     <h2 class="sec-title">${t.pathsTitle}</h2>
-    <div class="paths">${PATHS.map(card).join('')}</div>
-    <div class="badges" id="start-badges" aria-label="${cs.ui.badgesLabel}"></div>
+    <div class="paths" style="--cards:${offered.length}">${offered.map(card).join('')}</div>
   </div>
 </section>`);
   return { el: root, heading: $(root, 'h1') };

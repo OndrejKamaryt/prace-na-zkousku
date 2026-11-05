@@ -7,7 +7,7 @@ import { finish, kyberAnswer, touch } from '../logic/state.ts';
 import { fill } from '../logic/text.ts';
 import type { Ctx, Screen } from '../ui/ctx.ts';
 import { $, $$, el, esc } from '../ui/dom.ts';
-import { claimBar, viewHead } from '../ui/parts.ts';
+import { doneBar, moreSection, viewHead } from '../ui/parts.ts';
 
 type Phase = 'start' | 'count' | 'q1' | 'block' | 'last' | 'q2' | 'q3' | 'done';
 type Labeled = 'grep' | 'count' | 'ufw' | 'last';
@@ -24,7 +24,8 @@ export function createKyber(ctx: Ctx): Screen {
     </div>
     <div class="panel panel-soft stack" id="s-panel"></div>
   </div>
-  ${claimBar('kyber', 's-done', t.done)}
+  ${doneBar('s-done')}
+  ${moreSection('kyber')}
 </div></section>`);
   const out = $(root, '#s-out'), panel = $(root, '#s-panel');
 

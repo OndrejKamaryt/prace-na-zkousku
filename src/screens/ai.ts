@@ -1,6 +1,7 @@
 /* Stavění s AI: předem připravený agent a tři malé aplikace. Po postavení
    člověk najde chybu, kterou AI udělala, a nechá ji opravit. Teprve pak jdou
-   úpravy a odznak je po první dokončené úpravě. Žádné pole pro vlastní pokyn. */
+   úpravy a ukázka je hotová po první dokončené úpravě. Žádné pole pro vlastní pokyn.
+   Od 4. 11. je schovaná (config.offered), dokud nevznikne vstupní kurz AI. */
 import cs from '../content/cs.json';
 import { BUSY, ideaCode, nextWorkdays } from '../content/fixtures.ts';
 import { changeApplied, ideaBuilt, startIdea } from '../logic/state.ts';
@@ -10,7 +11,7 @@ import { IDEAS } from '../logic/types.ts';
 import type { IdeaKey } from '../logic/types.ts';
 import type { Ctx, Screen } from '../ui/ctx.ts';
 import { $, $$, el } from '../ui/dom.ts';
-import { claimBar, viewHead } from '../ui/parts.ts';
+import { doneBar, moreSection, viewHead } from '../ui/parts.ts';
 import { createApp } from './ai-apps.ts';
 import type { App, AppOpts } from './ai-apps.ts';
 
@@ -61,7 +62,8 @@ export function createAi(ctx: Ctx): Screen {
       <div class="changes" id="a-changes"></div>
     </div>
   </div>
-  ${claimBar('ai', 'a-done', t.done)}
+  ${doneBar('a-done', t.done)}
+  ${moreSection('ai')}
 </div></section>`);
 
   const log = $(root, '#a-log'), code = $(root, '#a-code'), device = $(root, '#a-app');
@@ -204,7 +206,7 @@ export function createAi(ctx: Ctx): Screen {
     app.render(device, opts);
     ctx.reveal(preview);
     aiLog(t.logDone, true);
-    // odznak a hodnocení až po dokončené úpravě, stejná úprava téže aplikace se počítá jednou
+    // hotovo a hodnocení až po dokončené úpravě, stejná úprava téže aplikace se počítá jednou
     if (changeApplied(s, key, ch.id, ctx.now())) ctx.completed('ai', true);
   }
 

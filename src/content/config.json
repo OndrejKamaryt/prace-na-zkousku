@@ -1,4 +1,9 @@
 {
+  "offered": [
+    "data",
+    "hry",
+    "kyber"
+  ],
   "digikurzy": {
     "rate": 0.7673,
     "cap": 35000

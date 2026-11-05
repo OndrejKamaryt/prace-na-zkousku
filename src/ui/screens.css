@@ -1,4 +1,4 @@
-/* Styly ukázek, výsledku a okna s odznakem (z prototypu, @media podle šířky převedené na @container). */
+/* Styly ukázek a výsledku (z prototypu, @media podle šířky převedené na @container). */
 
 /* data */
 .step-text{margin-top:10px; max-width:64ch}
@@ -136,40 +136,14 @@ button, a, #g-canvas{-webkit-tap-highlight-color:transparent}
 .step-no .of{font:500 14px var(--head); color:var(--gray); margin-left:auto}
 
 /* výsledek */
-.result-grid{display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:18px; align-items:start; grid-template-areas:"reco side" "others side"; grid-template-rows:auto 1fr; margin-top:18px}
-#r-reco{grid-area:reco} #r-side{grid-area:side; display:grid; gap:18px; align-content:start; min-width:0} #r-others-box{grid-area:others}
-@container (max-width:880px){ .result-grid{grid-template-columns:minmax(0,1fr); grid-template-areas:"reco" "side" "others"; grid-template-rows:none} }
-.reco{position:relative; overflow:hidden; border-radius:var(--r-panel); padding:26px 24px; color:var(--on-dark);
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 140' fill='none' stroke='%23ffffff' stroke-opacity='.32' stroke-width='3' stroke-dasharray='9 9' stroke-linecap='round'%3E%3Cpath d='M4 136C40 60 120 120 150 60S210 8 218 4'/%3E%3C/svg%3E") right -24px bottom -34px / 190px auto no-repeat, linear-gradient(125deg, var(--navy-deep), var(--navy))}
-@container (max-width:880px){ .reco{background:linear-gradient(125deg, var(--navy-deep), var(--navy))} }
-.reco .tagline{font:700 19px var(--head); color:var(--yellow)}
-.reco h2{font:500 clamp(30px,4.4cqi,46px)/1.1 var(--head); margin:4px 0 10px; color:var(--on-dark)}
-.reco .desc{color:rgba(255,255,255,.9); max-width:52ch}
+.result-col{display:grid; grid-template-columns:minmax(0,1fr); gap:18px; max-width:720px; margin:18px auto 0}
+.result-col .more-ex{margin-top:10px}
+.reco .tagline{font:500 16px var(--head); color:var(--gray)}
+.reco h2{font:500 clamp(30px,4.4cqi,46px)/1.1 var(--head); margin:4px 0 10px; color:var(--ink-strong)}
+.reco .desc{max-width:60ch}
 .why{display:grid; gap:8px; margin:16px 0 0; padding:0; list-style:none; font-size:15.5px}
 .why li{display:flex; gap:10px; align-items:flex-start}
 .why li::before{content:""; width:22px; height:22px; flex:none; margin-top:1px; border-radius:50%; background:var(--yellow) var(--ico-check) center/13px no-repeat}
-.fav{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
-.fav-q{margin-top:20px; font:700 17px var(--head)}
-.fav button, .goal button{min-height:44px; padding:8px 16px; border-radius:999px; border:1px solid var(--dark); background:var(--bg); font:500 15px var(--head); cursor:pointer; color:var(--dark)}
-.fav button[aria-pressed="true"], .goal button[aria-pressed="true"]{background:var(--dark); color:var(--on-dark)}
-.goal{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px}
-.reco .fav button, .reco .goal button{background:transparent; border-color:rgba(255,255,255,.75); color:var(--on-dark)}
-.reco .fav button:hover, .reco .goal button:hover{background:rgba(255,255,255,.1)}
-.reco .fav button[aria-pressed="true"], .reco .goal button[aria-pressed="true"]{background:var(--yellow); border-color:var(--yellow); color:var(--dark)}
-.reco .badges{margin-top:18px}
-.reco .badge{background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.45); color:rgba(255,255,255,.9)}
-.reco .badge i{background:rgba(255,255,255,.16)}
-.reco .badge svg{stroke:rgba(255,255,255,.85)}
-.reco .badge.got{background:var(--bg); border-color:var(--bg); color:var(--dark)}
-.reco .badge.got i{background:var(--yellow)}
-.reco .badge.got svg{stroke:var(--dark)}
-.reco :focus-visible{outline-color:var(--yellow)}
-.firm{margin-top:18px; padding:16px; border-radius:var(--r-panel); background:var(--bg); color:var(--ink)}
-.firm h4{margin:0 0 6px; font:700 17px var(--head)}
-.firm .hint{color:var(--gray)}
-.firm a{color:var(--dark)}
-.reco .firm :focus-visible{outline-color:var(--navy)}
-
 #r-price-box h3{font-size:20px}
 .price{display:grid; gap:4px; margin-top:8px; padding:14px 16px; border:1px solid var(--line); border-radius:var(--r-panel); font-variant-numeric:tabular-nums}
 .plabel{font-size:13px; color:var(--gray)}
@@ -191,32 +165,16 @@ button, a, #g-canvas{-webkit-tap-highlight-color:transparent}
 #r-next .btn-primary{background:var(--dark); border-color:var(--dark); color:var(--on-dark)}
 #r-next .btn-primary:hover{background:#000; border-color:#000}
 .small-link{font-size:14px; color:var(--gray); margin-top:12px}
-.others{display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:10px; margin-top:10px}
+.others{display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:10px; margin-top:10px}
 .other{display:flex; justify-content:space-between; align-items:center; gap:10px; min-height:48px; padding:12px 14px; border-radius:var(--r-card); border:1px solid var(--line-strong); background:var(--bg); font:500 15px var(--head); cursor:pointer; color:var(--dark); text-align:left}
 .other:hover{border-color:var(--yellow); box-shadow:inset 0 0 0 1px var(--yellow)}
+.o-text{display:grid; gap:2px; min-width:0}
+.o-field{font:500 13px var(--head); color:var(--gray)}
+.o-text b{font:700 15px/1.3 var(--head); color:var(--ink-strong)}
 .other .st{font:500 13px var(--head); color:var(--gray); white-space:nowrap}
 .other .st.done{color:var(--green-ink); font-weight:700}
 .empty-state{text-align:center; padding:40px 16px; display:grid; gap:14px; justify-items:center; margin-top:18px}
 .empty-state h2{font:500 28px var(--head); margin:0}
-
-/* okno s odznakem: <dialog> v top layer, nad lepicí hlavičkou, lištou cookies i poradcem webu */
-.celebrate{position:fixed; inset:0; width:100%; height:100%; max-width:none; max-height:none; margin:0; border:0; background:transparent; color:var(--ink); overflow:auto;
-  padding:max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px))}
-.celebrate[open]{display:grid; place-items:center}
-.celebrate::backdrop{background:rgba(33,37,41,.55)}
-.cel-card{position:relative; overflow:hidden; background:var(--bg); border-radius:12px; padding:30px 24px 20px; max-width:380px; width:100%; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.3); animation:pop .35s ease}
-.cel-card::before{content:""; position:absolute; left:0; top:0; width:150px; height:100px; pointer-events:none;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 100'%3E%3Cpath d='M0 0H150C136 20 128 42 106 54C84 66 58 56 38 72C24 83 12 94 0 100Z' fill='%23FCF3D9'/%3E%3C/svg%3E") no-repeat}
-.cel-card > *{position:relative}
-@keyframes pop{from{transform:scale(.88); opacity:0} to{transform:none; opacity:1}}
-.cel-badge{width:90px; height:90px; border-radius:50%; margin:0 auto 14px; display:grid; place-items:center; background:var(--yellow); box-shadow:0 0 0 8px var(--cream)}
-.cel-badge svg{width:42px; height:42px; stroke:var(--dark); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round}
-.cel-new{font:500 15px var(--head); color:var(--gray); margin-bottom:2px}
-.cel-card h2{font:700 26px/1.2 var(--head); margin:0 0 6px; color:var(--ink-strong)}
-.cel-count{font-size:15px; color:var(--gray); margin-bottom:18px}
-.cel-card .btn-row{justify-content:center}
-.cel-close{margin-top:10px}
-.confetti{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
 
 [hidden]{display:none !important}
 /* na dotykových zařízeních nenechávat viset hover po klepnutí */
