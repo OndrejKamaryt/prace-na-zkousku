@@ -111,7 +111,7 @@ export function changeApplied(s: State, idea: IdeaKey, changeId: string, now: nu
 }
 
 /* ---------- Tvorba her ---------- */
-/** own = hraje se upravený level (fáze 2 a víc, aspoň jeden upravený dílek) */
+/** own = hraje se upravená hra (fáze 2 a víc, aspoň jedna úprava) */
 export function gamePlay(s: State, own: boolean, now: number): void {
   touch(s, 'hry', now);
   s.hry.plays++;

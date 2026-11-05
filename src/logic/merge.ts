@@ -35,7 +35,7 @@ const MAX_SESSIONS = 20;
  */
 export function mergePath<T extends { status: Status }>(prev: T, next: T, sameSession: boolean, rated: (p: T) => boolean = () => false): T {
   // V jedné relaci stav jen roste, novější snímek je vždy úplnější
-  // (třeba druhá úprava aplikace po vyzvednutí odznaku).
+  // (třeba druhá úprava aplikace po dokončení ukázky).
   if (sameSession) return next;
   const a = STATUS_RANK[prev.status], b = STATUS_RANK[next.status];
   if (a !== b) return b > a ? next : prev;

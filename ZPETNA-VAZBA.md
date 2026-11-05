@@ -53,7 +53,9 @@ Zdroj: schůzka Ondřeje s Martinem Ptáčkem „Marketing a lead magnety“ 4. 
   - Smazat (dnes „Guma“), oddělené od objektů
 - Texty bez slova level: třeba „Zahraj si hru a pak ji uprav“ místo „Zahraj si level a pak ho postav po svém“, i „Výchozí level“ říct jednodušeji.
 
-## Otevřené otázky (zeptat se Ondřeje před stavbou)
+## Otevřené otázky (Ondřej rozhodl 5. 11., platí doporučené varianty)
+
+Výsledek má doporučený obor s jednou větou, cenu s příspěvkem, „Co dál“ a další příklady, ostatní je pryč včetně školení přes firmu. Konec ukázky je pruh „Hotovo“ s „Můj výsledek“ a pod ním „Zkus si další příklady“. V hlavičce je „Můj výsledek“ až po první hotové nebo přeskočené ukázce. „Hotovo“ dál znamená dokončenou ukázku, stav, snímek a hodnocení zůstávají, odpovědi na bavilo, cíl a firmu jsou prázdné. Věta o kurzu kyberbezpečnosti od ledna se nepřidává. Schválené texty jsou v `NAVRH-TEXTU.md`, podrobnosti v `PREDANI.md`. Původní znění otázek:
 
 - **Texty:** všechny nové texty schvaluje Ondřej (`CLAUDE.md`). Připravit návrh pro data, hru, výsledek a další příklady najednou.
 - **Výsledek:** co přesně zůstane (doporučení a proč, cena, „Co dál“, školení přes firmu, nízký příjem) a co jde pryč.

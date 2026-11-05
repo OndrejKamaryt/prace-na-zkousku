@@ -21,6 +21,8 @@
 .sw{width:12px; height:12px; border-radius:3px; display:inline-block; vertical-align:-1px; margin-right:6px}
 .data-step .q-title{margin-top:20px}
 .options.short{grid-template-columns:repeat(auto-fit, minmax(150px, 1fr))}
+/* tři volby se na mobilu do dvou sloupců nevejdou hezky: třetí by zůstala sama */
+@container (max-width:480px){ .options.short:has(> :nth-child(3):last-child){grid-template-columns:minmax(0,1fr)} }
 #d-next-row{margin-top:12px}
 
 /* stavění s AI */
