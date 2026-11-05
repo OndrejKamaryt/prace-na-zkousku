@@ -295,8 +295,8 @@
     "resultMoney": "Tolik kavárnu stál jeden měsíc bez víkendových snídaní.",
     "resultHint": "Přesně tohle dělá datový analytik: z čísel zjistí, co se ve firmě děje, a pomůže rozhodnout, co s tím.",
     "sqlSummary": "Jak na to přijde datový analytik",
-    "sqlIntro": "Každý tvůj klik byl jeden dotaz. V databázi je píše v jazyce SQL, v Excelu mu stačí kontingenční tabulka.",
-    "sqlOutro": "Nemusíš tomu teď rozumět, na kurzu se to naučíš od nuly.",
+    "sqlIntro": "SQL je jazyk, kterým se analytik ptá databáze. Napíše, co chce vědět, a databáze mu i z milionů řádků vrátí jen odpověď. Každý graf v téhle ukázce vznikl z jednoho takového dotazu. Tenhle říká: sečti tržby za únor a březen a rozděl je podle produktů.",
+    "sqlOutro": "Menší data zvládne i kontingenční tabulka v Excelu. Nemusíš tomu teď rozumět, na kurzu se to naučíš od nuly.",
     "done": "Hotovo, víš, proč tržby klesly!"
   },
   "ai": {

@@ -82,7 +82,7 @@ Jana na konci: **Aha! V březnu nám odešel kuchař a o víkendu snídaně nikd
 
 Výsledek: **Zmizely víkendové snídaně**, 52 800 Kč, **Tolik kavárnu stál jeden měsíc bez víkendových snídaní.** **Přesně tohle dělá datový analytik: z čísel zjistí, co se ve firmě děje, a pomůže rozhodnout, co s tím.**
 
-Rozbalovací „Jak na to přijde datový analytik“: **Každý tvůj klik byl jeden dotaz. V databázi je píše v jazyce SQL, v Excelu mu stačí kontingenční tabulka.** Ukázka SQL. Nemusíš tomu teď rozumět, na kurzu se to naučíš od nuly.
+Rozbalovací „Jak na to přijde datový analytik“: **SQL je jazyk, kterým se analytik ptá databáze. Napíše, co chce vědět, a databáze mu i z milionů řádků vrátí jen odpověď. Každý graf v téhle ukázce vznikl z jednoho takového dotazu. Tenhle říká: sečti tržby za únor a březen a rozděl je podle produktů.** Ukázka SQL. **Menší data zvládne i kontingenční tabulka v Excelu. Nemusíš tomu teď rozumět, na kurzu se to naučíš od nuly.**
 
 Pruh: **Hotovo, víš, proč tržby klesly!**
 

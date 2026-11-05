@@ -120,6 +120,7 @@
 .solved .hint-t{font-size:15px}
 .solved .more{margin-top:12px}
 .solved .more summary{color:var(--ink-strong)}
+.solved .fine{color:var(--ink)}
 
 @container (max-width:520px){
   .stage{padding:18px 13px 14px}
