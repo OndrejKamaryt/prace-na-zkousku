@@ -641,54 +641,64 @@
     "done": "Hotovo, tvoje verze hry je dohraná! V Unreal Enginu 5 se stejně skládají celé herní světy, ve 3D a bez programování."
   },
   "kyber": {
-    "title": "Někdo se dobývá do serveru pekárny",
-    "sub": "Staráš se o server pekárny Kvásek, přes který chodí objednávky z kaváren. Všechno uděláš tlačítky, nic psát nemusíš.",
-    "alert": "<b>Poplach:</b> od 3:00 v noci se na server někdo stokrát pokusil přihlásit.",
-    "termBar": "terminál serveru",
+    "title": "Někdo se dobývá do serveru Coders Labu",
+    "sub": "Máš noční službu. Na serveru běží přihlášky na kurzy a útočník zkouší hesla. Čím rychleji a přesněji zasáhneš, tím víc hvězd získáš. Všechno uděláš tlačítky, nic psát nemusíš.",
+    "who": "T",
+    "name": "Tereza, provoz Coders Labu",
+    "hud": {
+      "meter": "Zabezpečení serveru",
+      "meterValue": "{n} %",
+      "time": "Čas zásahu",
+      "tries": "Pokusy útočníka"
+    },
+    "mapLabel": "Mapa útoku na server",
+    "mapAttacker": "útočník",
+    "mapBlocked": "zablokováno",
     "cmd": {
       "grep": "Ukázat neúspěšná přihlášení",
       "count": "Spočítat pokusy podle adresy",
       "ufw": "Zablokovat adresu útočníka",
       "last": "Ukázat, kdo se přihlásil"
     },
-    "meter": "Zabezpečení serveru",
-    "meterValue": "{n} %",
-    "stepOf": "krok {n} ze 3",
+    "stepOf": "Krok {n} ze 3: {title}",
     "steps": [
       "Najdi útočníka",
       "Zavři dveře",
       "Ať se to neopakuje"
     ],
-    "safe": "Server je v bezpečí",
+    "hello": "Promiň, že budím. Od 3:00 se někdo pořád dokola pokouší přihlásit na server s přihláškami. Mrkneš na to?",
     "start": "Server si zapisuje každý pokus o přihlášení. Podívej se na ty, které neprošly.",
-    "count": "Všechny pokusy jdou z jedné adresy a zkouší různá jména: root, admin, petra. Spočítej, kolik pokusů přišlo odkud.",
-    "q1": "<b>Odkud útok přichází?</b>",
-    "block": "Správně! 412 pokusů za pár minut nezkouší člověk, ale program, který hádá hesla. Zablokuj ho.",
-    "last": "Útočník je venku. Jen zkontroluj, jestli se mezitím nedostal dovnitř.",
-    "q2": "Ve 3:12 se z adresy útočníka přihlásila <b>Petra</b>. Jenže Petra chodí do práce z kanceláře a ve tři ráno spí. <b>Co uděláš s jejím účtem?</b>",
-    "q3": "Účet je zamčený. Teď vyber <b>dvě opatření</b>, která na serveru nasadíš.",
+    "count": "Všechny jdou z jedné adresy a zkouší různá jména: root, admin, petra. Spočítej, kolik pokusů přišlo odkud.",
+    "q1": "Klikni na adresu útočníka.",
     "q1Options": [
       {
-        "t": "203.0.113.47 (412 pokusů)",
+        "ip": "203.0.113.47",
+        "n": 0,
         "ok": true,
         "why": ""
       },
       {
-        "t": "198.51.100.23 (3 pokusy)",
+        "ip": "198.51.100.23",
+        "n": 3,
         "ok": false,
-        "why": "Tři pokusy jsou nejspíš někdo z kanceláře, kdo si spletl heslo."
+        "why": "Tři pokusy? To je nejspíš někdo z kanceláře, kdo si spletl heslo."
       },
       {
-        "t": "192.0.2.10 (1 pokus)",
+        "ip": "192.0.2.10",
+        "n": 1,
         "ok": false,
         "why": "Jeden neúspěšný pokus je běžný překlep."
       }
     ],
+    "block": "Správně! Tolik pokusů za pár minut nezkouší člověk, ale program, který hádá hesla. Zablokuj ho.",
+    "last": "Útočník je venku, útoky se odrážejí. Jen zkontroluj, jestli se mezitím nedostal dovnitř.",
+    "q2Say": "Ve 3:12 se z adresy útočníka přihlásila lektorka Petra. Jenže ve tři ráno Petra spí.",
+    "q2": "Co uděláš s jejím účtem?",
     "q2Options": [
       {
         "t": "Účet smažu i se všemi daty.",
         "ok": false,
-        "why": "Smazáním přijdeš o stopy, podle kterých zjistíš, co útočník na serveru dělal, a Petra přijde o svá data."
+        "why": "Smazáním přijdeme o stopy, podle kterých zjistíme, co útočník na serveru dělal, a Petra přijde o svá data."
       },
       {
         "t": "Účet zamknu, prověřím, co se v něm dělo, a s Petrou nastavím nové heslo.",
@@ -701,42 +711,50 @@
         "why": "Útočník zná Petřino heslo a z jiné adresy se může vrátit."
       }
     ],
+    "q3": "Účet je zamčený. Vyber dva štíty, které na serveru nasadíš.",
     "q3Options": [
       {
         "id": "k1",
-        "t": "Přihlašování digitálním klíčem místo hesla (klíč se uhodnout nedá)",
-        "ok": true,
-        "why": ""
-      },
-      {
-        "id": "k2",
-        "t": "Hlídač fail2ban, který útočníka po 5 neúspěšných pokusech sám zablokuje",
+        "t": "Přihlašování digitálním klíčem místo hesla",
+        "d": "Klíč se uhodnout nedá.",
         "ok": true,
         "why": ""
       },
       {
         "id": "k3",
         "t": "Vypínat server přes noc",
+        "d": "Přihlášky chodí i v noci.",
         "ok": false,
-        "why": "Vypínat server nejde, objednávky z kaváren chodí i brzy ráno a útok může přijít kdykoli."
+        "why": "Vypínat server nejde, přihlášky chodí i v noci a útok může přijít kdykoli."
+      },
+      {
+        "id": "k2",
+        "t": "Hlídač fail2ban",
+        "d": "Po 5 neúspěšných pokusech útočníka sám zablokuje.",
+        "ok": true,
+        "why": ""
       },
       {
         "id": "k4",
-        "t": "Přejmenovat server, aby ho útočník nenašel",
+        "t": "Přejmenovat server",
+        "d": "Aby ho útočník nenašel.",
         "ok": false,
         "why": "Přejmenování nepomůže, útočníci hledají otevřené porty a jméno serveru je nezajímá."
       }
     ],
-    "deploy": "Nasadit opatření",
-    "pickTwo": "Vyber přesně dvě opatření.",
+    "deploy": "Nasadit štíty",
+    "pickTwo": "Vyber přesně dva štíty.",
     "tryAgain": "Zkus to ještě jednou.",
-    "doneList": [
-      "Útočník odhalený a zablokovaný ve firewallu",
-      "Napadený účet zamčený dřív, než stihl napáchat víc",
-      "Přihlašování heslem vypnuté, fail2ban hlídá další pokusy",
-      "Správná rozhodnutí napoprvé: {n} ze 3"
-    ],
-    "doneHint": "Přesně tohle se učí IT administrátoři: Linux, sítě a zabezpečení serverů."
+    "safe": "Server je v bezpečí",
+    "thanks": "Díky, jdu zase spát. Přihlášky jedou dál.",
+    "stars": {
+      "safe": "Server ubráněný",
+      "clean": "Všechna rozhodnutí napoprvé",
+      "firstOk": "Rozhodnutí napoprvé: {n} ze 3",
+      "fast": "Zásah do 2 minut ({time})"
+    },
+    "doneHint": "Přesně tohle se učí IT administrátoři: Linux, sítě a zabezpečení serverů.",
+    "done": "Hotovo, server je ubráněný!"
   },
   "result": {
     "emptyTitle": "Zatím nemáš hotovou žádnou ukázku",

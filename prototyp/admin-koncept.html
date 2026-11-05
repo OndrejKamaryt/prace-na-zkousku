@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IT administrátor, koncept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Ubuntu:wght@500;700&family=Ubuntu+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--y:#FABA20;--ink:#212529;--sky:#69CCEA;--cream:#FCF3D9;--navy:#17496F;--pink:#D81B53;--muted:#5F676F;--line:#DEE2E6;--green:#2FBF71}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font:400 16px/1.5 "Open Sans",sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:16px}
+.concept{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 14px;font-size:13px;color:var(--muted)}
+.concept button{white-space:nowrap;font:500 13px "Ubuntu",sans-serif;background:none;border:1px solid var(--line);border-radius:99px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+h2{font:700 clamp(22px,4vw,28px)/1.2 "Ubuntu",sans-serif;margin:0 0 6px}
+.lead{margin:0 0 12px;max-width:64ch}
+
+.stage{position:relative;border-radius:8px;padding:14px;background:var(--ink);color:#fff;transition:background .8s;overflow:hidden}
+.stage[data-scene=alarm]{animation:alarm 1.6s ease-in-out infinite}
+@keyframes alarm{0%,100%{box-shadow:inset 0 0 0 3px rgba(216,27,83,.25)}50%{box-shadow:inset 0 0 0 3px rgba(216,27,83,1),inset 0 0 50px rgba(216,27,83,.4)}}
+.stage[data-scene=calm]{background:var(--navy)}
+.stage[data-scene=safe]{background:var(--navy);box-shadow:inset 0 0 0 3px var(--green)}
+
+.hud{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:8px;margin-bottom:12px}
+.tile{background:rgba(255,255,255,.08);border-radius:6px;padding:7px 10px;min-width:0}
+.tile span{display:block;font-size:12.5px;line-height:1.3;color:#C7CDD3}
+.tile b{display:block;font:700 19px/1.25 "Ubuntu",sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tile.hot b{color:#FF6B93}
+.meter{height:9px;margin-top:5px;border-radius:5px;background:rgba(255,255,255,.16);overflow:hidden}
+.meter i{display:block;height:100%;width:15%;background:var(--pink);transition:width .7s cubic-bezier(.2,.9,.3,1),background .4s}
+.meter i.mid{background:var(--y)}.meter i.top{background:var(--green)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+.side{display:grid;gap:10px;min-width:0}
+.map{display:block;width:100%;height:auto;background:rgba(0,0,0,.22);border-radius:6px}
+.term{background:#14171A;border-radius:6px;padding:9px 11px;font:400 13px/1.45 "Ubuntu Mono",monospace;height:150px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.term div{white-space:pre-wrap;overflow-wrap:anywhere}
+.term .p{color:var(--sky)}.term .bad{color:#FF6B93}.term .ok{color:var(--green)}.term .c{color:#8A939B}
+
+.chat{display:flex;gap:9px;align-items:flex-start;margin-bottom:12px}
+.ava{flex:none;width:36px;height:36px;border-radius:50%;background:var(--y);color:var(--ink);font:700 16px/36px "Ubuntu",sans-serif;text-align:center}
+.bub{background:#fff;color:var(--ink);border-radius:12px 12px 12px 3px;padding:9px 13px;font-size:15px;animation:rise .28s ease-out}
+.bub small{display:block;font:500 12.5px "Ubuntu",sans-serif;color:var(--muted)}
+.bub.no{box-shadow:0 0 0 2px var(--pink)}
+@keyframes rise{from{transform:translateY(7px);opacity:0}to{transform:none;opacity:1}}
+.step{font:500 13.5px "Ubuntu",sans-serif;color:var(--y);margin:0 0 3px}
+.q{font:700 clamp(18px,3vw,20px)/1.25 "Ubuntu",sans-serif;margin:0 0 10px}
+.acts{display:grid;gap:9px}
+.act{position:relative;overflow:hidden;display:grid;gap:2px;width:100%;min-height:54px;padding:11px 13px;border:2px solid var(--y);border-radius:6px;background:rgba(255,255,255,.07);color:#fff;font:500 15.5px/1.3 "Ubuntu",sans-serif;text-align:left;cursor:pointer;transition:background .15s,color .15s,transform .15s,opacity .2s;animation:glow 2.2s ease-in-out infinite;animation-delay:calc(var(--i)*.28s)}
+.act code{font:400 12.5px "Ubuntu Mono",monospace;color:var(--sky);overflow-wrap:anywhere}
+.act::after{content:"";position:absolute;top:-20%;bottom:-20%;left:-30%;width:22%;background:rgba(255,255,255,.26);transform:skewX(-20deg);animation:shine 3.4s ease-in-out infinite;animation-delay:calc(var(--i)*.45s);pointer-events:none}
+@keyframes glow{0%,100%{box-shadow:0 0 5px rgba(250,186,32,.5)}50%{box-shadow:0 0 22px 4px rgba(250,186,32,.9)}}
+@keyframes shine{0%,62%{left:-30%}100%{left:115%}}
+@media (hover:hover){.act:hover:not(:disabled){background:var(--y);color:var(--ink);transform:translateY(-2px)}.act:hover:not(:disabled) code{color:var(--navy)}}
+.act.red{border-color:var(--pink);background:var(--pink);animation:glowr 1.3s ease-in-out infinite}
+.act.red code{color:#FFD7E2}
+@keyframes glowr{0%,100%{box-shadow:0 0 6px rgba(216,27,83,.6)}50%{box-shadow:0 0 26px 6px rgba(216,27,83,1)}}
+.act.no{border-color:var(--pink);opacity:.5;animation:shake .35s;box-shadow:none}
+.act.ok{background:var(--y);color:var(--ink);animation:none;box-shadow:0 0 26px 6px rgba(250,186,32,.9)}
+.act:disabled{cursor:default}.act:disabled::after{display:none}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.ip{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;align-items:center}
+.ip .num{font:700 15px "Ubuntu",sans-serif;font-variant-numeric:tabular-nums}
+.ip .bar{grid-column:1/-1;height:7px;border-radius:4px;background:rgba(255,255,255,.14);overflow:hidden}
+.ip .bar i{display:block;height:100%;background:#FF6B93;transition:width .3s}
+.shield{display:flex;gap:11px;align-items:flex-start;cursor:pointer}
+.shield .box{flex:none;width:24px;height:24px;margin-top:1px;border:2px solid var(--y);border-radius:6px;display:grid;place-items:center;font:700 15px/1 "Ubuntu",sans-serif;color:transparent}
+.act.on{background:rgba(250,186,32,.2)}.act.on .box{background:var(--y);color:var(--ink)}
+.go{margin-top:10px;border:0;border-radius:99px;padding:12px 24px;background:var(--y);color:var(--ink);font:500 16px "Ubuntu",sans-serif;cursor:pointer;min-height:46px;animation:glow 2.2s ease-in-out infinite}
+.go:disabled{opacity:.45;animation:none;cursor:default}
+
+.win h3{font:700 clamp(22px,3.4vw,27px)/1.2 "Ubuntu",sans-serif;margin:0 0 4px;color:var(--green)}
+.stars{display:flex;gap:7px;margin:6px 0}
+.stars svg{width:44px;height:44px;fill:rgba(255,255,255,.14)}
+.stars svg.on{fill:var(--y);animation:star .5s cubic-bezier(.3,1.8,.5,1) both;animation-delay:calc(var(--i)*.22s)}
+@keyframes star{0%{transform:scale(0) rotate(-60deg)}100%{transform:scale(1) rotate(0)}}
+.why{list-style:none;margin:8px 0;padding:0;display:grid;gap:4px;font-size:15px}
+.why li{display:flex;gap:8px;align-items:flex-start}
+.why svg{flex:none;width:18px;height:18px;margin-top:3px;fill:rgba(255,255,255,.2)}.why li.on svg{fill:var(--y)}
+.note{font-size:15px;color:#D5DEE5;margin:8px 0 0}
+.done{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;background:var(--cream);border-radius:8px;padding:12px 14px;margin-top:12px;font:700 17px "Ubuntu",sans-serif}
+.done[hidden]{display:none}
+.pill{background:var(--ink);color:#fff;border:0;border-radius:99px;padding:10px 20px;font:500 15px "Ubuntu",sans-serif}
+button:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+@media (max-width:760px){
+  .stage{padding:11px}
+  .grid{display:flex;flex-direction:column;gap:10px}
+  .side{display:contents}
+  .map{order:1;aspect-ratio:400/120;object-fit:cover}
+  .main{order:2;width:100%}
+  .term{order:3;width:100%;height:112px;font-size:12px}
+  .tile{padding:6px 8px}.tile b{font-size:16px}.tile span{font-size:11.5px}
+  .hud{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head>
+<body><main class="wrap">
+<p class="concept"><span>Koncept ke schválení, zatím mimo aplikaci</span><button type="button" id="again">Začít znovu</button></p>
+<h2 id="title"></h2>
+<p class="lead" id="lead"></p>
+<section class="stage" id="stage" data-scene="alarm">
+  <div class="hud">
+    <div class="tile"><span>Zabezpečení serveru <b id="pct" style="display:inline;font-size:inherit"></b></span><div class="meter"><i id="meter"></i></div></div>
+    <div class="tile"><span>Čas zásahu</span><b id="time">0:00</b></div>
+    <div class="tile hot" id="tries-box"><span>Pokusy útočníka</span><b id="tries">0</b></div>
+  </div>
+  <div class="grid">
+    <div class="main" id="main"></div>
+    <div class="side">
+      <svg class="map" id="map" viewBox="0 0 400 170" role="img" aria-label="Mapa útoku na server"></svg>
+      <div class="term" id="term" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+<div class="done" id="done" hidden><span id="done-t"></span><button type="button" class="pill">Můj výsledek</button></div>
+</main>
+<script>
+const nb = t => t.replace(/(^|[\s(„>])([ksvzouaiKSVZOUAI]) /g, '$1$2 ').replace(/(\d) (\d)/g, '$1 $2').replace(/(\d) (%|Kč|pokus)/g, '$1 $2');
+const $ = id => document.getElementById(id);
+const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, calm ? 0 : ms));
+const WHO = 'Tereza, provoz Coders Labu';
+const PROMPT = 'admin@coderslab-srv:~$ ';
+const STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.2l1.5-7L2 9.4l7-.8z"/></svg>';
+const IP = '203.0.113.47';
+const CMD = {
+  grep: { cmd: 'grep "Failed password" /var/log/auth.log', out: [['o', '03:11:41  Failed password for root from ' + IP], ['o', '03:11:43  Failed password for admin from ' + IP], ['o', '03:11:58  Failed password for petra from ' + IP]] },
+  count: { cmd: 'grep "Failed" auth.log | sort | uniq -c', out: [['bad', '    412 ' + IP], ['o', '      3 198.51.100.23'], ['o', '      1 192.0.2.10']] },
+  ufw: { cmd: 'sudo ufw deny from ' + IP, out: [['ok', 'Rule added: adresa je zablokovaná']] },
+  last: { cmd: 'last -a | head -3', out: [['bad', 'petra   ' + IP + '    dnes 03:12'], ['o', 'admin   198.51.100.10   včera 17:40'], ['o', 'petra   198.51.100.23   včera 08:02']] },
+  lock: { cmd: 'sudo usermod -L petra', out: [['c', '# účet petra je zamčený, staré heslo už nefunguje']] },
+  f2b: { cmd: 'sudo systemctl enable --now fail2ban', out: [['ok', 'fail2ban hlídá přihlašování']] },
+  keys: { cmd: 'sudo sed -i "s/PasswordAuthentication yes/no/" sshd_config', out: [['ok', 'přihlašování heslem je vypnuté']] },
+};
+const STEPS = ['Najdi útočníka', 'Zavři dveře', 'Ať se to neopakuje'];
+const TEXT = {
+  title: 'Někdo se dobývá do serveru Coders Labu',
+  lead: 'Máš noční službu. Na serveru běží přihlášky na kurzy a útočník zkouší hesla. Čím rychleji a přesněji zasáhneš, tím víc hvězd získáš. Všechno uděláš tlačítky, nic psát nemusíš.',
+  hello: 'Promiň, že budím. Od 3:00 se někdo pořád dokola pokouší přihlásit na server s přihláškami. Mrkneš na to?',
+  grepAsk: 'Server si zapisuje každý pokus o přihlášení. Podívej se na ty, které neprošly.',
+  countSay: 'Všechny jdou z jedné adresy a zkouší různá jména: root, admin, petra. Spočítej, kolik pokusů přišlo odkud.',
+  q1: 'Klikni na adresu útočníka.',
+  q1No: { '198.51.100.23': 'Tři pokusy? To je nejspíš někdo z kanceláře, kdo si spletl heslo.', '192.0.2.10': 'Jeden neúspěšný pokus je běžný překlep.' },
+  blockSay: 'Správně! Tolik pokusů za pár minut nezkouší člověk, ale program, který hádá hesla. Zablokuj ho.',
+  lastSay: 'Útočník je venku, útoky se odrážejí. Jen zkontroluj, jestli se mezitím nedostal dovnitř.',
+  q2Say: 'Ve 3:12 se z adresy útočníka přihlásila lektorka Petra. Jenže ve tři ráno Petra spí.',
+  q2: 'Co uděláš s jejím účtem?',
+  q2Opts: [
+    { t: 'Účet smažu i se všemi daty.', why: 'Smazáním přijdeme o stopy, podle kterých zjistíme, co útočník na serveru dělal, a Petra přijde o svá data.' },
+    { t: 'Účet zamknu, prověřím, co se v něm dělo, a s Petrou nastavím nové heslo.', ok: 1 },
+    { t: 'Nic, útočníka už blokuje firewall.', why: 'Útočník zná Petřino heslo a z jiné adresy se může vrátit.' },
+  ],
+  q3: 'Účet je zamčený. Vyber dva štíty, které na serveru nasadíš.',
+  q3Opts: [
+    { id: 'k1', t: 'Přihlašování digitálním klíčem místo hesla', d: 'Klíč se uhodnout nedá.', ok: 1 },
+    { id: 'k3', t: 'Vypínat server přes noc', d: 'Přihlášky chodí i v noci.', why: 'Vypínat server nejde, přihlášky chodí i v noci a útok může přijít kdykoli.' },
+    { id: 'k2', t: 'Hlídač fail2ban', d: 'Po 5 neúspěšných pokusech útočníka sám zablokuje.', ok: 1 },
+    { id: 'k4', t: 'Přejmenovat server', d: 'Aby ho útočník nenašel.', why: 'Přejmenování nepomůže, útočníci hledají otevřené porty a jméno serveru je nezajímá.' },
+  ],
+  deploy: 'Nasadit štíty', pickTwo: 'Vyber přesně dva štíty.', tryAgain: 'Zkus to ještě jednou.',
+  safe: 'Server je v bezpečí', thanks: 'Díky, jdu zase spát. Přihlášky jedou dál.',
+  hint: 'Přesně tohle se učí IT administrátoři: Linux, sítě a zabezpečení serverů.',
+  done: 'Hotovo, server je ubráněný!',
+};
+
+let phase, meter, tries, seconds, timer, firstOk, askCount, busy, blocked, shields, picked, packets, spawn, flash, sourceLit, won;
+
+/* ---------- mapa útoku ---------- */
+const SRC = [{ x: 34, y: 34, ip: IP }, { x: 34, y: 140, ip: '198.51.100.23' }, { x: 366, y: 34, ip: '192.0.2.10' }];
+const SERVER = { x: 215, y: 85 };
+function drawMap() {
+  const lit = i => i === 0 && sourceLit;
+  const ring = (r, on, color) => on ? '<circle cx="' + SERVER.x + '" cy="' + SERVER.y + '" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="3.5" stroke-dasharray="' + (r * .55) + ' ' + (r * .08) + '"><animateTransform attributeName="transform" type="rotate" from="0 ' + SERVER.x + ' ' + SERVER.y + '" to="360 ' + SERVER.x + ' ' + SERVER.y + '" dur="' + (r / 3) + 's" repeatCount="indefinite"/></circle>' : '';
+  const color = won ? '#2FBF71' : blocked ? '#FABA20' : '#D81B53';
+  let h = '<g fill="#fff" fill-opacity=".05">';
+  for (let x = 20; x < 400; x += 40) for (let y = 15; y < 170; y += 35) h += '<circle cx="' + x + '" cy="' + y + '" r="1.5"/>';
+  h += '</g>';
+  SRC.forEach((s, i) => {
+    h += '<line x1="' + s.x + '" y1="' + s.y + '" x2="' + SERVER.x + '" y2="' + SERVER.y + '" stroke="#fff" stroke-opacity=".08" stroke-dasharray="3 5"/>';
+    h += '<circle cx="' + s.x + '" cy="' + s.y + '" r="' + (lit(i) ? 11 : 7) + '" fill="' + (i === 0 && !blocked ? '#D81B53' : '#6C757D') + '">' + (i === 0 && !blocked && !calm ? '<animate attributeName="r" values="8;12;8" dur="1s" repeatCount="indefinite"/>' : '') + '</circle>';
+    if (lit(i)) h += '<circle cx="' + s.x + '" cy="' + s.y + '" r="17" fill="none" stroke="#FABA20" stroke-width="2"/><text x="' + s.x + '" y="' + (s.y + 32) + '" text-anchor="middle" font-family="Ubuntu Mono, monospace" font-size="11.5" fill="#FABA20">' + (blocked ? 'zablokováno' : 'útočník') + '</text>';
+  });
+  h += '<g id="pk"></g>';
+  h += ring(44, blocked, '#FABA20') + ring(54, shields >= 1, '#69CCEA') + ring(64, shields >= 2, '#2FBF71');
+  h += '<rect x="' + (SERVER.x - 26) + '" y="' + (SERVER.y - 28) + '" width="52" height="56" rx="7" fill="#14171A" stroke="' + color + '" stroke-width="3"/>';
+  for (let i = 0; i < 2; i++) h += '<rect x="' + (SERVER.x - 19) + '" y="' + (SERVER.y + 4 + i * 11) + '" width="38" height="7" rx="2" fill="#343A40"/><circle cx="' + (SERVER.x + 14) + '" cy="' + (SERVER.y + 7.5 + i * 11) + '" r="2" fill="' + color + '"/>';
+  h += '<rect x="' + (SERVER.x - 19) + '" y="' + (SERVER.y - 22) + '" width="38" height="21" rx="3" fill="#FABA20"/><text x="' + SERVER.x + '" y="' + (SERVER.y - 6.5) + '" text-anchor="middle" font-family="Ubuntu, sans-serif" font-weight="700" font-size="15" fill="#212529">CL</text>';
+  $('map').innerHTML = h;
+}
+function animate() {
+  if (!won && !calm && performance.now() > spawn) {
+    spawn = performance.now() + (blocked ? 340 : 130);
+    packets.push({ t: 0, s: Math.random() < .86 ? 0 : 1 + Math.floor(Math.random() * 2) });
+  }
+  const box = document.getElementById('pk');
+  let h = '';
+  const stopAt = 1 - (44 + shields * 10) / 190;
+  packets = packets.filter(p => {
+    p.t += p.back ? -.022 : .016;
+    if (p.t < 0) return false;
+    if (blocked && p.s === 0 && !p.back && p.t > stopAt) { p.back = true; flash = 1; }
+    if (!blocked && p.t >= 1 && p.s === 0) { addTry(); return false; }
+    if (p.t >= 1) return false;
+    const s = SRC[p.s], x = s.x + (SERVER.x - s.x) * p.t, y = s.y + (SERVER.y - s.y) * p.t;
+    h += '<circle cx="' + x + '" cy="' + y + '" r="3.2" fill="' + (p.s === 0 ? (p.back ? '#FABA20' : '#FF6B93') : '#ADB5BD') + '"/>';
+    return true;
+  });
+  if (box) box.innerHTML = h;
+  requestAnimationFrame(animate);
+}
+function addTry(n = 1) { if (blocked) return; tries += n; $('tries').textContent = tries.toLocaleString('cs-CZ'); renderIpCount(); }
+
+/* ---------- stav ---------- */
+function setMeter(v) {
+  meter = v; const m = $('meter'); m.style.width = v + '%';
+  m.className = v >= 90 ? 'top' : v >= 50 ? 'mid' : '';
+  $('pct').textContent = v + ' %';
+}
+function line(cls, text) {
+  const d = document.createElement('div'); d.className = cls; d.textContent = text;
+  const t = $('term'); t.appendChild(d);
+  while (t.children.length > 9) t.firstChild.remove();
+}
+async function run(key) {
+  const c = CMD[key]; line('p', PROMPT + c.cmd); await wait(450);
+  for (const [cls, text] of c.out) { line(cls, text); await wait(110); }
+}
+const say = (t, no) => '<div class="chat"><div class="ava" aria-hidden="true">T</div><div class="bub' + (no ? ' no' : '') + '"><small>' + WHO + '</small>' + nb(t) + '</div></div>';
+const stepHead = n => '<p class="step">Krok ' + n + ' ze 3: ' + STEPS[n - 1] + '</p>';
+const cmdBtn = (k, label, red) => '<button type="button" class="act' + (red ? ' red' : '') + '" data-cmd="' + k + '" style="--i:0"><span>' + nb(label) + '</span><code>' + CMD[k].cmd + '</code></button>';
+
+function renderIpCount() { const n = $('ip0'); if (n) { n.textContent = tries.toLocaleString('cs-CZ'); } }
+function render(extra = '') {
+  const m = $('main');
+  if (phase === 'start') m.innerHTML = say(TEXT.hello) + stepHead(1) + '<p class="q">' + nb(TEXT.grepAsk) + '</p><div class="acts">' + cmdBtn('grep', 'Ukázat neúspěšná přihlášení') + '</div>';
+  if (phase === 'count') m.innerHTML = say(TEXT.countSay) + stepHead(1) + '<div class="acts">' + cmdBtn('count', 'Spočítat pokusy podle adresy') + '</div>';
+  if (phase === 'q1') m.innerHTML = extra + stepHead(1) + '<p class="q">' + nb(TEXT.q1) + '</p><div class="acts" id="ips">' +
+    [[IP, 0], ['198.51.100.23', 3], ['192.0.2.10', 1]].map(([ip, n], i) => '<button type="button" class="act" data-ip="' + ip + '" style="--i:' + i + '"><span class="ip"><span>' + ip + '</span><span class="num"' + (i === 0 ? ' id="ip0"' : '') + '>' + (i === 0 ? tries : n) + '</span><span class="bar"><i style="width:' + (i === 0 ? 96 : n * 2) + '%"></i></span></span></button>').join('') + '</div>';
+  if (phase === 'block') m.innerHTML = say(TEXT.blockSay) + stepHead(2) + '<div class="acts">' + cmdBtn('ufw', 'Zablokovat adresu útočníka', true) + '</div>';
+  if (phase === 'last') m.innerHTML = say(TEXT.lastSay) + stepHead(2) + '<div class="acts">' + cmdBtn('last', 'Ukázat, kdo se přihlásil') + '</div>';
+  if (phase === 'q2') m.innerHTML = (extra || say(TEXT.q2Say)) + stepHead(2) + '<p class="q">' + nb(TEXT.q2) + '</p><div class="acts">' + TEXT.q2Opts.map((o, i) => '<button type="button" class="act" data-q2="' + i + '" style="--i:' + i + '">' + nb(o.t) + '</button>').join('') + '</div>';
+  if (phase === 'q3') {
+    m.innerHTML = (extra || '') + stepHead(3) + '<p class="q">' + nb(TEXT.q3) + '</p><div class="acts">' + TEXT.q3Opts.map((o, i) => '<button type="button" class="act shield' + (picked.has(o.id) ? ' on' : '') + '" data-s="' + o.id + '" aria-pressed="' + picked.has(o.id) + '" style="--i:' + i + '"><span class="box" aria-hidden="true">✓</span><span>' + nb(o.t) + '<code style="display:block;font-family:Open Sans,sans-serif;color:#C7CDD3;font-size:13px">' + nb(o.d) + '</code></span></button>').join('') + '</div><button type="button" class="go" id="deploy"' + (picked.size === 2 ? '' : ' disabled') + '>' + TEXT.deploy + '</button>';
+  }
+  if (phase === 'win') {
+    const fast = seconds <= 120, clean = firstOk === 3;
+    const stars = [{ on: true, t: 'Server ubráněný' }, { on: clean, t: clean ? 'Všechna rozhodnutí napoprvé' : 'Rozhodnutí napoprvé: ' + firstOk + ' ze 3' }, { on: fast, t: 'Zásah do 2 minut (' + clock(seconds) + ')' }];
+    m.innerHTML = say(TEXT.thanks) + '<div class="win"><h3>' + nb(TEXT.safe) + '</h3><div class="stars">' + stars.map((s, i) => STAR.replace('<svg ', '<svg class="' + (s.on ? 'on' : '') + '" style="--i:' + i + '" ')).join('') + '</div><ul class="why">' + stars.map(s => '<li class="' + (s.on ? 'on' : '') + '">' + STAR + '<span>' + nb(s.t) + '</span></li>').join('') + '</ul><p class="note">' + nb(TEXT.hint) + '</p></div>';
+  }
+}
+const clock = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+async function onCmd(k, btn) {
+  if (busy) return; busy = true; btn.disabled = true; btn.classList.add('ok');
+  await run(k); busy = false;
+  if (k === 'grep') { setMeter(20); phase = 'count'; }
+  else if (k === 'count') { setMeter(25); phase = 'q1'; }
+  else if (k === 'ufw') { blocked = true; setMeter(50); $('stage').dataset.scene = 'fight'; $('tries-box').classList.remove('hot'); drawMap(); phase = 'last'; }
+  else { phase = 'q2'; }
+  render();
+}
+function onIp(ip, btn) {
+  if (busy) return; askCount.q1++;
+  if (ip !== IP) { btn.classList.add('no'); btn.disabled = true; addTry(25); render2Say(TEXT.q1No[ip]); return; }
+  if (askCount.q1 === 1) firstOk++;
+  sourceLit = true; drawMap(); setMeter(35); phase = 'block'; render();
+}
+function render2Say(t) {
+  const old = $('main').querySelector('.chat'); if (old) old.remove();
+  $('main').insertAdjacentHTML('afterbegin', say(t, true));
+}
+async function onQ2(i, btn) {
+  if (busy) return; const o = TEXT.q2Opts[i]; askCount.q2++;
+  if (!o.ok) { btn.classList.add('no'); btn.disabled = true; render2Say(o.why); return; }
+  if (askCount.q2 === 1) firstOk++;
+  busy = true; btn.classList.add('ok'); $('main').querySelectorAll('.act').forEach(b => { b.disabled = true; });
+  await run('lock'); busy = false; setMeter(70); phase = 'q3'; render();
+}
+function onShield(id) {
+  if (picked.has(id)) picked.delete(id); else picked.add(id);
+  const keep = $('main').querySelector('.chat')?.outerHTML || '';
+  render(keep);
+}
+async function deploy() {
+  if (busy || picked.size !== 2) return;
+  askCount.q3++;
+  const wrong = TEXT.q3Opts.filter(o => picked.has(o.id) && !o.ok);
+  if (wrong.length) { render(say(wrong.map(o => o.why).join(' ') + ' ' + TEXT.tryAgain, true)); return; }
+  if (askCount.q3 === 1) firstOk++;
+  busy = true; $('deploy').disabled = true;
+  await run('f2b'); shields = 1; drawMap(); setMeter(85); await wait(280);
+  await run('keys'); shields = 2; setMeter(100); await wait(280); busy = false;
+  won = true; clearInterval(timer); $('stage').dataset.scene = 'safe'; drawMap(); phase = 'win'; render();
+  $('done-t').textContent = nb(TEXT.done); $('done').hidden = false;
+}
+$('main').addEventListener('click', e => {
+  const c = e.target.closest('[data-cmd]'); if (c) return onCmd(c.dataset.cmd, c);
+  const ip = e.target.closest('[data-ip]'); if (ip) return onIp(ip.dataset.ip, ip);
+  const q = e.target.closest('[data-q2]'); if (q) return onQ2(Number(q.dataset.q2), q);
+  const s = e.target.closest('[data-s]'); if (s) return onShield(s.dataset.s);
+  if (e.target.closest('#deploy')) deploy();
+});
+function reset() {
+  clearInterval(timer);
+  phase = 'start'; meter = 15; tries = 412; seconds = 0; firstOk = 0; askCount = { q1: 0, q2: 0, q3: 0 }; busy = false; blocked = false; shields = 0; picked = new Set(); packets = []; spawn = 0; flash = 0; sourceLit = false; won = false;
+  $('stage').dataset.scene = 'alarm'; $('tries-box').classList.add('hot'); $('done').hidden = true; $('term').innerHTML = '';
+  $('tries').textContent = tries; $('time').textContent = '0:00'; setMeter(15);
+  line('c', '# server s přihláškami Coders Labu, Ubuntu 24.04');
+  drawMap(); render();
+  timer = setInterval(() => { seconds++; $('time').textContent = clock(seconds); }, 1000);
+}
+$('again').addEventListener('click', reset);
+$('title').textContent = nb(TEXT.title); $('lead').textContent = nb(TEXT.lead);
+window.__a = { get phase() { return phase; }, get firstOk() { return firstOk; } };
+reset();
+requestAnimationFrame(animate);
+</script></body></html>

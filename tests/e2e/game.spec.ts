@@ -89,18 +89,18 @@ test('první výhra ukáže hvězdy a body a nabídne úpravu hry, trampolína p
   const errors = trackErrors(page);
   await open(page, '/index.html?ukazka=hry');
   const card = page.locator('#g-card');
-  // skoky načasované od startu: odpočet 0,9 s a běh 4 dlaždice za sekundu, okna jsou široká, dva pády hra odpustí
-  for (let n = 0; n < 2 && !(await card.isVisible()); n++) {
-    await page.locator('#g-play').click({ timeout: 5_000 });
-    await page.evaluate(async () => {
-      const host = document.querySelector('prace-na-zkousku')!;
-      const press = () => host.shadowRoot!.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true, composed: true }));
-      const wait = (ms: number) => new Promise(r => setTimeout(r, ms));
-      await wait(1_550); press();
-      await wait(1_050); press();
-    });
-    await expect.poll(async () => (await card.isVisible()) || (await page.locator('#g-play').isEnabled() && await page.locator('#g-play').isVisible()), { timeout: 6_000 }).toBe(true);
-  }
+  // skákání pořád dokola projde původní hrou při jakékoli rychlosti snímků:
+  // skok z dopadu přenese přes díru i bug a poslední vede za cíl
+  await page.locator('#g-play').click();
+  await page.evaluate(() => new Promise<void>(done => {
+    const root = document.querySelector('prace-na-zkousku')!.shadowRoot!;
+    const timer = setInterval(() => {
+      root.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true, composed: true }));
+      if ((root.querySelector('#g-play') as HTMLElement).hidden) return;
+      clearInterval(timer);
+      done();
+    }, 50);
+  }));
   await expect(card).toContainText('Jsi ve studiu!');
   await expect(card).toContainText(/\d+\sbodů/);
   await expect(page.locator('#g-status')).toContainText('Zkus to znovu na tři hvězdy');

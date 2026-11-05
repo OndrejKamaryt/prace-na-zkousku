@@ -86,37 +86,69 @@ Rozbalovací „Jak na to přijde datový analytik“: **SQL je jazyk, kterým s
 
 Pruh: **Hotovo, víš, proč tržby klesly!**
 
-## Tvorba her
+## Tvorba her (schváleno 5. 11., koncept v `prototyp/hra-koncept.html`)
 
-- Nadpis: ~~Zahraj si level a pak ho postav po svém~~ → **Zahraj si hru a pak ji uprav**
-- Kroky: Zahraj si, ~~Uprav level~~ → **Uprav hru**, ~~Dohraj svůj level~~ → **Dohraj svou verzi**
-- Popisek nástrojů: ~~Dílky~~ → **Nástroje**
-- Nástroje s nakreslenou ikonou (blok s modrým vrškem, růžové bodce, mince, guma) a vysvětlením. Smazat je oddělené od ostatních.
-  - ~~Plošina~~ → **Přidej plošinu**: **Postava po ní běží a dá se na ni vyskočit.**
-  - ~~Bodce~~ → **Přidej nástrahu**: **Když se jí postava dotkne, přijde o život.**
-  - ~~Mince~~ → **Přidej mince**: **Jsou odměna, sbíráš za ně body.**
-  - ~~Guma~~ → **Smazat**: **Klepni na věc ve hře a zmizí.**
-- Popis plátna pro čtečky: ~~Herní level. Ve hře klepnutím skáčeš, při úpravách klepnutím pokládáš dílky.~~ → **Hra. Při hraní klepnutím skáčeš, při úpravách klepnutím přidáváš věci do hry.**
-- ~~Upravit level~~ → **Upravit hru**
-- ~~Výchozí level~~ → **Vrátit původní hru**
-- Odemčení úprav: ~~…Uprav level, aby šel projít, třeba zasyp díru plošinou.~~ → **Nevadí, i herní designéři ladí obtížnost. Uprav hru, aby šla projít, třeba zasyp díru plošinou.**
-- Moc těžké: ~~Je to moc těžké? Dobrý level designér obtížnost ladí, zkus překážku posunout nebo přidat plošinu.~~ → **Je to moc těžké? Herní designér obtížnost ladí, zkus nástrahu posunout nebo přidat plošinu.**
-- První výhra: ~~…Teď level navrhuješ ty: přidej bodce, mince nebo plošiny a zmáčkni Hrát.~~ → **Super, máš to! Mince: {coins}. Teď hru navrhuješ ty: přidej nástrahy, mince nebo plošiny a zmáčkni Hrát.**
-- Vlastní výhra: ~~Tvůj vlastní level je dohraný! Mince: {coins}. Zkus ho udělat ještě těžší.~~ → **Tvoje verze hry je dohraná! Mince: {coins}. Zkus ji udělat ještě těžší.**
-- Výhra bez úprav: ~~Dohráno! Mince: {coins}. Teď level uprav po svém a zkus ho znovu.~~ → **Dohráno! Mince: {coins}. Teď hru uprav po svém a zkus ji znovu.**
-- Nápověda k úpravám: ~~Klepni do mřížky a polož dílek. Až budeš chtít, zmáčkni Hrát.~~ → **Vyber, co chceš přidat, a klepni do hry. Až budeš chtít, zmáčkni Hrát.**
-- Start a cíl: ~~Tohle pole patří startu nebo cíli, polož dílek jinam.~~ → **Tady je start nebo cíl, polož to jinam.**
-- Po vrácení: ~~Level je zase ve výchozí podobě.~~ → **Hra je zase v původní podobě.**
-- Počítadlo: ~~Pokusy: {plays}, upravené dílky: {edits}~~ → **Pokusy: {plays}, úpravy: {edits}**
-- Pruh: ~~Hotovo, tvůj level je dohraný! V Unreal Enginu 5…~~ → **Hotovo, tvoje verze hry je dohraná! V Unreal Enginu 5 se stejně skládají celé herní světy, ve 3D a bez programování.**
+Nadpis zůstává: „Zahraj si hru a pak ji uprav“
 
-Plátno roztáhnu na celou šířku rámečku. Herní plocha i fyzika zůstanou stejné, po stranách bude pokračovat obloha a zem. Výška zůstane taková, aby šlo hrát bez scrollování.
+Podnadpis: **Běžíš z Coders Labu do svého prvního herního studia. Postavička běží sama, ty jen skáčeš. Sbírej kód a vyhýbej se bugům.**
 
-## Kyberbezpečnost
+Na začátku: **Zmáčkni Hrát a pak klepni kamkoli do hry.**
 
-Texty beze změny. Jeden levý sloupec shora dolů: zadání, poplach, hned pod ním krok s tlačítky, po vyřešení „Server je v bezpečí“ a tlačítko Můj výsledek. Terminál vpravo jako ilustrace, na mobilu pod krokem.
+Cedule ve hře: CODERS LAB, HERNÍ STUDIO. Přehled na plátně: životy, kód, body a rekord {n}.
 
-- Pruh: ~~Hotovo, server je v bezpečí!~~ → jen tlačítko **Můj výsledek**, protože „Server je v bezpečí“ je hned nad ním.
+Nástroje:
+- **Přidej plošinu:** Postava po ní běží a dá se na ni vyskočit.
+- **Přidej bug:** Když se ho postava dotkne, přijde o život. Těžší hra, víc bodů.
+- **Přidej kód:** Je to odměna, každý kousek je 100 bodů.
+- **Přidej trampolínu:** Vystřelí postavu vysoko nad bugy.
+- **Smazat:** Klepni na věc ve hře a zmizí.
+
+Pády: **Au, bug! Přišla o život.** Postavička narazila do zdi. Spadla do díry. Zmáčkni Hrát znovu a zkus to ještě jednou.
+
+Po třetím pádu: **Životy došly, ale nevadí, i herní designéři ladí obtížnost. Uprav hru, aby šla projít, třeba zasyp díru plošinou.**
+
+Moc pádů ve vlastní verzi: **Je to moc těžké? Herní designér obtížnost ladí, zkus bug posunout nebo přidat plošinu.**
+
+První výhra: **Máš to! Zkus to znovu na tři hvězdy, nebo hru uprav. Teď ji navrhuješ ty.** Karta: Jsi ve studiu!
+
+Vlastní verze: **Tvoje verze hry je dohraná! Každý bug navíc je 50 bodů, zkus ji udělat těžší.** Karta: Tvoje hra je dohraná!
+
+Karta dál: hvězdy, {n} bodů, Nový rekord! nebo Rekord: {n}
+
+Hvězdy: Cíl, Všechen kód, Bez ztráty života, Těžká verze: aspoň 3 bugy. Třetí je „Bez ztráty života“ v původní hře a „Těžká verze: aspoň 3 bugy“ ve vlastní verzi.
+
+Výzvy herního designéra {n}/{total}: Přidej bug, Přidej kód, Přidej trampolínu, Dohraj svou verzi
+
+Pruh: **Hotovo, tvoje verze hry je dohraná! V Unreal Enginu 5 se stejně skládají celé herní světy, ve 3D a bez programování.**
+
+## IT administrátor (schváleno 5. 11., koncept v `prototyp/admin-koncept.html`)
+
+Nadpis: **Někdo se dobývá do serveru Coders Labu**
+
+Podnadpis: **Máš noční službu. Na serveru běží přihlášky na kurzy a útočník zkouší hesla. Čím rychleji a přesněji zasáhneš, tím víc hvězd získáš. Všechno uděláš tlačítky, nic psát nemusíš.**
+
+Přehled nahoře: Zabezpečení serveru, Čas zásahu, Pokusy útočníka. Mapa útoku: útočník, zablokováno.
+
+Tereza, provoz Coders Labu, začátek: **Promiň, že budím. Od 3:00 se někdo pořád dokola pokouší přihlásit na server s přihláškami. Mrkneš na to?**
+
+Krok 1, Najdi útočníka: Server si zapisuje každý pokus o přihlášení. Podívej se na ty, které neprošly. Tlačítko „Ukázat neúspěšná přihlášení“. Tereza: **Všechny jdou z jedné adresy a zkouší různá jména: root, admin, petra. Spočítej, kolik pokusů přišlo odkud.** Tlačítko „Spočítat pokusy podle adresy“. **Klikni na adresu útočníka.**
+- 198.51.100.23 → Tereza: Tři pokusy? To je nejspíš někdo z kanceláře, kdo si spletl heslo.
+- 192.0.2.10 → Tereza: Jeden neúspěšný pokus je běžný překlep.
+
+Krok 2, Zavři dveře: **Správně! Tolik pokusů za pár minut nezkouší člověk, ale program, který hádá hesla. Zablokuj ho.** Tlačítko „Zablokovat adresu útočníka“. **Útočník je venku, útoky se odrážejí. Jen zkontroluj, jestli se mezitím nedostal dovnitř.** Tlačítko „Ukázat, kdo se přihlásil“. **Ve 3:12 se z adresy útočníka přihlásila lektorka Petra. Jenže ve tři ráno Petra spí. Co uděláš s jejím účtem?**
+- Účet smažu i se všemi daty. → Tereza: Smazáním přijdeme o stopy, podle kterých zjistíme, co útočník na serveru dělal, a Petra přijde o svá data.
+- Účet zamknu, prověřím, co se v něm dělo, a s Petrou nastavím nové heslo. (správně)
+- Nic, útočníka už blokuje firewall. → Tereza: Útočník zná Petřino heslo a z jiné adresy se může vrátit.
+
+Krok 3, Ať se to neopakuje: **Účet je zamčený. Vyber dva štíty, které na serveru nasadíš.** Tlačítko „Nasadit štíty“.
+- Přihlašování digitálním klíčem místo hesla: Klíč se uhodnout nedá. (správně)
+- Vypínat server přes noc: Přihlášky chodí i v noci. → Tereza: Vypínat server nejde, přihlášky chodí i v noci a útok může přijít kdykoli.
+- Hlídač fail2ban: Po 5 neúspěšných pokusech útočníka sám zablokuje. (správně)
+- Přejmenovat server: Aby ho útočník nenašel. → Tereza: Přejmenování nepomůže, útočníci hledají otevřené porty a jméno serveru je nezajímá.
+
+Konec: **Server je v bezpečí**, Tereza: **Díky, jdu zase spát. Přihlášky jedou dál.** Hvězdy: Server ubráněný, Všechna rozhodnutí napoprvé, Rozhodnutí napoprvé: {n} ze 3, Zásah do 2 minut ({time}). Přesně tohle se učí IT administrátoři: Linux, sítě a zabezpečení serverů.
+
+Pruh: **Hotovo, server je ubráněný!**
 
 ## Výsledek (jeden sloupec)
 

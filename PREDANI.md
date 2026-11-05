@@ -5,18 +5,19 @@ Shrnutí ze dne 5. 11. 2026. Zadání zjednodušení je `ZPETNA-VAZBA.md`, schv�
 ## Stav
 
 - **Fáze 1 a 2 (sloučená s fází 3) a zjednodušení jsou hotové.** Skutečný widget `<prace-na-zkousku>` s otevřeným Shadow DOM. Hlavní je samostatná stránka (`data-variant="standalone"`), kterou Martin vloží na web přes embed na celou obrazovku. Varianta embed (`data-variant="embed"`, výchozí) a měření hlavičky dál fungují.
-- **Testy:** 87 unit testů (Vitest) a 44 Playwright testů v Edge přes `http://localhost` (`npm run test:e2e`), jeden odložený do fáze 6 (`test.fixme`, dotykové cíle 44 px). Typecheck i build jsou čisté, widget má 36,8 kB gzip (cíl 80 kB). Rozložení je ověřené na 390 × 844 i 1366 × 768.
+- **Testy:** 87 unit testů (Vitest) a 45 Playwright testů v Edge přes `http://localhost` (`npm run test:e2e`), jeden odložený do fáze 6 (`test.fixme`, dotykové cíle 44 px). Typecheck i build jsou čisté, widget má 47,0 kB gzip (cíl 80 kB). Rozložení je ověřené na 390 × 844 i 1366 × 768.
 - **Demo:** https://ondrejkamaryt.github.io/prace-na-zkousku/ ukazuje novou verzi. Sestavuje ho `node scripts/build-site.ts` (spustí i `vite build`), nasazuje `.github/workflows/pages.yml` při pushi do `main`. Adresa se nezměnila.
 
 ## Co se změnilo proti 3. 11.
 
 - **Odznaky jsou pryč:** pruh, vyzvednutí, okno s konfetami i „Odznaky n/4“. `src/ui/celebrate.ts` je smazaný.
-- **Konec ukázky:** krémový pruh s větou a tlačítkem „Můj výsledek“, u kyberbezpečnosti jen tlačítko, protože „Server je v bezpečí“ je hned nad ním. Dole na ukázce i ve výsledku je „Zkus si další příklady“ (ostatní ukázky, hotové odškrtnuté) místo „Zpět na výběr“.
+- **Konec ukázky:** krémový pruh s větou a tlačítkem „Můj výsledek“. Dole na ukázce i ve výsledku je „Zkus si další příklady“ (ostatní ukázky, hotové odškrtnuté) místo „Zpět na výběr“.
 - **Hlavička:** „Můj výsledek“ se ukáže až po první hotové nebo přeskočené ukázce. V embedu je do té doby skrytý celý světlý pruh.
 - **Výsledek** je jeden sloupec (nejvýš 720 px): doporučený obor s jednou větou, cena s příspěvkem, „Co dál“ s větou o nové záložce, další příklady. Pryč jsou důvody, „Bavilo tě to?“, „Co od kurzu čekáš?“ a školení přes firmu. Barevně bez modrého bloku.
 - **Datová analýza** je práce analytika v osmi rozhodnutích: Jana napíše o problému, návštěvník stáhne data z pokladny, sečte měsíce, klikne na březen, porovná dny, klikne na víkend, rozdělí tržby podle produktů, klikne na snídaně a napíše Janě závěr. Jeviště mění barvu podle fáze (krémová, tmavá, modrá, žlutá), tlačítka a sloupce svítí, nad jevištěm se plní tři stopy a nad grafy se vypisuje dotaz SQL. Špatná volba zmizí a Jana k ní řekne svoje, po dvou špatných se rozsvítí správná, na kterou se klikne. Konec je „Zmizely víkendové snídaně“ a 52 800 Kč. Klikací koncept je v `prototyp/data-koncept.html`.
-- **Kyberbezpečnost:** jeden levý sloupec (zadání, poplach, krok, výsledek), terminál vpravo jako ilustrace, na mobilu pod krokem. Texty beze změny.
-- **Hra:** plátno přes celou šířku rámečku. Plocha 12 × 7 a fyzika jsou stejné, na širokém okně je plocha uprostřed a po stranách pokračuje obloha a zem jako kulisa (při úpravách zesvětlená, klepnutí tam nic nedělá). Pořadí je plátno, text, nástroje, tlačítka. Nástroje s ikonou a vysvětlením se ukazují jen při úpravách, takže plátno při přepínání neposkočí. Texty bez slova level.
+- **IT administrátor (kyberbezpečnost):** noční velín na serveru s přihláškami Coders Labu. Nahoře zabezpečení, čas zásahu a pokusy útočníka, vlevo Tereza z provozu a rozhodnutí, vpravo živá mapa útoku a terminál, na mobilu mapa nahoře a terminál dole. Scéna jde z poplachu přes klid do zeleného konce. Špatná adresa přidá útočníkovi 25 pokusů. Na konci hvězdy: server ubráněný, rozhodnutí napoprvé a zásah do 2 minut. Tereza a lektorka Petra jsou vymyšlené postavy. Koncept je v `prototyp/admin-koncept.html`.
+- **Hra:** běží se z Coders Labu do herního studia, postavička je logo CL, sbírá se kód a uhýbá bugům. Plátno má celou šířku rámečku, plocha 12 × 7 a fyzika jsou stejné, na širokém okně je plocha uprostřed a po stranách pokračuje město a zem jako kulisa (při úpravách zesvětlená, klepnutí tam nic nedělá). Přibyly tři životy v první fázi, body, rekord, hvězdy za běh, výzvy herního designéra a nástroj trampolína. Po první výhře se do úprav nejde samo: karta ukáže hvězdy a svítí „Upravit hru“. Po třetím pádu se editor otevře sám. Řádek „Pokusy, úpravy“ je pryč. Koncept je v `prototyp/hra-koncept.html`.
+- **Hvězdy a body nejsou odznaky:** žijí jen v obrazovce ukázky, nejsou v hlavičce ani ve výsledku a neposílají se do Pipedrivu. Ve fázi 4 se dá rozhodnout, jestli je obchod chce vidět.
 - **Stavění s AI je schované:** nikde se nenabízí a `?ukazka=ai` ani `data-start="ai"` ji neotevřou. Kód, texty i testy zůstávají.
 
 ## Jak vrátit Stavění s AI
@@ -53,7 +54,7 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 - **Po dvou špatných volbách v datech** se u tlačítek i v grafu ostatní volby vypnou a správná se rozsvítí. Dál se jde až kliknutím na ni, „Další krok“ v ukázce není. Ukázka je hotová hned po poslední správné volbě, výsledek a pruh Hotovo se ukážou po Janině odpovědi.
 - **Po odhalené odpovědi** je vidět jen „Správná odpověď je označená zeleně.“, věta za správnou odpověď začíná „Správně“ a sem by se nehodila.
 - **Plátno hry v embedu** se počítá z výšky okna pod hlavičkou webu, na samostatné stránce vyjde stejně jako v prototypu (A3). Kritérium „Hrát bez scrollování“ testuji jen na samostatné stránce.
-- **Fokus (A11):** po přepnutí obrazovky na nadpis, v kyberbezpečnosti zůstává v panelu a na konci přejde na „Můj výsledek“, v datech na další otázku a na konci na výsledek ukázky.
+- **Fokus (A11):** po přepnutí obrazovky na nadpis, v kyberbezpečnosti zůstává v panelu a na konci přejde na „Můj výsledek“, ve hře po výhře na „Upravit hru“ nebo „Hrát znovu“, v datech na další otázku a na konci na výsledek ukázky.
 - **Ilustrace na úvodu** (`HERO_ART`) dál obsahuje malou bublinu s hvězdičkou, která naráží na AI. Nikam nevede, nechal jsem ji.
 - **Vývojové závislosti navíc:** `@playwright/test` 1.64.1 a `@types/node` 24 (jen pro vývoj a testy, runtime závislost žádná).
 

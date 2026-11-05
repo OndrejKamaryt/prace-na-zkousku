@@ -372,7 +372,7 @@ export function createGame(ctx: Ctx): Screen {
       phase = 2;
       edit(true);
       status(msg);
-      ctx.keepVisible(tools);
+      ctx.keepVisible(buttons);
     }
     function die(msg: string) {
       mode = 'dead';
@@ -454,7 +454,9 @@ export function createGame(ctx: Ctx): Screen {
       mode = 'edit'; p = null; got = new Set(); score = 0; gone = false;
       hideResult();
       ui();
-      if (!quiet) status(t.editHelp);
+      if (quiet) return;
+      status(t.editHelp);
+      ctx.keepVisible(buttons);
     }
     function status(text: string) { statusEl.textContent = text; }
     function quest(k: Quest) {

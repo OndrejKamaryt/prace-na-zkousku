@@ -269,49 +269,65 @@ test('B3: chyba v rezervaci a v návycích, po dvou špatných odpovědích se u
   expect(errors).toEqual([]);
 });
 
-test('C: Kyberbezpečnost na notebooku v jednom sloupci a terminál bokem', async ({ page }) => {
+test('C: IT administrátor na notebooku: rozhodnutí vlevo, mapa a terminál vpravo, na konci hvězdy', async ({ page }) => {
   await page.setViewportSize(LAPTOP);
   const errors = trackErrors(page);
   await open(page, '/index.html?ukazka=kyber');
 
-  // poplach přímo navazuje na akce a terminál je vpravo vedle nich
-  const alert = (await page.locator('#v-kyber .alert').boundingBox())!;
+  const stage = page.locator('#s-stage');
+  await expect(stage).toHaveAttribute('data-scene', 'alarm');
+  await expect(page.locator('#s-say')).toContainText('Promiň, že budím.');
+  await expect(page.locator('#s-tries')).toContainText('412');
   const panel = (await page.locator('#s-panel').boundingBox())!;
-  const term = (await page.locator('#v-kyber .term').boundingBox())!;
-  expect(panel.y - (alert.y + alert.height)).toBeLessThanOrEqual(12);
-  expect(Math.round(panel.x)).toBe(Math.round(alert.x));
-  expect(term.x).toBeGreaterThan(panel.x + panel.width - 1);
+  const map = (await page.locator('#s-map').boundingBox())!;
+  const term = (await page.locator('#s-out').boundingBox())!;
+  expect(map.x).toBeGreaterThan(panel.x + panel.width - 1);
+  expect(term.y).toBeGreaterThan(map.y + map.height - 1);
 
   await page.locator('[data-cmd="grep"]').click();
   await page.locator('[data-cmd="count"]').click();
+  // špatná adresa: Tereza to komentuje a útočník získá náskok
+  const before = await page.locator('#s-ip0').innerText();
   await page.locator('[data-q1="1"]').click();
-  await expect(page.locator('#s-fb')).toHaveText('Tři pokusy jsou nejspíš někdo z kanceláře, kdo si spletl heslo.');
+  await expect(page.locator('#s-say')).toContainText('Tři pokusy? To je nejspíš někdo z kanceláře');
+  expect(parseInt((await page.locator('#s-ip0').innerText()).replace(/\s/g, ''))).toBeGreaterThanOrEqual(parseInt(before.replace(/\s/g, '')) + 25);
   await page.locator('[data-q1="0"]').click();
+  // po zablokování se počítadlo zastaví a poplach skončí
   await page.locator('[data-cmd="ufw"]').click();
+  await expect(stage).toHaveAttribute('data-scene', 'fight');
   await expect(page.locator('#s-out div').last()).toHaveText('Rule inserted');
+  const stopped = await page.locator('#s-tries').innerText();
+  await page.waitForTimeout(700);
+  await expect(page.locator('#s-tries')).toHaveText(stopped);
   await page.locator('[data-cmd="last"]').click();
   await page.locator('[data-q2="1"]').click();
-  await page.locator('#s-k1').check();
-  await page.locator('#s-k3').check();
-  await page.locator('[data-act="deploy"]').click();
-  await expect(page.locator('#s-fb')).toContainText('Vypínat server nejde');
-  await page.locator('#s-k3').uncheck();
-  await page.locator('#s-k2').check();
-  await page.locator('[data-act="deploy"]').click();
+
+  // štíty: dva se dají nasadit, špatný vysvětlí Tereza a zůstane označený k odebrání
+  const deploy = page.locator('#s-deploy');
+  await expect(deploy).toBeDisabled();
+  await page.locator('[data-shield="k1"]').click();
+  await page.locator('[data-shield="k3"]').click();
+  await expect(page.locator('[data-shield="k3"]')).toHaveAttribute('aria-pressed', 'true');
+  await deploy.click();
+  await expect(page.locator('#s-say')).toContainText('Vypínat server nejde');
+  await page.locator('[data-shield="k3"]').click();
+  await expect(deploy).toBeDisabled();
+  await page.locator('[data-shield="k2"]').click();
+  await deploy.click();
+
   await expect(page.locator('#s-done')).toBeVisible({ timeout: 10_000 });
-  await expect(page.locator('#s-panel .why')).toContainText('Správná rozhodnutí napoprvé: 1 ze 3');
-  await expect(page.locator('#s-panel')).toContainText('Server je v bezpečí');
+  await expect(stage).toHaveAttribute('data-scene', 'safe');
+  await expect(page.locator('#s-pct')).toContainText('100');
+  await expect(page.locator('#s-safe')).toHaveText('Server je v bezpečí');
+  await expect(page.locator('#s-panel .star-list')).toContainText('Rozhodnutí napoprvé: 1 ze 3');
+  await expect(page.locator('#s-panel .star-list')).toContainText('Zásah do 2 minut');
+  await expect(page.locator('#s-panel .stars svg.on')).toHaveCount(2);
   expect((await widgetState(page)).kyber).toMatchObject({ status: 'done', firstOk: 1, mistakes: 2 });
 
-  // po vyřešení tlačítko k výsledku v levém sloupci, hned pod textem
-  const p2 = (await page.locator('#s-panel').boundingBox())!;
-  const go = (await page.locator('#s-done [data-go="vysledek"]').boundingBox())!;
-  expect(go.y).toBeGreaterThanOrEqual(p2.y + p2.height);
-  expect(go.y - (p2.y + p2.height)).toBeLessThanOrEqual(24);
-  expect(go.x).toBeLessThan(p2.x + p2.width);
-  await expect(page.locator('#s-done p')).toHaveCount(0);
-
-  await page.locator('#s-done [data-go="vysledek"]').click();
+  await expect(page.locator('#s-done')).toContainText('Hotovo, server je ubráněný!');
+  const go = page.locator('#s-done [data-go="vysledek"]');
+  await expect(go).toBeInViewport();
+  await go.click();
   await expect(page.locator('#r-reco h2')).toHaveText('Kyberbezpečnost');
   const reco = (await page.locator('#r-reco').boundingBox())!;
   const priceBox = (await page.locator('#r-price-box').boundingBox())!;
@@ -320,11 +336,13 @@ test('C: Kyberbezpečnost na notebooku v jednom sloupci a terminál bokem', asyn
   expect(errors).toEqual([]);
 });
 
-test('C1: na mobilu je terminál pod krokem', async ({ page }) => {
+test('C1: na mobilu je mapa nahoře a terminál pod krokem', async ({ page }) => {
   await page.setViewportSize(MOBILE);
   await open(page, '/index.html?ukazka=kyber');
   const panel = (await page.locator('#s-panel').boundingBox())!;
-  const term = (await page.locator('#v-kyber .term').boundingBox())!;
+  const map = (await page.locator('#s-map').boundingBox())!;
+  const term = (await page.locator('#s-out').boundingBox())!;
+  expect(map.y + map.height).toBeLessThanOrEqual(panel.y);
   expect(term.y).toBeGreaterThanOrEqual(panel.y + panel.height);
 });
 
@@ -344,7 +362,7 @@ test('C2: Zkus si další příklady, hotové odškrtnuté, a výsledek ze dvou 
   await solveData(page);
   await page.locator('#v-data [data-go="kyber"]').click();
   await expect(page.locator('#v-kyber')).toBeVisible();
-  expect((await focused(page)).text).toBe('Někdo se dobývá do serveru pekárny');
+  expect((await focused(page)).text).toBe('Někdo se dobývá do serveru Coders Labu');
   const fromKyber = page.locator('#v-kyber [data-more] .other[data-go="data"]');
   await expect(fromKyber).toContainText('Hotovo ✓');
   await solveKyber(page);

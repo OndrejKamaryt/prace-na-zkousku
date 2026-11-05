@@ -97,7 +97,7 @@ test('kyberbezpečnost na mobilu: po vyřešení je vidět Server je v bezpečí
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page, '/index.html?ukazka=kyber');
   await solveKyber(page);
-  await expect(page.locator('#s-panel .step-no')).toBeInViewport({ ratio: 1 });
+  await expect(page.locator('#s-safe')).toBeInViewport({ ratio: 1 });
   await expect(page.locator('#s-done [data-go="vysledek"]')).toBeInViewport({ ratio: 1 });
 });
 

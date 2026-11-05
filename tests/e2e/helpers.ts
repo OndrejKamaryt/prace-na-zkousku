@@ -66,13 +66,11 @@ export async function solveData(page: Page, onStep: () => Promise<void> = async 
 
 /** Kyberbezpečnost bez chyby až po tlačítko k výsledku. onStep se volá po každém kroku. */
 export async function solveKyber(page: Page, onStep: () => Promise<void> = async () => {}): Promise<void> {
-  for (const sel of ['[data-cmd="grep"]', '[data-cmd="count"]', '[data-q1="0"]', '[data-cmd="ufw"]', '[data-cmd="last"]', '[data-q2="1"]']) {
+  for (const sel of ['[data-cmd="grep"]', '[data-cmd="count"]', '[data-q1="0"]', '[data-cmd="ufw"]', '[data-cmd="last"]', '[data-q2="1"]', '[data-shield="k1"]', '[data-shield="k2"]']) {
     await page.locator(sel).click();
     await onStep();
   }
-  await page.locator('#s-k1').check();
-  await page.locator('#s-k2').check();
-  await page.locator('[data-act="deploy"]').click();
+  await page.locator('#s-deploy').click();
   await expect(page.locator('#s-done')).toBeVisible({ timeout: 10_000 });
   await onStep();
 }

@@ -32,10 +32,10 @@ export function nextWorkdays(today: Date, count = 3): Date[] {
   return out;
 }
 
-/* ---------- terminál serveru pekárny ---------- */
+/* ---------- terminál serveru Coders Labu ---------- */
 export const IP = '203.0.113.47';
-export const PROMPT = 'admin@kvasek-srv:~$ ';
-export const BANNER = '# server pekárny Kvásek, Ubuntu 24.04';
+export const PROMPT = 'admin@coderslab-srv:~$ ';
+export const BANNER = '# server s přihláškami Coders Labu, Ubuntu 24.04';
 
 export type TermLine = [cls: 'o' | 'c' | 'bad', html: string];
 export type CmdKey = 'grep' | 'count' | 'ufw' | 'last' | 'lock' | 'f2b' | 'keys' | 'restart';
