@@ -25,12 +25,22 @@ export async function open(page: Page, path: string): Promise<void> {
   await expect(page.locator('section.view:visible')).toHaveCount(1);
 }
 
+/** Otevře samostatnou stránku se schovaným Stavěním s AI: do HTML doplní atribut data-ukazky. Stránka sama ho nemá. */
+export async function openWithAi(page: Page, path: string): Promise<void> {
+  await page.route('**/index.html*', async route => {
+    const response = await route.fetch();
+    const body = (await response.text()).replace('<prace-na-zkousku ', '<prace-na-zkousku data-ukazky="data ai hry kyber" ');
+    await route.fulfill({ response, body });
+  });
+  await open(page, path);
+}
+
 /** Prvek s fokusem uvnitř widgetu (document.activeElement je jen hostitel). */
 export function focused(page: Page) {
   return page.evaluate(() => {
     const host = document.querySelector('prace-na-zkousku')!;
     const a = host.shadowRoot!.activeElement as HTMLElement | null;
-    return { inDialog: !!a?.closest('dialog'), text: a?.textContent?.replace(/ /g, ' ').trim() ?? null, id: a?.id ?? '', go: a?.dataset.go ?? '' };
+    return { text: a?.textContent?.replace(/ /g, ' ').trim() ?? null, id: a?.id ?? '', go: a?.dataset.go ?? '' };
   });
 }
 
@@ -39,10 +49,27 @@ export const widgetState = (page: Page) => page.evaluate(() => (document.querySe
 /** Šířka obsahu stránky, pro kontrolu vodorovného přetečení. */
 export const scrollWidth = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth);
 
-/** Datová analýza vyřešená napoprvé, až po pruh s vyzvednutím odznaku. */
+/** Datová analýza projitá bez chyby: březen, snídaně, o víkendu, až po pruh Hotovo. */
 export async function solveData(page: Page): Promise<void> {
-  await page.locator('#d-options .opt').nth(2).click();
+  await page.locator('#d-options [data-opt="2"]').click();
+  await page.locator('#d-next').click();
+  await page.locator('#d-options [data-opt="2"]').click();
+  await page.locator('#d-next').click();
+  await page.locator('#d-options [data-opt="1"]').click();
   await expect(page.locator('#d-done')).toBeVisible();
+}
+
+/** Kyberbezpečnost bez chyby až po tlačítko k výsledku. onStep se volá po každém kroku. */
+export async function solveKyber(page: Page, onStep: () => Promise<void> = async () => {}): Promise<void> {
+  for (const sel of ['[data-cmd="grep"]', '[data-cmd="count"]', '[data-q1="0"]', '[data-cmd="ufw"]', '[data-cmd="last"]', '[data-q2="1"]']) {
+    await page.locator(sel).click();
+    await onStep();
+  }
+  await page.locator('#s-k1').check();
+  await page.locator('#s-k2').check();
+  await page.locator('[data-act="deploy"]').click();
+  await expect(page.locator('#s-done')).toBeVisible({ timeout: 10_000 });
+  await onStep();
 }
 
 /** Prohlížeč bere fixed prvky shadow DOM jako hostitele, elementFromPoint proto vrací widget nebo prvek webu. */

@@ -1,10 +1,10 @@
 /* Přepis referenčního gametest.py: hra se po pádu sama nespouští, po třech
-   pádech se odemkne editor a vlastní level jde dohrát. Navíc přeskočení hry
-   podle rozhodnutí 7 (bez odznaku, karta „Přeskočeno“). Čeká se na stav hry,
-   ne na pevné časy, protože herní čas závisí na snímkové frekvenci (R10). */
+   pádech se odemkne editor a vlastní verze jde dohrát. Navíc přeskočení hry
+   podle rozhodnutí 7 (karta „Přeskočeno“). Čeká se na stav hry, ne na pevné
+   časy, protože herní čas závisí na snímkové frekvenci (R10). */
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { MOBILE, open, trackErrors, widgetState } from './helpers.ts';
+import { LAPTOP, MOBILE, open, trackErrors, widgetState } from './helpers.ts';
 
 async function dieOnce(page: Page, n: number) {
   await page.locator('#g-play').click();
@@ -12,57 +12,93 @@ async function dieOnce(page: Page, n: number) {
   await expect.poll(async () => (await widgetState(page)).hry.deaths, { timeout: 10_000 }).toBe(n);
 }
 
-/** Klepnutí do buňky mřížky 12 × 7. */
+/** Klepnutí do buňky plochy 12 × 7. Plocha je uprostřed plátna, po stranách je jen kulisa. */
 async function tapCell(page: Page, c: number, r: number) {
   const box = (await page.locator('#g-canvas').boundingBox())!;
-  await page.mouse.click(box.x + ((c + 0.5) / 12) * box.width, box.y + ((r + 0.5) / 7) * box.height);
+  const tile = box.height / 7, left = (box.width - tile * 12) / 2;
+  await page.mouse.click(box.x + left + (c + 0.5) * tile, box.y + (r + 0.5) * tile);
 }
 
-test('po pádu se hra nespouští, po třech pádech editor a vlastní level jde dohrát', async ({ page }) => {
-  await page.setViewportSize(MOBILE);
-  // bez plynulého posouvání: klepání do mřížky počítá s klidnou stránkou
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  const errors = trackErrors(page);
-  await open(page, '/index.html?ukazka=hry');
-  await expect(page.locator('#g-status')).toHaveText('Postavička běží sama, ty jen skáčeš. Zmáčkni Hrát a pak klepni kamkoli do hry.');
+for (const vp of [MOBILE, LAPTOP]) {
+  test(`po pádu se hra nespouští, po třech pádech editor a vlastní verze jde dohrát, ${vp.width} px`, async ({ page }) => {
+    await page.setViewportSize(vp);
+    // bez plynulého posouvání: klepání do plochy počítá s klidnou stránkou
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const errors = trackErrors(page);
+    await open(page, '/index.html?ukazka=hry');
+    await expect(page.locator('#v-hry h2')).toHaveText('Zahraj si hru a pak ji uprav');
+    await expect(page.locator('#g-status')).toHaveText('Postavička běží sama, ty jen skáčeš. Zmáčkni Hrát a pak klepni kamkoli do hry.');
+    await expect(page.locator('#g-tools')).toBeHidden();
 
-  // po pádu je Hrát znovu chvíli neaktivní; okno 900 ms se pod zátěží snadno mine, proto ho zapisuje pozorovatel
-  await page.evaluate(() => {
-    const b = document.querySelector('prace-na-zkousku')!.shadowRoot!.querySelector('#g-play')!;
-    new MutationObserver(() => { if (b.hasAttribute('disabled')) (window as unknown as { pnzHeld?: boolean }).pnzHeld = true; })
-      .observe(b, { attributes: true, attributeFilter: ['disabled'] });
+    // po pádu je Hrát znovu chvíli neaktivní; okno 900 ms se pod zátěží snadno mine, proto ho zapisuje pozorovatel
+    await page.evaluate(() => {
+      const b = document.querySelector('prace-na-zkousku')!.shadowRoot!.querySelector('#g-play')!;
+      new MutationObserver(() => { if (b.hasAttribute('disabled')) (window as unknown as { pnzHeld?: boolean }).pnzHeld = true; })
+        .observe(b, { attributes: true, attributeFilter: ['disabled'] });
+    });
+    await dieOnce(page, 1);
+    const status = page.locator('#g-status');
+    await expect(status).toHaveText('Spadla do díry. Zmáčkni Hrát znovu a zkus to ještě jednou.');
+    const play = page.locator('#g-play');
+    await expect(play).toHaveText('Hrát znovu');
+    await expect(play).toBeVisible();
+    expect(await page.evaluate(() => (window as unknown as { pnzHeld?: boolean }).pnzHeld), 'Hrát znovu bylo po pádu neaktivní').toBe(true);
+    await expect(page.locator('#g-jump')).toBeHidden();
+    await expect(play).toBeEnabled({ timeout: 2_000 });
+    await page.waitForTimeout(2_000);
+    expect((await widgetState(page)).hry.plays, 'hra se po pádu sama nespustila').toBe(1);
+    await expect(page.locator('#g-jump')).toBeHidden();
+
+    await dieOnce(page, 2);
+    await dieOnce(page, 3);
+    await expect(status).toContainText('Nevadí, i herní designéři ladí obtížnost. Uprav hru, aby šla projít');
+    await expect(page.locator('#g-tools')).toBeVisible();
+    await expect(page.locator('[data-gstep="1"]')).toHaveClass(/\bok\b/);
+
+    await tapCell(page, 4, 6);
+    await tapCell(page, 5, 6);
+    await page.locator('[data-tool="0"]').click();
+    await tapCell(page, 8, 5);
+    await expect(page.locator('#g-stats')).toHaveText('Pokusy: 3, úpravy: 3');
+    await play.click();
+    // při hraní nástroje zmizí, aby na obrazovce bylo jen to nutné
+    await expect(page.locator('#g-tools')).toBeHidden();
+    await expect(status).toContainText('Tvoje verze hry je dohraná! Mince: ', { timeout: 10_000 });
+    await expect(status).toContainText(/Mince: \d\/3\./);
+    await expect(page.locator('#g-done')).toContainText('Hotovo, tvoje verze hry je dohraná!');
+    await expect(page.locator('#g-done [data-go="vysledek"]')).toHaveText('Můj výsledek');
+    expect((await widgetState(page)).hry).toMatchObject({ status: 'done', ownWon: true, winAttempt: 1, edits: 3 });
+    await expect(page.locator('[data-gstep="3"]')).toHaveClass(/\bok\b/);
+    expect(errors).toEqual([]);
   });
-  await dieOnce(page, 1);
-  const status = page.locator('#g-status');
-  await expect(status).toHaveText('Spadla do díry. Zmáčkni Hrát znovu a zkus to ještě jednou.');
-  const play = page.locator('#g-play');
-  await expect(play).toHaveText('Hrát znovu');
-  await expect(play).toBeVisible();
-  expect(await page.evaluate(() => (window as unknown as { pnzHeld?: boolean }).pnzHeld), 'Hrát znovu bylo po pádu neaktivní').toBe(true);
-  await expect(page.locator('#g-jump')).toBeHidden();
-  await expect(play).toBeEnabled({ timeout: 2_000 });
-  await page.waitForTimeout(2_000);
-  expect((await widgetState(page)).hry.plays, 'hra se po pádu sama nespustila').toBe(1);
-  await expect(page.locator('#g-jump')).toBeHidden();
+}
 
-  await dieOnce(page, 2);
-  await dieOnce(page, 3);
-  await expect(status).toContainText('Nevadí, i herní designéři ladí obtížnost.');
-  await expect(page.locator('#g-tools')).toBeVisible();
-  await expect(page.locator('[data-gstep="1"]')).toHaveClass(/\bok\b/);
+test('nástroje mají ikonu a vysvětlení a Smazat je od ostatních oddělené', async ({ page }) => {
+  await page.setViewportSize(LAPTOP);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page, '/index.html?ukazka=hry');
+  for (let n = 1; n <= 3; n++) await dieOnce(page, n);
+  const tools = page.locator('#g-tools .tool');
+  await expect(tools).toHaveCount(4);
+  await expect(tools.locator('svg')).toHaveCount(4);
+  await expect(tools.locator('b')).toHaveText(['Přidej plošinu', 'Přidej nástrahu', 'Přidej mince', 'Smazat']);
+  await expect(tools.nth(1).locator('small')).toHaveText('Když se jí postava dotkne, přijde o život.');
+  await expect(tools.nth(2).locator('small')).toHaveText('Jsou odměna, sbíráš za ně body.');
+  await expect(page.locator('[data-tool="1"]')).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('[data-tool="3"]').click();
+  await expect(page.locator('[data-tool="3"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-tool="1"]')).toHaveAttribute('aria-pressed', 'false');
 
-  await tapCell(page, 4, 6);
-  await tapCell(page, 5, 6);
-  await page.locator('[data-tool="0"]').click();
-  await tapCell(page, 8, 5);
-  await expect(page.locator('#g-stats')).toHaveText('Pokusy: 3, upravené dílky: 3');
-  await play.click();
-  await expect(status).toContainText('Tvůj vlastní level je dohraný! Mince: ', { timeout: 10_000 });
-  await expect(status).toContainText(/Mince: \d\/3\./);
-  await expect(page.locator('#g-done')).toBeVisible();
-  expect((await widgetState(page)).hry).toMatchObject({ status: 'done', ownWon: true, winAttempt: 1, edits: 3 });
-  await expect(page.locator('[data-gstep="3"]')).toHaveClass(/\bok\b/);
-  expect(errors).toEqual([]);
+  const coin = (await page.locator('[data-tool="3"]').boundingBox())!;
+  const erase = (await page.locator('[data-tool="0"]').boundingBox())!;
+  const solid = (await page.locator('[data-tool="1"]').boundingBox())!;
+  const spike = (await page.locator('[data-tool="2"]').boundingBox())!;
+  expect(erase.x - (coin.x + coin.width), 'mezera před Smazat').toBeGreaterThan(spike.x - (solid.x + solid.width));
+
+  // klepnutí mimo herní plochu nic nezmění
+  const box = (await page.locator('#g-canvas').boundingBox())!;
+  await page.mouse.click(box.x + 10, box.y + box.height / 2);
+  expect((await widgetState(page)).hry.edits).toBe(0);
 });
 
 test('Hrát pulzuje do prvního spuštění a hru spustí i klepnutí do ní', async ({ page }) => {
@@ -100,7 +136,7 @@ test('mezerník skáče jen s fokusem ve widgetu', async ({ page }) => {
   expect(f, 'po schování Hrát přejde fokus na Skok').toBe('g-jump');
 });
 
-test('přeskočená hra nedává odznak, výsledek je dostupný (rozhodnutí 7)', async ({ page }) => {
+test('přeskočená hra není hotová, výsledek je dostupný (rozhodnutí 7)', async ({ page }) => {
   test.slow();
   await page.setViewportSize(MOBILE);
   await open(page, '/index.html?ukazka=hry');
@@ -109,16 +145,14 @@ test('přeskočená hra nedává odznak, výsledek je dostupný (rozhodnutí 7)'
   await expect(skip).toBeVisible();
   await skip.click();
   await expect(page.locator('#v-vysledek')).toBeVisible();
-  await expect(page.locator('#cel')).toBeHidden();
   await expect(page.locator('#r-reco h2')).toHaveText('Tvorba her');
-  await expect(page.locator('#r-reco .why li')).toHaveText(['Hra přeskočená', 'Upravené dílky: 0']);
-  await expect(page.locator('#prog-text')).toHaveText('Odznaky 0/4');
-  await expect(page.locator('#r-reco .badge.got')).toHaveCount(0);
+  await expect(page.locator('.prog')).toBeVisible();
   expect((await widgetState(page)).hry.status).toBe('skipped');
 
-  await page.locator('#r-others [data-go="data"]').click();
-  await page.locator('#v-data .back').click();
+  await page.locator('.logo').click();
   await expect(page.locator('[data-state="hry"]')).toHaveText('Přeskočeno');
-  await page.locator('.path-card[data-go="hry"]').click();
+  await page.locator('.path-card[data-go="data"]').click();
+  await expect(page.locator('#v-data [data-more] [data-go="hry"]')).toContainText('Přeskočeno');
+  await page.locator('#v-data [data-more] [data-go="hry"]').click();
   await expect(page.locator('#g-done')).toBeHidden();
 });
