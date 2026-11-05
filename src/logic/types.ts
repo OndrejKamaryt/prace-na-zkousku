@@ -30,9 +30,11 @@ export interface Utm {
 export interface DataSnap {
   status: Status;
   seconds: number;
-  viewsSeen: number;
-  tries: number;
+  /** Špatné odpovědi ve všech krocích dohromady. */
+  mistakes: number;
+  /** Všechny kroky správně napoprvé, nastaví se až na konci ukázky. */
   firstTry: boolean;
+  /** Aspoň v jednom kroku musel správnou odpověď ukázat nástroj. */
   revealed: boolean;
 }
 export interface AiApp {

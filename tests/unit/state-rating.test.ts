@@ -1,44 +1,69 @@
 import { describe, expect, it } from 'vitest';
 import { rate } from '../../src/logic/rating.ts';
 import {
-  answerData, changeApplied, createState, finish, gameDeath, gameEdit, gamePlay, gameSkip, gameWin, ideaBuilt,
-  kyberAnswer, lowIncomeShown, openPath, setFirm, setGoal, snapshot, startIdea, viewData,
+  answerData, changeApplied, createState, finish, finishData, gameDeath, gameEdit, gamePlay, gameSkip, gameWin, ideaBuilt,
+  kyberAnswer, lowIncomeShown, openPath, setFirm, setGoal, snapshot, startIdea,
 } from '../../src/logic/state.ts';
-import type { State } from '../../src/logic/state.ts';
-import { min, snap, T0 } from './helpers.ts';
+import { min, snap, solveData, T0 } from './helpers.ts';
 
 const now = min(1);
 
-function solveData(s: State, wrongFirst: number): void {
-  for (let i = 0; i < wrongFirst; i++) answerData(s, false, now);
-  if (s.data.status !== 'done') answerData(s, true, now);
-}
-
 describe('Datová analýza', () => {
-  it('úvodní pohled ukázku nezačne, přepnutí pohledu ano', () => {
+  it('otevření ukázku nezačne, první odpověď ano', () => {
     const s = createState();
-    viewData(s, 'mesice', now, true);
+    openPath(s, 'data', now);
     expect(s.data.status).toBe('not_started');
-    viewData(s, 'produkty', now);
+    answerData(s, true, now);
     expect(s.data.status).toBe('in_progress');
-    expect(snapshot(s, now).paths.data.viewsSeen).toBe(2);
   });
-  it('great napoprvé, average na 2. a 3. pokus, bad po odhalení', () => {
-    expect(rate('data', snap(s => solveData(s, 0)).paths)).toBe('great');
-    expect(rate('data', snap(s => solveData(s, 1)).paths)).toBe('average');
-    expect(rate('data', snap(s => solveData(s, 2)).paths)).toBe('average');
-    const revealed = snap(s => solveData(s, 3));
-    expect(revealed.paths.data).toMatchObject({ tries: 3, revealed: true, status: 'done' });
+  it('hotová je až po posledním kroku, ne po správné odpovědi', () => {
+    const s = createState();
+    for (let i = 0; i < 3; i++) expect(answerData(s, true, now)).toBe('solved');
+    expect(s.data.status).toBe('in_progress');
+    expect(finishData(s, now)).toBe(true);
+    expect(s.data.status).toBe('done');
+    expect(finishData(s, now)).toBe(false);
+  });
+  it('great bez chyby, average s chybami, bad po odhalení', () => {
+    const clean = snap(s => solveData(s));
+    expect(clean.paths.data).toMatchObject({ status: 'done', firstTry: true, mistakes: 0, revealed: false });
+    expect(rate('data', clean.paths)).toBe('great');
+    // po jedné chybě ve dvou krocích: dvě chyby, ale žádná správná odpověď ukázaná nástrojem
+    const two = snap(s => solveData(s, [1, 1, 0]));
+    expect(two.paths.data).toMatchObject({ firstTry: false, mistakes: 2, revealed: false });
+    expect(rate('data', two.paths)).toBe('average');
+    const revealed = snap(s => solveData(s, [2, 0, 0]));
+    expect(revealed.paths.data).toMatchObject({ firstTry: false, mistakes: 2, revealed: true, status: 'done' });
     expect(rate('data', revealed.paths)).toBe('bad');
   });
-  it('rozpracovaná bez odpovědi nemá hodnocení', () => {
-    expect(rate('data', snap(s => viewData(s, 'dny', now)).paths)).toBeNull();
-  });
-  it('po vyřešení další odpovědi nic nemění', () => {
+  it('po dvou špatných v kroku ukáže správnou a počítá se znovu v dalším', () => {
     const s = createState();
+    expect(answerData(s, false, now)).toBe('wrong');
+    expect(answerData(s, false, now)).toBe('revealed');
+    expect(answerData(s, false, now)).toBe('wrong');
+    expect(answerData(s, true, now)).toBe('solved');
+    expect(answerData(s, false, now)).toBe('wrong');
+    expect(s.data.mistakes).toBe(4);
+  });
+  it('správná odpověď vynuluje chyby v kroku', () => {
+    const s = createState();
+    answerData(s, false, now);
     answerData(s, true, now);
+    expect(answerData(s, false, now)).toBe('wrong');
+  });
+  it('rozpracovaná bez dokončení nemá hodnocení', () => {
+    expect(rate('data', snap(s => answerData(s, true, now)).paths)).toBeNull();
+  });
+  it('po dokončení další odpovědi nic nemění', () => {
+    const s = createState();
+    solveData(s);
     expect(answerData(s, false, now)).toBe('ignored');
-    expect(s.data.tries).toBe(1);
+    expect(s.data.mistakes).toBe(0);
+  });
+  it('snímek neobsahuje pomocné počítadlo kroku', () => {
+    const s = createState();
+    answerData(s, false, now);
+    expect(Object.keys(snapshot(s, now).paths.data).sort()).toEqual(['firstTry', 'mistakes', 'revealed', 'seconds', 'status']);
   });
 });
 
@@ -136,19 +161,19 @@ describe('snapshot', () => {
     const s = createState();
     openPath(s, 'data', min(0));
     expect(s.data.status).toBe('not_started');
-    answerData(s, true, min(5));
+    solveData(s, [0, 0, 0], min(5));
     expect(snapshot(s, min(6)).paths.data.seconds).toBe(300);
   });
   it('minuty zaokrouhlí jako mins() v prototypu (89,5 s = 1 min)', () => {
     const s = createState();
     answerData(s, false, T0);
-    answerData(s, true, T0 + 89_500);
+    solveData(s, [0, 0, 0], T0 + 89_500);
     expect(snapshot(s, T0 + 89_500).paths.data.seconds).toBe(89);
   });
   it('počítá čas od první akce', () => {
     const s = createState();
     answerData(s, false, min(1));
-    answerData(s, true, min(4));
+    solveData(s, [0, 0, 0], min(4));
     const p = snapshot(s, min(9));
     expect(p.paths.data.seconds).toBe(180);
     expect(p.paths.ai.seconds).toBe(0);

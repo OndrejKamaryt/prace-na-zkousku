@@ -13,7 +13,8 @@ export function candidates(s: Snapshot): PathKey[] {
 
 export function score(k: PathKey, s: Snapshot): number {
   const p = s.paths;
-  if (k === 'data') return 2 + (p.data.firstTry ? 1 : 0) + (p.data.viewsSeen >= 3 ? 0.5 : 0);
+  // kdo ukázku dokončil, prošel všechny kroky, takže dřívějších 0,5 za prohlédnuté pohledy platí vždy
+  if (k === 'data') return 2.5 + (p.data.firstTry ? 1 : 0);
   if (k === 'ai') return 2 + Math.min(bestApp(p.ai)?.changes ?? 0, 2) * 0.5;
   if (k === 'hry') return 2 + (p.hry.defaultWon || p.hry.ownWon ? 1 : 0) + (p.hry.edits >= 5 ? 0.5 : 0);
   return 2 + p.kyber.firstOk * 0.4;
@@ -43,8 +44,7 @@ export function why(k: PathKey, s: Snapshot): string[] {
   if (k === 'data') {
     const d = p.data;
     return [
-      d.revealed ? w.dataRevealed : d.firstTry ? w.dataFirstTry : fill(w.dataTries, { tries: d.tries }),
-      fill(w.dataViews, { seen: d.viewsSeen }),
+      d.revealed ? w.dataRevealed : d.firstTry ? w.dataFirstTry : fill(w.dataMistakes, { n: d.mistakes }),
       fill(w.time, { min: minutes(d.seconds) }),
     ];
   }

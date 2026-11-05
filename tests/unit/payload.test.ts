@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildPayload, MAX_BODY_BYTES, parseBody } from '../../src/logic/payload.ts';
 import { answerData, changeApplied, createState, ideaBuilt, startIdea } from '../../src/logic/state.ts';
-import { min } from './helpers.ts';
+import { min, solveData } from './helpers.ts';
 
 const TOKEN = '3f9c0e7a-5b1d-4c2e-9a8f-1d2e3f4a5b6c';
 const SESSION = '0b6d2a3e-8c1f-4d5a-b7e9-2a4c6e8f0a1b';
@@ -9,7 +9,7 @@ const UTM = { source: 'facebook', medium: 'cpc', campaign: 'dta-podzim', content
 
 function payload() {
   const s = createState('data', 'url', '/cz/prace-na-zkousku');
-  answerData(s, true, min(1));
+  solveData(s, [0, 0, 0], min(1));
   startIdea(s, 'navyky', min(2)); ideaBuilt(s, 'navyky'); changeApplied(s, 'navyky', 'streak', min(3));
   return buildPayload(s, { token: TOKEN, session: SESSION, seq: 1, utm: UTM }, min(5));
 }
@@ -34,8 +34,8 @@ describe('payload', () => {
     expect(parseBody(JSON.stringify({ ...payload(), fav: 'not:nic' })).ok).toBe(false);
     expect(parseBody(JSON.stringify({ ...payload(), token: 'abc' })).ok).toBe(false);
     const p = payload();
-    p.paths.data.tries = -1;
-    expect(parseBody(JSON.stringify(p))).toEqual({ ok: false, error: 'paths.data.tries: čekám celé číslo 0 až 4' });
+    p.paths.data.mistakes = -1;
+    expect(parseBody(JSON.stringify(p))).toEqual({ ok: false, error: 'paths.data.mistakes: čekám celé číslo 0 až 6' });
   });
   it('odmítne tělo nad 10 kB a ne-JSON', () => {
     const big = JSON.stringify({ ...payload(), page: 'x'.repeat(MAX_BODY_BYTES) });

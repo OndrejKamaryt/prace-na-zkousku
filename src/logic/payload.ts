@@ -81,7 +81,7 @@ function validate(input: unknown): Payload {
   const status = (o: Obj, at: string) => oneOf(o.status, at + '.status', STATUSES);
   const sec = (o: Obj, at: string) => int(o.seconds, at + '.seconds', LIMITS.seconds);
 
-  const d = obj(paths.data, 'paths.data', ['status', 'seconds', 'viewsSeen', 'tries', 'firstTry', 'revealed']);
+  const d = obj(paths.data, 'paths.data', ['status', 'seconds', 'mistakes', 'firstTry', 'revealed']);
   const a = obj(paths.ai, 'paths.ai', ['status', 'seconds', 'ideasTried', 'apps']);
   const apps = obj(a.apps, 'paths.ai.apps', [], IDEAS);
   const h = obj(paths.hry, 'paths.hry', ['status', 'seconds', 'plays', 'deaths', 'edits', 'ownPlays', 'defaultWon', 'ownWon', 'winAttempt', 'bestCoins']);
@@ -109,7 +109,7 @@ function validate(input: unknown): Payload {
     paths: {
       data: {
         status: status(d, 'paths.data'), seconds: sec(d, 'paths.data'),
-        viewsSeen: int(d.viewsSeen, 'paths.data.viewsSeen', 4), tries: int(d.tries, 'paths.data.tries', 4),
+        mistakes: int(d.mistakes, 'paths.data.mistakes', 6),
         firstTry: bool(d.firstTry, 'paths.data.firstTry'), revealed: bool(d.revealed, 'paths.data.revealed'),
       },
       ai: {

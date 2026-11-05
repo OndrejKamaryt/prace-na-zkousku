@@ -29,7 +29,7 @@
       "data": {
         "field": "Datová analýza",
         "title": "Proč kavárně klesly tržby?",
-        "desc": "Zahraj si na detektiva v datech z pokladny a najdi, kam zmizelo 57 600 Kč."
+        "desc": "Projdi s majitelkou data z pokladny a zjisti, proč kavárna v březnu vydělala méně."
       },
       "ai": {
         "field": "Stavění s AI",
@@ -51,18 +51,16 @@
   "data": {
     "title": "Proč kavárně Zrnko v březnu klesly tržby?",
     "who": "J",
-    "mission": "Majitelka Jana nechápe, kam se v březnu ztratilo 57 600 Kč. Přepínej pohledy na data a najdi viníka.",
-    "tip": "Tip: nejvíc toho prozradí pohled podle produktů a podle dnů.",
-    "tabsLabel": "Pohled na data",
-    "tabs": {
-      "mesice": "Po měsících",
-      "produkty": "Podle produktů",
-      "dny": "Podle dnů",
-      "hodiny": "Podle hodin"
-    },
-    "views": {
-      "mesice": {
-        "note": "Tržby kavárny po měsících.",
+    "mission": "Majitelka kavárny Jana vidí, že v březnu vydělala méně než jindy. Najdi, proč poklesly tržby. Půjdeš na to ve třech krocích, stejně jako datový analytik.",
+    "stepOf": "krok {n} ze 3",
+    "next": "Další krok",
+    "legendFeb": "únor",
+    "legendMar": "březen",
+    "revealed": "Správná odpověď je označená zeleně.",
+    "steps": [
+      {
+        "title": "Porovnej měsíce",
+        "text": "Analytik začíná tím nejjednodušším: kolik kavárna vydělala za každý měsíc.",
         "rows": [
           [
             "Leden",
@@ -80,10 +78,34 @@
             "Duben",
             306200
           ]
+        ],
+        "question": "Ve kterém měsíci tržby klesly?",
+        "options": [
+          {
+            "t": "Leden",
+            "ok": false,
+            "why": "V tomhle měsíci vydělala kavárna zhruba jako jindy. Hledej nejkratší pruh."
+          },
+          {
+            "t": "Únor",
+            "ok": false,
+            "why": "V tomhle měsíci vydělala kavárna zhruba jako jindy. Hledej nejkratší pruh."
+          },
+          {
+            "t": "Březen",
+            "ok": true,
+            "why": "Správně, v březnu kavárna vydělala o 57 600 Kč méně než v únoru. Teď zjistíme proč."
+          },
+          {
+            "t": "Duben",
+            "ok": false,
+            "why": "V tomhle měsíci vydělala kavárna zhruba jako jindy. Hledej nejkratší pruh."
+          }
         ]
       },
-      "produkty": {
-        "note": "Únor a březen podle toho, co lidé kupovali.",
+      {
+        "title": "Podívej se, co lidé kupovali",
+        "text": "Tržby za únor a březen teď rozdělíme podle toho, co lidé kupovali.",
         "rows": [
           [
             "Káva a nápoje",
@@ -105,10 +127,34 @@
             25200,
             23300
           ]
+        ],
+        "question": "Co se v březnu prodávalo mnohem méně?",
+        "options": [
+          {
+            "t": "Káva a nápoje",
+            "ok": false,
+            "why": "Tady je březen skoro stejný jako únor. Hledej, kde je březnový pruh mnohem kratší."
+          },
+          {
+            "t": "Dezerty",
+            "ok": false,
+            "why": "Tady je březen skoro stejný jako únor. Hledej, kde je březnový pruh mnohem kratší."
+          },
+          {
+            "t": "Snídaně",
+            "ok": true,
+            "why": "Přesně tak. Snídaně spadly z 62 100 na 9 300 Kč, ostatní se prodávalo skoro stejně. Zbývá zjistit, kdy snídaně chyběly."
+          },
+          {
+            "t": "Obědové menu",
+            "ok": false,
+            "why": "Tady je březen skoro stejný jako únor. Hledej, kde je březnový pruh mnohem kratší."
+          }
         ]
       },
-      "dny": {
-        "note": "Únor a březen podle dne v týdnu.",
+      {
+        "title": "Podívej se na dny v týdnu",
+        "text": "Stejné tržby teď rozdělíme podle dnů v týdnu.",
         "rows": [
           [
             "Pondělí",
@@ -145,70 +191,34 @@
             53900,
             28400
           ]
+        ],
+        "question": "Kdy kavárna v březnu vydělala méně?",
+        "options": [
+          {
+            "t": "Ve všední dny",
+            "ok": false,
+            "why": "Od pondělí do pátku je březen skoro stejný jako únor. Podívej se na sobotu a neděli."
+          },
+          {
+            "t": "O víkendu",
+            "ok": true,
+            "why": ""
+          },
+          {
+            "t": "Každý den stejně",
+            "ok": false,
+            "why": "Kdyby to bylo každý den, byly by kratší všechny březnové pruhy. Podívej se na sobotu a neděli."
+          }
         ]
-      },
-      "hodiny": {
-        "note": "Únor a březen podle hodiny nákupu.",
-        "rows": [
-          [
-            "7 až 10 h",
-            92300,
-            49800
-          ],
-          [
-            "10 až 13 h",
-            88600,
-            76400
-          ],
-          [
-            "13 až 16 h",
-            64900,
-            63200
-          ],
-          [
-            "16 až 19 h",
-            53100,
-            51900
-          ]
-        ]
-      }
-    },
-    "kpiSpend": "Průměrná útrata",
-    "kpiSpendValue": "únor 142 Kč, březen 141 Kč",
-    "kpiReceipts": "Počet účtenek",
-    "kpiReceiptsValue": "únor 2 105, březen 1 711",
-    "legendFeb": "únor",
-    "legendMar": "březen a rozdíl proti únoru",
-    "question": "Co se v březnu stalo?",
-    "seen": "Prohlédnuto {n} ze 4 pohledů na data",
-    "options": [
-      {
-        "t": "Lidé přestali chodit na kávu.",
-        "ok": false,
-        "why": "Káva v březnu vydělala skoro stejně jako v únoru, 146 900 proti 148 200 Kč. Hledej, co kleslo víc."
-      },
-      {
-        "t": "Kavárna zdražila a lidé utrácejí méně.",
-        "ok": false,
-        "why": "Průměrná útrata zůstala na 141 až 142 Kč. Lidé tedy neutrácejí méně, jen jich přišlo méně."
-      },
-      {
-        "t": "Zmizely víkendové snídaně.",
-        "ok": true,
-        "why": "Přesně tak. Snídaně spadly z 62 100 na 9 300 Kč a propad je skoro celý o víkendových dopolednech. Majitelka pak potvrdila, že v březnu odešel kuchař a o víkendu snídaně nikdo nepřipravoval. Stálo ji to 52 800 Kč za měsíc."
-      },
-      {
-        "t": "Bylo špatné počasí a lidé nechodili ven.",
-        "ok": false,
-        "why": "Ve všední dny jsou tržby skoro stejné jako v únoru. Počasí by se projevilo každý den."
       }
     ],
-    "revealed": "Správně je zmizení víkendových snídaní: snídaně spadly z 62 100 na 9 300 Kč, hlavně o víkendových dopolednech.",
+    "resultTitle": "Zmizely víkendové snídaně",
+    "resultText": "Snídaně se v březnu skoro neprodávaly a chyběly hlavně o víkendu. Majitelka pak potvrdila, že v březnu odešel kuchař a o víkendu snídaně nikdo nepřipravoval. Stálo ji to 52 800 Kč za měsíc.",
+    "resultHint": "Přesně tohle dělá datový analytik: z čísel zjistí, co se ve firmě děje, a pomůže rozhodnout, co s tím.",
     "sqlSummary": "Jak na to přijde datový analytik",
     "sqlIntro": "V Excelu na to stačí kontingenční tabulka. V databázi jeden dotaz v jazyce SQL:",
     "sqlOutro": "Nemusíš tomu teď rozumět, na kurzu se to naučíš od nuly.",
-    "fab": "Znám viníka",
-    "done": "Hotovo, detektivka je vyřešená!"
+    "done": "Hotovo, víš, proč tržby klesly!"
   },
   "ai": {
     "tagNote": "Tohle se učí na kurzu Claude Code",
@@ -720,10 +730,9 @@
     "navyky": "Tracker návyků"
   },
   "why": {
-    "dataFirstTry": "Detektivka vyřešená na první pokus",
-    "dataTries": "Detektivka vyřešená na {tries}. pokus",
+    "dataFirstTry": "Všechny tři kroky správně napoprvé",
+    "dataMistakes": "Špatné odpovědi po cestě: {n}",
     "dataRevealed": "Správnou odpověď ukázal nástroj",
-    "dataViews": "Prozkoumané pohledy na data: {seen} ze 4",
     "time": "Čas: {min} min",
     "aiBuilt": "Aplikace „{name}“ postavená",
     "aiChanges": "Úpravy zadané AI: {changes}",
@@ -740,7 +749,7 @@
   "opener": {
     "none": "Zatím nic nedokončeno.",
     "notFun": "Vidím, že vás ukázka „{label}“ moc nechytla. Co by vás lákalo víc?",
-    "data": "Vidím, že máte za sebou datovou detektivku{firstTry}. Co vás na práci s daty bavilo?",
+    "data": "Vidím, že máte za sebou ukázku s daty kavárny{firstTry}. Co vás na práci s daty bavilo?",
     "dataFirstTry": ", a to hned napoprvé",
     "ai": "Vidím, že vám AI agent postavil aplikaci „{name}“{changes}. Máte nápad, co by se vám hodilo postavit pro sebe nebo do práce?",
     "aiChanges": " a dostal od vás {n} {word}",

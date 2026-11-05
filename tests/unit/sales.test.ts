@@ -3,14 +3,14 @@ import { recommend, why } from '../../src/logic/recommend.ts';
 import { noteRows, noteText, opener } from '../../src/logic/sales.ts';
 import {
   answerData, changeApplied, finish, gameDeath, gameEdit, gamePlay, gameSkip, gameWin, ideaBuilt, kyberAnswer,
-  setFav, setFirm, setGoal, startIdea, viewData,
+  setFav, setFirm, setGoal, startIdea,
 } from '../../src/logic/state.ts';
 import type { State } from '../../src/logic/state.ts';
-import { min, snap, typo } from './helpers.ts';
+import { min, snap, solveData, typo } from './helpers.ts';
 
 const now = min(1);
-const dataFirstTry = (s: State) => answerData(s, true, now);
-const dataSecondTry = (s: State) => { answerData(s, false, now); answerData(s, true, now); };
+const dataFirstTry = (s: State) => solveData(s);
+const dataSecondTry = (s: State) => solveData(s, [1, 0, 0]);
 const aiWith = (n: number) => (s: State) => {
   startIdea(s, 'kadernice', now); ideaBuilt(s, 'kadernice');
   ['service', 'busy', 'dark'].slice(0, n).forEach(c => changeApplied(s, 'kadernice', c, now));
@@ -21,11 +21,11 @@ const kyberDone = (ok: number) => (s: State) => {
 };
 
 describe('opener (věta do telefonu)', () => {
-  it('odpovídá příkladu v ZADANI kap. 4', () => {
-    expect(opener(snap(dataFirstTry))).toBe(typo('Vidím, že máte za sebou datovou detektivku, a to hned napoprvé. Co vás na práci s daty bavilo?'));
+  it('data napoprvé', () => {
+    expect(opener(snap(dataFirstTry))).toBe(typo('Vidím, že máte za sebou ukázku s daty kavárny, a to hned napoprvé. Co vás na práci s daty bavilo?'));
   });
   it('data bez prvního pokusu', () => {
-    expect(opener(snap(dataSecondTry))).toBe(typo('Vidím, že máte za sebou datovou detektivku. Co vás na práci s daty bavilo?'));
+    expect(opener(snap(dataSecondTry))).toBe(typo('Vidím, že máte za sebou ukázku s daty kavárny. Co vás na práci s daty bavilo?'));
   });
   it.each([
     [1, 'Vidím, že vám AI agent postavil aplikaci „Rezervační systém“ a dostal od vás 1 úpravu. Máte nápad, co by se vám hodilo postavit pro sebe nebo do práce?'],
@@ -52,7 +52,7 @@ describe('opener (věta do telefonu)', () => {
     expect(opener(snap(kyberDone(ok)))).toBe(typo('Vidím, že máte za sebou noční poplach na serveru' + clean + '. Co vás na kyberbezpečnosti láká?'));
   });
   it('bez hotové ukázky řekne neutrálně, že nic nedokončil', () => {
-    expect(opener(snap(s => viewData(s, 'dny', now)))).toBe('Zatím nic nedokončeno.');
+    expect(opener(snap(s => answerData(s, true, now)))).toBe('Zatím nic nedokončeno.');
   });
   it('„Spíš ne“ platí jen pro ukázku, u které padlo', () => {
     const one = snap(s => { dataFirstTry(s); setFav(s, 'not:data'); });
@@ -80,12 +80,14 @@ describe('recommend', () => {
 });
 
 describe('why', () => {
-  it('odlišuje odhalenou odpověď od třetího pokusu', () => {
-    const third = snap(s => { answerData(s, false, now); answerData(s, false, now); answerData(s, true, min(3)); });
-    const shown = snap(s => { for (let i = 0; i < 3; i++) answerData(s, false, now); });
-    expect(why('data', third)[0]).toBe('Detektivka vyřešená na 3. pokus');
-    expect(why('data', shown)[0]).toBe('Správnou odpověď ukázal nástroj');
-    expect(why('data', third)[2]).toBe('Čas: 2 min');
+  it('odlišuje čistý průchod, chyby a odpověď ukázanou nástrojem', () => {
+    const clean = snap(s => solveData(s));
+    const mistakes = snap(s => { answerData(s, false, now); solveData(s, [0, 1, 0], min(3)); });
+    const shown = snap(s => solveData(s, [2, 0, 0]));
+    expect(why('data', clean)[0]).toBe(typo('Všechny tři kroky správně napoprvé'));
+    expect(why('data', mistakes)[0]).toBe(typo('Špatné odpovědi po cestě: 2'));
+    expect(why('data', shown)[0]).toBe(typo('Správnou odpověď ukázal nástroj'));
+    expect(why('data', mistakes)[1]).toBe(typo('Čas: 2 min'));
   });
 });
 

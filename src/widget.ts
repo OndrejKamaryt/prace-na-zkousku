@@ -27,6 +27,8 @@ import baseCss from './ui/styles.css?inline';
 import screensCss from './ui/screens.css?inline';
 
 const CLAIM_BAR: Record<PathKey, string> = { data: '#d-done', ai: '#a-done', hry: '#g-done', kyber: '#s-done' };
+/** Mezera nad prvkem nebo pod ním po posunu stránky, v px. */
+const TOP_GAP = 8;
 const isPath = (v: string): v is PathKey => (PATHS as readonly string[]).includes(v);
 
 let sharedSheet: CSSStyleSheet | null = null;
@@ -113,7 +115,8 @@ export class PraceNaZkousku extends HTMLElement {
       go: v => this.#go(v, true),
       completed: (k, first) => this.#completed(k, first),
       reveal: target => this.#reveal(target),
-      center: target => this.#center(target),
+      alignTop: target => this.#alignTop(target),
+      keepVisible: target => this.#keepVisible(target),
       topOffset: () => this.#topOffset(),
       bottomOffset: () => (this.#variant === 'embed' ? measureBottom(this) : 0),
       width: () => this.clientWidth,
@@ -217,10 +220,17 @@ export class PraceNaZkousku extends HTMLElement {
     if (r.top > innerHeight * 0.55 || r.bottom < off + 80) scrollPage(scrollY + r.top - off, !this.#reduce);
   }
 
-  #center(target: Element) {
+  #alignTop(target: Element | null | undefined) {
+    if (!target?.isConnected) return;
+    scrollPage(scrollY + target.getBoundingClientRect().top - this.#topOffset() - TOP_GAP, !this.#reduce);
+  }
+
+  #keepVisible(target: Element | null | undefined) {
+    if (!target?.isConnected) return;
     const r = target.getBoundingClientRect();
-    const top = this.#topOffset(), bottom = this.#variant === 'embed' ? measureBottom(this) : 0;
-    const mid = top + (innerHeight - top - bottom) / 2;
-    scrollPage(scrollY + r.top + r.height / 2 - mid, !this.#reduce);
+    const limit = innerHeight - (this.#variant === 'embed' ? measureBottom(this) : 0);
+    if (r.bottom <= limit) return;
+    // začátek prvku se kvůli jeho konci nesmí dostat pod lepicí hlavičku
+    scrollPage(scrollY + Math.min(r.bottom - limit + TOP_GAP, r.top - this.#topOffset() - TOP_GAP), !this.#reduce);
   }
 }

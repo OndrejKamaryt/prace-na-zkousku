@@ -2,20 +2,20 @@ import { describe, expect, it } from 'vitest';
 import { merge, mergePath } from '../../src/logic/merge.ts';
 import { rate } from '../../src/logic/rating.ts';
 import {
-  answerData, gamePlay, gameWin, ideaBuilt, lowIncomeShown, setFav, setFirm, setGoal, setLowIncome, startIdea,
+  gamePlay, gameWin, ideaBuilt, lowIncomeShown, setFav, setFirm, setGoal, setLowIncome, startIdea,
 } from '../../src/logic/state.ts';
 import type { State } from '../../src/logic/state.ts';
 import type { DataSnap } from '../../src/logic/types.ts';
-import { min, snap } from './helpers.ts';
+import { min, snap, solveData } from './helpers.ts';
 
 const A = '11111111-1111-4111-8111-111111111111';
 const B = '22222222-2222-4222-8222-222222222222';
 const now = min(1);
-const wrongThenRight = (s: State) => { answerData(s, false, now); answerData(s, true, now); };
-const firstTry = (s: State) => answerData(s, true, now);
+const wrongThenRight = (s: State) => solveData(s, [1, 0, 0], now);
+const firstTry = (s: State) => solveData(s, [0, 0, 0], now);
 
-const data = (status: DataSnap['status'], tries = 0): DataSnap =>
-  ({ status, seconds: 60, viewsSeen: 1, tries, firstTry: tries === 1, revealed: false });
+const data = (status: DataSnap['status'], mistakes = 0): DataSnap =>
+  ({ status, seconds: 60, mistakes, firstTry: status === 'done' && mistakes === 0, revealed: false });
 
 describe('mergePath: odsouhlasená pravidla (PLAN.md, rozhodnutí 8)', () => {
   it('ve stejné relaci vyhrává novější snímek', () => {
@@ -60,7 +60,7 @@ describe('merge', () => {
     const second = merge(first, snap(() => {}), B, 2);
     expect(rate('data', second.snapshot.paths)).toBe('great');
   });
-  it('opakovaná detektivka v nové relaci hodnocení nezlepší', () => {
+  it('opakovaná ukázka v nové relaci hodnocení nezlepší', () => {
     const first = merge(null, snap(wrongThenRight), A, 3);
     const again = merge(first, snap(firstTry), B, 4);
     expect(rate('data', again.snapshot.paths)).toBe('average');

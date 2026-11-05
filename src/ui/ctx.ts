@@ -23,8 +23,10 @@ export interface Ctx {
   completed(k: PathKey, first: boolean): void;
   /** Posune stránku tak, aby byl prvek vidět pod lepicí hlavičkou (reveal() z prototypu). */
   reveal(el: Element | null | undefined): void;
-  /** Posune stránku tak, aby byl prvek uprostřed místa pod hlavičkou. */
-  center(el: Element): void;
+  /** Posune stránku tak, aby prvek začínal hned pod lepicí hlavičkou (nový krok, výsledek ukázky). */
+  alignTop(el: Element | null | undefined): void;
+  /** Posune stránku jen tolik, aby byl prvek celý vidět nad dolní lištou webu. */
+  keepVisible(el: Element | null | undefined): void;
   /** Výška lepicí hlavičky webu nahoře a lišty dole v px. */
   topOffset(): number;
   bottomOffset(): number;

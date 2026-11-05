@@ -10,7 +10,7 @@ interface Timing {
   t0: number;
   t1: number;
 }
-type DataState = Omit<DataSnap, 'seconds' | 'viewsSeen'> & Timing & { views: string[] };
+type DataState = Omit<DataSnap, 'seconds'> & Timing & { stepWrong: number };
 type AiState = Omit<AiSnap, 'seconds' | 'apps'> & Timing & { apps: Partial<Record<IdeaKey, { built: boolean; changes: string[] }>> };
 type HryState = Omit<HrySnap, 'seconds'> & Timing;
 type KyberState = Omit<KyberSnap, 'seconds'> & Timing;
@@ -30,8 +30,8 @@ export interface State {
   kyber: KyberState;
 }
 
-/** Po kolika chybách ukáže Datová analýza správnou odpověď. */
-export const DATA_MAX_TRIES = 3;
+/** Po kolika špatných odpovědích v jednom kroku ukáže Datová analýza správnou. */
+export const DATA_MAX_WRONG = 2;
 
 const timing = (): Timing => ({ t0: 0, t1: 0 });
 const NOT_STARTED: Status = 'not_started';
@@ -40,7 +40,7 @@ export function createState(entry: Screen = 'start', entrySource: EntrySource = 
   return {
     entry, entrySource, page, firstAt: 0,
     fav: null, goal: null, firm: false, lowIncome: null,
-    data: { status: NOT_STARTED, ...timing(), views: [], tries: 0, firstTry: false, revealed: false },
+    data: { status: NOT_STARTED, ...timing(), mistakes: 0, stepWrong: 0, firstTry: false, revealed: false },
     ai: { status: NOT_STARTED, ...timing(), ideasTried: 0, apps: {} },
     hry: { status: NOT_STARTED, ...timing(), plays: 0, deaths: 0, edits: 0, ownPlays: 0, defaultWon: false, ownWon: false, winAttempt: 0, bestCoins: 0 },
     kyber: { status: NOT_STARTED, ...timing(), firstOk: 0, mistakes: 0 },
@@ -74,28 +74,25 @@ export const isDone = (s: State, k: PathKey) => s[k].status === 'done';
 export const badgeCount = (s: State) => PATHS.filter(k => isDone(s, k)).length;
 
 /* ---------- Datová analýza ---------- */
-export function viewData(s: State, view: string, now: number, initial = false): void {
-  if (!initial) touch(s, 'data', now);
-  if (!s.data.views.includes(view)) s.data.views.push(view);
-}
-
 export type DataOutcome = 'wrong' | 'solved' | 'revealed' | 'ignored';
 export function answerData(s: State, correct: boolean, now: number): DataOutcome {
   const d = s.data;
   if (d.status === 'done') return 'ignored';
   touch(s, 'data', now);
-  d.tries++;
   if (correct) {
-    d.firstTry = d.tries === 1;
-    finish(s, 'data', now);
+    d.stepWrong = 0;
     return 'solved';
   }
-  if (d.tries >= DATA_MAX_TRIES) {
-    d.revealed = true;
-    finish(s, 'data', now);
-    return 'revealed';
-  }
-  return 'wrong';
+  d.mistakes++;
+  if (++d.stepWrong < DATA_MAX_WRONG) return 'wrong';
+  d.stepWrong = 0;
+  d.revealed = true;
+  return 'revealed';
+}
+/** Poslední krok je za námi. Vrací true jen poprvé. */
+export function finishData(s: State, now: number): boolean {
+  s.data.firstTry = s.data.mistakes === 0;
+  return finish(s, 'data', now);
 }
 
 /* ---------- Stavění s AI ---------- */
@@ -184,7 +181,7 @@ const secs = (t: Timing, now: number) => (t.t0 ? toSecs((t.t1 || now) - t.t0) : 
 const EMPTY_UTM: Utm = { source: '', medium: '', campaign: '', content: '', term: '' };
 
 export function snapshot(s: State, now: number, utm: Utm = EMPTY_UTM): Snapshot {
-  const { t0: _d0, t1: _d1, views, ...data } = s.data;
+  const { t0: _d0, t1: _d1, stepWrong: _dw, ...data } = s.data;
   const { t0: _a0, t1: _a1, apps, ...ai } = s.ai;
   const { t0: _h0, t1: _h1, ...hry } = s.hry;
   const { t0: _k0, t1: _k1, ...kyber } = s.kyber;
@@ -203,7 +200,7 @@ export function snapshot(s: State, now: number, utm: Utm = EMPTY_UTM): Snapshot 
     firmInterest: s.firm && s.goal === 'upskill',
     lowIncome: s.lowIncome,
     paths: {
-      data: { ...data, seconds: secs(s.data, now), viewsSeen: views.length },
+      data: { ...data, seconds: secs(s.data, now) },
       ai: { ...ai, seconds: secs(s.ai, now), apps: aiApps },
       hry: { ...hry, seconds: secs(s.hry, now) },
       kyber: { ...kyber, seconds: secs(s.kyber, now) },

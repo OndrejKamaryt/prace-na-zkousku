@@ -1,28 +1,27 @@
 /* Styly ukázek, výsledku a okna s odznakem (z prototypu, @media podle šířky převedené na @container). */
 
 /* data */
-.tabs{display:flex; flex-wrap:wrap; gap:8px}
-.tab{min-height:44px; padding:8px 16px; border-radius:999px; border:1px solid var(--dark); background:var(--bg); font:500 15px var(--head); cursor:pointer; color:var(--dark)}
-.tab:hover{background:var(--light)}
-.tab[aria-selected="true"]{background:var(--dark); color:var(--on-dark)}
-.bars{display:grid; gap:12px; margin-top:18px}
+.step-text{margin-top:10px; max-width:64ch}
+.bars{display:grid; gap:12px; margin-top:16px}
 .bar-row{display:grid; grid-template-columns:8.2em minmax(0,1fr) 6.6em; align-items:center; gap:10px; font-size:14px}
 @container (max-width:480px){ .bar-row{grid-template-columns:6.4em minmax(0,1fr) 5.8em; font-size:13px} }
 .bar-label{font-weight:600}
-.bar-pair{display:grid; gap:3px}
+.bar-row.pair{grid-template-columns:8.2em minmax(0,1fr)}
+@container (max-width:480px){ .bar-row.pair{grid-template-columns:5.6em minmax(0,1fr)} }
+.bar-pair{display:grid; gap:2px}
+.bar-line{display:grid; grid-template-columns:minmax(0,1fr) 6.6em; align-items:center; gap:10px}
+@container (max-width:480px){ .bar-line{grid-template-columns:minmax(0,1fr) 5.8em; gap:6px} }
 .bar-track{height:22px; background:var(--light); border-radius:4px; position:relative; overflow:hidden}
 .bar-track.thin{height:10px; border-radius:3px}
 .bar-fill{position:absolute; inset:0 auto 0 0; background:var(--navy); border-radius:inherit; transition:width .5s ease}
 .bar-fill.pale{background:var(--sky-pale)}
 .num{text-align:right; font-variant-numeric:tabular-nums; font:700 14px var(--head)}
-.num small{display:block; font:500 12px var(--head); color:var(--gray)}
-.num.neg small{color:var(--pink-ink); font-weight:700}
+.num.pale{font-weight:500; color:var(--gray)}
 .legend{display:flex; flex-wrap:wrap; gap:16px; font-size:13px; color:var(--gray); margin-top:14px}
 .sw{width:12px; height:12px; border-radius:3px; display:inline-block; vertical-align:-1px; margin-right:6px}
-.kpis{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px}
-.kpi{background:var(--light); border-radius:var(--r-card); padding:8px 12px; font-size:13px; color:var(--gray)}
-.kpi b{display:block; font:700 16px var(--head); color:var(--ink); font-variant-numeric:tabular-nums}
-.seen{font:500 14px var(--head); color:var(--navy); margin-top:6px}
+.data-step .q-title{margin-top:20px}
+.options.short{grid-template-columns:repeat(auto-fit, minmax(150px, 1fr))}
+#d-next-row{margin-top:12px}
 
 /* stavění s AI */
 .ideas{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin-top:10px}
@@ -225,8 +224,6 @@ button, a, #g-canvas{-webkit-tap-highlight-color:transparent}
   .path-card:hover{border-color:var(--line); box-shadow:none}
   .opt:hover:not(:disabled), .cmd:hover:not(:disabled), .other:hover, .idea:hover{border-color:var(--line-strong); box-shadow:none}
   .idea[aria-pressed="true"]:hover{border-color:var(--dark); box-shadow:inset 0 0 0 1px var(--dark)}
-  .tab:hover{background:var(--bg)}
-  .tab[aria-selected="true"]:hover{background:var(--dark)}
 }
 /* Pulse: tlačítko, na které se má klepnout, jemně dýchá a vysílá žlutý kruh */
 @keyframes pulse{0%{transform:scale(1); box-shadow:0 0 0 0 rgba(250,186,32,.6)} 35%{transform:scale(1.06)} 70%{transform:scale(1); box-shadow:0 0 0 14px rgba(250,186,32,0)} 100%{transform:scale(1); box-shadow:0 0 0 0 rgba(250,186,32,0)}}

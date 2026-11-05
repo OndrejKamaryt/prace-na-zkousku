@@ -2,7 +2,7 @@
    coderslab.cz). Proti prototypu:
    - tokeny a základ jsou na :host, který zároveň odřízne děděné vlastnosti webu (all: initial),
    - rozložení podle šířky řídí @container (šířka widgetu), ne @media (šířka okna), vw je cqi,
-   - okno s odznakem je <dialog> v top layer, plovoucí tlačítko popover,
+   - okno s odznakem je <dialog> v top layer,
    - v režimu embed je místo tmavé hlavičky světlý pruh s odznaky. */
 :host{
   all:initial;
@@ -177,7 +177,6 @@ button{font-family:inherit}
 .mission{display:flex; gap:14px; align-items:flex-start; background:var(--light); border-radius:var(--r-panel); padding:16px 18px; margin-bottom:16px}
 .mission .who{width:54px; height:54px; border-radius:50%; background:var(--bg); border:3px solid var(--yellow); display:grid; place-items:center; flex:none; font:700 21px var(--head); color:var(--dark)}
 .mission p{font-size:16px; max-width:64ch}
-.mission .tip{display:block; font-size:14px; color:var(--gray); margin-top:6px}
 
 /* pracovní plocha */
 .task{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:16px; align-items:start}
@@ -212,7 +211,3 @@ details.more summary{cursor:pointer; font:500 15px var(--head); color:var(--dark
 .claim p{font:700 18px/1.35 var(--head); flex:1 1 240px; max-width:60ch; color:var(--ink-strong)}
 .claim .btn-primary{background:var(--dark); border-color:var(--dark); color:var(--on-dark)}
 .claim .btn-primary:hover{background:#000; border-color:#000}
-
-/* plovoucí tlačítko „Znám viníka“: popover v top layer, nad dolní lištou webu */
-.fab{position:fixed; inset:auto auto calc(var(--pnz-fab-bottom, 16px) + env(safe-area-inset-bottom, 0px)) 50%; transform:translateX(-50%); margin:0; width:auto; height:auto; overflow:visible; box-shadow:var(--float); z-index:2147483000}
-.fab[popover]:not(:popover-open){display:none}
