@@ -35,7 +35,7 @@ describe('payload', () => {
     expect(parseBody(JSON.stringify({ ...payload(), token: 'abc' })).ok).toBe(false);
     const p = payload();
     p.paths.data.mistakes = -1;
-    expect(parseBody(JSON.stringify(p))).toEqual({ ok: false, error: 'paths.data.mistakes: čekám celé číslo 0 až 6' });
+    expect(parseBody(JSON.stringify(p))).toEqual({ ok: false, error: 'paths.data.mistakes: čekám celé číslo 0 až 16' });
   });
   it('odmítne tělo nad 10 kB a ne-JSON', () => {
     const big = JSON.stringify({ ...payload(), page: 'x'.repeat(MAX_BODY_BYTES) });

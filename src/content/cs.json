@@ -47,172 +47,255 @@
   "data": {
     "title": "Proč kavárně Zrnko v březnu klesly tržby?",
     "who": "J",
-    "mission": "Majitelka kavárny Jana vidí, že v březnu vydělala méně než jindy. Najdi, proč poklesly tržby. Půjdeš na to ve třech krocích, stejně jako datový analytik.",
-    "stepOf": "krok {n} ze 3",
-    "next": "Další krok",
+    "jana": "Jana, kavárna Zrnko",
+    "opening": "Ahoj, v březnu jsme vydělali nějak málo a vůbec nevím proč. Nemrkneš na to? Jsi přece náš datový analytik.",
+    "closing": "Aha! V březnu nám odešel kuchař a o víkendu snídaně nikdo nedělal. Díky, hned to řeším!",
+    "cluesLabel": "Co už víš",
+    "clues": [
+      "Kdy?",
+      "Které dny?",
+      "Co chybí?"
+    ],
+    "file": "pokladna_zrnko.csv",
+    "receipts": "9 660 účtenek",
     "legendFeb": "únor",
     "legendMar": "březen",
-    "revealed": "Správná odpověď je označená zeleně.",
+    "revealed": "Správná odpověď svítí.",
     "steps": [
       {
-        "title": "Porovnej měsíce",
-        "text": "Analytik začíná tím nejjednodušším: kolik kavárna vydělala za každý měsíc.",
-        "rows": [
-          [
-            "Leden",
-            312400
-          ],
-          [
-            "Únor",
-            298900
-          ],
-          [
-            "Březen",
-            241300
-          ],
-          [
-            "Duben",
-            306200
-          ]
-        ],
-        "question": "Ve kterém měsíci tržby klesly?",
+        "scene": "jana",
+        "q": "Co uděláš jako první?",
         "options": [
           {
-            "t": "Leden",
-            "ok": false,
-            "why": "V tomhle měsíci vydělala kavárna zhruba jako jindy. Hledej nejkratší pruh."
+            "icon": "tag",
+            "t": "Navrhnu slevovou akci na březen",
+            "why": "Slevu? Vždyť ještě nevíme, co se stalo."
           },
           {
-            "t": "Únor",
-            "ok": false,
-            "why": "V tomhle měsíci vydělala kavárna zhruba jako jindy. Hledej nejkratší pruh."
+            "icon": "down",
+            "t": "Stáhnu si data z pokladny",
+            "ok": true
           },
           {
-            "t": "Březen",
-            "ok": true,
-            "why": "Správně, v březnu kavárna vydělala o 57 600 Kč méně než v únoru. Teď zjistíme proč."
-          },
-          {
-            "t": "Duben",
-            "ok": false,
-            "why": "V tomhle měsíci vydělala kavárna zhruba jako jindy. Hledej nejkratší pruh."
+            "icon": "slides",
+            "t": "Rovnou udělám prezentaci",
+            "why": "Prezentaci o čem? Zatím nemáš jediné číslo."
           }
         ]
       },
       {
-        "title": "Podívej se, co lidé kupovali",
-        "text": "Tržby za únor a březen teď rozdělíme podle toho, co lidé kupovali.",
-        "rows": [
-          [
-            "Káva a nápoje",
-            148200,
-            146900
-          ],
-          [
-            "Dezerty",
-            63400,
-            61800
-          ],
-          [
-            "Snídaně",
-            62100,
-            9300
-          ],
-          [
-            "Obědové menu",
-            25200,
-            23300
-          ]
-        ],
-        "question": "Co se v březnu prodávalo mnohem méně?",
+        "scene": "raw",
+        "q": "Z tolika řádků nic nevyčteš. Co uděláš?",
         "options": [
           {
-            "t": "Káva a nápoje",
-            "ok": false,
-            "why": "Tady je březen skoro stejný jako únor. Hledej, kde je březnový pruh mnohem kratší."
+            "icon": "rows",
+            "t": "Projdu účtenky jednu po druhé",
+            "why": "9 660 účtenek? Budeš u toho do Velikonoc."
           },
           {
-            "t": "Dezerty",
-            "ok": false,
-            "why": "Tady je březen skoro stejný jako únor. Hledej, kde je březnový pruh mnohem kratší."
+            "icon": "trash",
+            "t": "Smažu všechno kromě března",
+            "why": "Bez ostatních měsíců nepoznáš, co je normální. Potřebuješ srovnání."
           },
           {
-            "t": "Snídaně",
-            "ok": true,
-            "why": "Přesně tak. Snídaně spadly z 62 100 na 9 300 Kč, ostatní se prodávalo skoro stejně. Zbývá zjistit, kdy snídaně chyběly."
-          },
-          {
-            "t": "Obědové menu",
-            "ok": false,
-            "why": "Tady je březen skoro stejný jako únor. Hledej, kde je březnový pruh mnohem kratší."
+            "icon": "sum",
+            "t": "Sečtu tržby po měsících",
+            "ok": true
           }
         ]
       },
       {
-        "title": "Podívej se na dny v týdnu",
-        "text": "Stejné tržby teď rozdělíme podle dnů v týdnu.",
-        "rows": [
-          [
-            "Pondělí",
-            33100,
-            32700
-          ],
-          [
-            "Úterý",
-            34800,
-            34100
-          ],
-          [
-            "Středa",
-            35600,
-            35900
-          ],
-          [
-            "Čtvrtek",
-            36900,
-            36200
-          ],
-          [
-            "Pátek",
-            41200,
-            40600
-          ],
-          [
-            "Sobota",
-            63400,
-            33400
-          ],
-          [
-            "Neděle",
-            53900,
-            28400
-          ]
+        "chart": "months",
+        "q": "Klikni na měsíc, který nesedí.",
+        "right": [
+          2
         ],
-        "question": "Kdy kavárna v březnu vydělala méně?",
+        "chip": "−57 600 Kč",
+        "clue": "v březnu",
+        "found": "Březen je o 57 600 Kč níž než únor.",
+        "rows": [
+          {
+            "label": "Leden",
+            "a": 312400,
+            "why": "Leden vypadá normálně. Hledej nejnižší sloupec."
+          },
+          {
+            "label": "Únor",
+            "a": 298900,
+            "why": "Únor vypadá normálně. Hledej nejnižší sloupec."
+          },
+          {
+            "label": "Březen",
+            "a": 241300
+          },
+          {
+            "label": "Duben",
+            "a": 306200,
+            "why": "Duben vypadá normálně. Hledej nejnižší sloupec."
+          }
+        ]
+      },
+      {
+        "q": "Jak březen rozebereš dál?",
         "options": [
           {
-            "t": "Ve všední dny",
-            "ok": false,
-            "why": "Od pondělí do pátku je březen skoro stejný jako únor. Podívej se na sobotu a neděli."
+            "icon": "cal",
+            "t": "Porovnám dny v týdnu s únorem",
+            "ok": true
           },
           {
-            "t": "O víkendu",
-            "ok": true,
-            "why": ""
+            "icon": "cloud",
+            "t": "Zjistím, jestli v březnu pršelo",
+            "why": "Počasí může hrát roli, ale nejdřív vytěž data, která máš."
           },
           {
-            "t": "Každý den stejně",
-            "ok": false,
-            "why": "Kdyby to bylo každý den, byly by kratší všechny březnové pruhy. Podívej se na sobotu a neděli."
+            "icon": "mega",
+            "t": "Napíšu Janě, ať víc propaguje kavárnu",
+            "why": "Zatím nevíš, co se pokazilo. Hledej dál."
+          }
+        ]
+      },
+      {
+        "chart": "days",
+        "q": "Klikni na dny, kdy březen propadl.",
+        "right": [
+          5,
+          6
+        ],
+        "chip": "−55 500 Kč",
+        "clue": "o víkendu",
+        "found": "O víkendu chybí 55 500 Kč. Všední dny jsou v pořádku.",
+        "rows": [
+          {
+            "label": "Po",
+            "name": "Pondělí",
+            "a": 33100,
+            "b": 32700,
+            "why": "V pondělí je březen skoro stejný jako únor."
+          },
+          {
+            "label": "Út",
+            "name": "Úterý",
+            "a": 34800,
+            "b": 34100,
+            "why": "V úterý je březen skoro stejný jako únor."
+          },
+          {
+            "label": "St",
+            "name": "Středa",
+            "a": 35600,
+            "b": 35900,
+            "why": "Ve středu je březen skoro stejný jako únor."
+          },
+          {
+            "label": "Čt",
+            "name": "Čtvrtek",
+            "a": 36900,
+            "b": 36200,
+            "why": "Ve čtvrtek je březen skoro stejný jako únor."
+          },
+          {
+            "label": "Pá",
+            "name": "Pátek",
+            "a": 41200,
+            "b": 40600,
+            "why": "V pátek je březen skoro stejný jako únor."
+          },
+          {
+            "label": "So",
+            "name": "Sobota",
+            "a": 63400,
+            "b": 33400
+          },
+          {
+            "label": "Ne",
+            "name": "Neděle",
+            "a": 53900,
+            "b": 28400
+          }
+        ]
+      },
+      {
+        "q": "Co se o víkendu změnilo? Jak to zjistíš?",
+        "options": [
+          {
+            "icon": "avg",
+            "t": "Spočítám průměrnou účtenku",
+            "why": "Průměr ti neřekne, co přesně chybí. Potřebuješ vidět jednotlivé položky."
+          },
+          {
+            "icon": "basket",
+            "t": "Rozdělím tržby podle produktů",
+            "ok": true
+          },
+          {
+            "icon": "clock",
+            "t": "Seřadím účtenky podle času",
+            "why": "Čas už znáš, je to víkend. Teď hledej co."
+          }
+        ]
+      },
+      {
+        "chart": "products",
+        "q": "Klikni na produkt, který zmizel.",
+        "right": [
+          2
+        ],
+        "clue": "snídaně",
+        "found": "Snídaně spadly z 62 100 na 9 300 Kč. Ostatní se prodává skoro stejně.",
+        "rows": [
+          {
+            "label": "Káva a nápoje",
+            "a": 148200,
+            "b": 146900,
+            "why": "Káva a nápoje se prodávají skoro stejně jako v únoru."
+          },
+          {
+            "label": "Dezerty",
+            "a": 63400,
+            "b": 61800,
+            "why": "Dezerty se prodávají skoro stejně jako v únoru."
+          },
+          {
+            "label": "Snídaně",
+            "a": 62100,
+            "b": 9300
+          },
+          {
+            "label": "Obědové menu",
+            "a": 25200,
+            "b": 23300,
+            "why": "Obědy se prodávají skoro stejně jako v únoru."
+          }
+        ]
+      },
+      {
+        "q": "Máš všechno. Co napíšeš Janě?",
+        "options": [
+          {
+            "icon": "msg",
+            "t": "Lidé přestali chodit, to se stává.",
+            "why": "Kávu si kupují pořád stejně, lidé chodí dál."
+          },
+          {
+            "icon": "msg",
+            "t": "Zdražte kávu, to tržby vrátí.",
+            "why": "Káva problém není. Opravovala bych něco, co funguje."
+          },
+          {
+            "icon": "msg",
+            "t": "V březnu o víkendu skoro nebyly snídaně. Stálo vás to 52 800 Kč.",
+            "ok": true
           }
         ]
       }
     ],
+    "lost": 52800,
     "resultTitle": "Zmizely víkendové snídaně",
-    "resultText": "Snídaně se v březnu skoro neprodávaly a chyběly hlavně o víkendu. Majitelka pak potvrdila, že v březnu odešel kuchař a o víkendu snídaně nikdo nepřipravoval. Stálo ji to 52 800 Kč za měsíc.",
+    "resultMoney": "Tolik kavárnu stál jeden měsíc bez víkendových snídaní.",
     "resultHint": "Přesně tohle dělá datový analytik: z čísel zjistí, co se ve firmě děje, a pomůže rozhodnout, co s tím.",
     "sqlSummary": "Jak na to přijde datový analytik",
-    "sqlIntro": "V Excelu na to stačí kontingenční tabulka. V databázi jeden dotaz v jazyce SQL:",
+    "sqlIntro": "Každý tvůj klik byl jeden dotaz. V databázi je píše v jazyce SQL, v Excelu mu stačí kontingenční tabulka.",
     "sqlOutro": "Nemusíš tomu teď rozumět, na kurzu se to naučíš od nuly.",
     "done": "Hotovo, víš, proč tržby klesly!"
   },
@@ -704,7 +787,7 @@
     "navyky": "Tracker návyků"
   },
   "why": {
-    "dataFirstTry": "Všechny tři kroky správně napoprvé",
+    "dataFirstTry": "Všechny kroky správně napoprvé",
     "dataMistakes": "Špatné odpovědi po cestě: {n}",
     "dataRevealed": "Správnou odpověď ukázal nástroj",
     "time": "Čas: {min} min",

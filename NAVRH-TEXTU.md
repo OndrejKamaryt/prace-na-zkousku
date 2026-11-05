@@ -19,47 +19,72 @@ Zůstává rozcestník se třemi kartami: Datová analýza, Tvorba her, Kyberbez
 - Karta hry, nadpis: ~~Zahraj si a postav level~~ → **Zahraj si hru a uprav ji**
 - Karta hry, popis: ~~Nejdřív si level zahraj, pak ho předělej podle sebe.~~ → **Nejdřív si hru zahraj, pak ji předělej podle sebe.**
 
-## Datová analýza: klikačka po třech krocích
+## Datová analýza: práce analytika (schváleno 5. 11., nahrazuje klikačku po třech krocích)
+
+Návštěvník rozhoduje, co analytik udělá dál, a v grafech kliká přímo na sloupce. Klikací koncept je v `prototyp/data-koncept.html`, ostrá verze v `src/content/cs.json`.
 
 Nadpis zůstává: „Proč kavárně Zrnko v březnu klesly tržby?“
 
-Zadání: ~~Majitelka Jana nechápe, kam se v březnu ztratilo 57 600 Kč. Přepínej pohledy na data a najdi viníka.~~ → **Majitelka kavárny Jana vidí, že v březnu vydělala méně než jindy. Najdi, proč poklesly tržby. Půjdeš na to ve třech krocích, stejně jako datový analytik.**
+Stopy nad jevištěm: Kdy?, Které dny?, Co chybí? Plní se postupně.
 
-Zmizí: tip, záložky s pohledy, pohled podle hodin, průměrná útrata a počet účtenek, otázka se čtyřmi odpověďmi, „Prohlédnuto n ze 4 pohledů“, tlačítko „Znám viníka“. Graf má u každého pruhu jeho částku, bez rozdílu proti únoru. Legenda: ~~březen a rozdíl proti únoru~~ → **březen**.
+Jana na začátku: **Ahoj, v březnu jsme vydělali nějak málo a vůbec nevím proč. Nemrkneš na to? Jsi přece náš datový analytik.**
 
-Na obrazovce je vždy jen jeden krok. Po dvou špatných odpovědích se správná ukáže sama.
+**Co uděláš jako první?**
+- Navrhnu slevovou akci na březen → Jana: Slevu? Vždyť ještě nevíme, co se stalo.
+- Stáhnu si data z pokladny (správně)
+- Rovnou udělám prezentaci → Jana: Prezentaci o čem? Zatím nemáš jediné číslo.
 
-**Krok 1 ze 3: Porovnej měsíce**
-- Text: **Analytik začíná tím nejjednodušším: kolik kavárna vydělala za každý měsíc.**
-- Graf: tržby leden až duben (jako dnes).
-- Otázka: **Ve kterém měsíci tržby klesly?** Volby: Leden, Únor, Březen, Duben.
-- Špatně: **V tomhle měsíci vydělala kavárna zhruba jako jindy. Hledej nejkratší pruh.**
-- Správně: **Správně, v březnu kavárna vydělala o 57 600 Kč méně než v únoru. Teď zjistíme proč.**
-- Tlačítko: **Další krok**
+**Z tolika řádků nic nevyčteš. Co uděláš?**
+- Projdu účtenky jednu po druhé → Jana: 9 660 účtenek? Budeš u toho do Velikonoc.
+- Smažu všechno kromě března → Jana: Bez ostatních měsíců nepoznáš, co je normální. Potřebuješ srovnání.
+- Sečtu tržby po měsících (správně)
 
-**Krok 2 ze 3: Podívej se, co lidé kupovali**
-- Text: **Tržby za únor a březen teď rozdělíme podle toho, co lidé kupovali.**
-- Graf: únor a březen podle produktů.
-- Otázka: **Co se v březnu prodávalo mnohem méně?** Volby: Káva a nápoje, Dezerty, Snídaně, Obědové menu.
-- Špatně: **Tady je březen skoro stejný jako únor. Hledej, kde je březnový pruh mnohem kratší.**
-- Správně: **Přesně tak. Snídaně spadly z 62 100 na 9 300 Kč, ostatní se prodávalo skoro stejně. Zbývá zjistit, kdy snídaně chyběly.**
-- Tlačítko: **Další krok**
+**Klikni na měsíc, který nesedí.**
+- Leden → Jana: Leden vypadá normálně. Hledej nejnižší sloupec.
+- Únor → Jana: Únor vypadá normálně. Hledej nejnižší sloupec.
+- Duben → Jana: Duben vypadá normálně. Hledej nejnižší sloupec.
+- Správně: Březen je o 57 600 Kč níž než únor. Stopa: „v březnu“.
 
-**Krok 3 ze 3: Podívej se na dny v týdnu**
-- Text: **Stejné tržby teď rozdělíme podle dnů v týdnu.**
-- Graf: únor a březen podle dnů.
-- Otázka: **Kdy kavárna v březnu vydělala méně?** Volby: **Ve všední dny**, **O víkendu**, **Každý den stejně**.
-- Špatně (všední dny): **Od pondělí do pátku je březen skoro stejný jako únor. Podívej se na sobotu a neděli.**
-- Špatně (každý den): **Kdyby to bylo každý den, byly by kratší všechny březnové pruhy. Podívej se na sobotu a neděli.**
+**Jak březen rozebereš dál?**
+- Porovnám dny v týdnu s únorem (správně)
+- Zjistím, jestli v březnu pršelo → Jana: Počasí může hrát roli, ale nejdřív vytěž data, která máš.
+- Napíšu Janě, ať víc propaguje kavárnu → Jana: Zatím nevíš, co se pokazilo. Hledej dál.
 
-Po dvou špatných: **Správná odpověď je označená zeleně.**
+**Klikni na dny, kdy březen propadl.**
+- Pondělí → Jana: V pondělí je březen skoro stejný jako únor.
+- Úterý → Jana: V úterý je březen skoro stejný jako únor.
+- Středa → Jana: Ve středu je březen skoro stejný jako únor.
+- Čtvrtek → Jana: Ve čtvrtek je březen skoro stejný jako únor.
+- Pátek → Jana: V pátek je březen skoro stejný jako únor.
+- Správně: O víkendu chybí 55 500 Kč. Všední dny jsou v pořádku. Stopa: „o víkendu“.
 
-**Výsledek ukázky**
-- Nadpis: **Zmizely víkendové snídaně**
-- Text: **Snídaně se v březnu skoro neprodávaly a chyběly hlavně o víkendu. Majitelka pak potvrdila, že v březnu odešel kuchař a o víkendu snídaně nikdo nepřipravoval. Stálo ji to 52 800 Kč za měsíc.**
-- **Přesně tohle dělá datový analytik: z čísel zjistí, co se ve firmě děje, a pomůže rozhodnout, co s tím.**
-- Rozbalovací „Jak na to přijde datový analytik“ s ukázkou SQL zůstává.
-- Pruh: ~~Hotovo, detektivka je vyřešená!~~ → **Hotovo, víš, proč tržby klesly!**
+**Co se o víkendu změnilo? Jak to zjistíš?**
+- Spočítám průměrnou účtenku → Jana: Průměr ti neřekne, co přesně chybí. Potřebuješ vidět jednotlivé položky.
+- Rozdělím tržby podle produktů (správně)
+- Seřadím účtenky podle času → Jana: Čas už znáš, je to víkend. Teď hledej co.
+
+**Klikni na produkt, který zmizel.**
+- Káva a nápoje → Jana: Káva a nápoje se prodávají skoro stejně jako v únoru.
+- Dezerty → Jana: Dezerty se prodávají skoro stejně jako v únoru.
+- Obědové menu → Jana: Obědy se prodávají skoro stejně jako v únoru.
+- Správně: Snídaně spadly z 62 100 na 9 300 Kč. Ostatní se prodává skoro stejně. Stopa: „snídaně“.
+
+**Máš všechno. Co napíšeš Janě?**
+- Lidé přestali chodit, to se stává. → Jana: Kávu si kupují pořád stejně, lidé chodí dál.
+- Zdražte kávu, to tržby vrátí. → Jana: Káva problém není. Opravovala bych něco, co funguje.
+- V březnu o víkendu skoro nebyly snídaně. Stálo vás to 52 800 Kč. (správně)
+
+Po dvou špatných: **Správná odpověď svítí.**
+
+Stahování dat: `pokladna_zrnko.csv`, 9 660 účtenek (počet je dopočítaný z tržeb při zhruba 120 Kč na účtenku).
+
+Jana na konci: **Aha! V březnu nám odešel kuchař a o víkendu snídaně nikdo nedělal. Díky, hned to řeším!**
+
+Výsledek: **Zmizely víkendové snídaně**, 52 800 Kč, **Tolik kavárnu stál jeden měsíc bez víkendových snídaní.** **Přesně tohle dělá datový analytik: z čísel zjistí, co se ve firmě děje, a pomůže rozhodnout, co s tím.**
+
+Rozbalovací „Jak na to přijde datový analytik“: **Každý tvůj klik byl jeden dotaz. V databázi je píše v jazyce SQL, v Excelu mu stačí kontingenční tabulka.** Ukázka SQL. Nemusíš tomu teď rozumět, na kurzu se to naučíš od nuly.
+
+Pruh: **Hotovo, víš, proč tržby klesly!**
 
 ## Tvorba her
 
@@ -108,7 +133,7 @@ Zmizí: seznam důvodů („Detektivka vyřešená na první pokus“, „Čas: 
 
 ## Jen pro obchod (poznámka v Pipedrivu, na obrazovce není)
 
-- ~~Detektivka vyřešená na první pokus~~ → **Všechny tři kroky správně napoprvé**
+- ~~Detektivka vyřešená na první pokus~~ → **Všechny kroky správně napoprvé**
 - ~~Detektivka vyřešená na {tries}. pokus~~ → **Špatné odpovědi po cestě: {n}**
 - ~~Prozkoumané pohledy na data: {seen} ze 4~~ → zmizí
 - První věta do telefonu: ~~Vidím, že máte za sebou datovou detektivku{firstTry}.~~ → **Vidím, že máte za sebou ukázku s daty kavárny{firstTry}.** Co vás na práci s daty bavilo?

@@ -49,13 +49,18 @@ export const widgetState = (page: Page) => page.evaluate(() => (document.querySe
 /** Šířka obsahu stránky, pro kontrolu vodorovného přetečení. */
 export const scrollWidth = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth);
 
-/** Datová analýza projitá bez chyby: březen, snídaně, o víkendu, až po pruh Hotovo. */
-export async function solveData(page: Page): Promise<void> {
-  await page.locator('#d-options [data-opt="2"]').click();
-  await page.locator('#d-next').click();
-  await page.locator('#d-options [data-opt="2"]').click();
-  await page.locator('#d-next').click();
-  await page.locator('#d-options [data-opt="1"]').click();
+/** Volba v datové ukázce. Starší tlačítka jsou po odpovědi vypnutá, Playwright počká na nová. */
+export const dataOpt = (page: Page, n: number) => page.locator(`#d-options [data-opt="${n}"]`).click();
+/** Klik na sloupec nebo řádek grafu v datové ukázce. */
+export const dataBar = (page: Page, n: number) => page.locator(`#d-chart [data-bar="${n}"]`).click();
+
+/** Datová analýza projitá bez chyby: data, měsíce, březen, dny, víkend, produkty, snídaně, zpráva Janě. onStep se volá po každém rozhodnutí. */
+export async function solveData(page: Page, onStep: () => Promise<void> = async () => {}): Promise<void> {
+  const moves: [typeof dataOpt, number][] = [[dataOpt, 1], [dataOpt, 2], [dataBar, 2], [dataOpt, 0], [dataBar, 5], [dataOpt, 1], [dataBar, 2], [dataOpt, 2]];
+  for (const [move, n] of moves) {
+    await move(page, n);
+    await onStep();
+  }
   await expect(page.locator('#d-done')).toBeVisible();
 }
 

@@ -67,3 +67,17 @@ export function commands(today: Date): Record<CmdKey, { cmd: string; out: TermLi
     restart: { cmd: 'sudo systemctl restart ssh', out: [['c', '# přihlásit se jde už jen klíčem, hádání hesel nemá smysl']] },
   };
 }
+
+/** Dotaz, který se vypíše nad grafem datové ukázky: každý klik analytika je jeden dotaz. */
+export const SQL_CHART = {
+  months: 'SELECT mesic, SUM(trzba) FROM uctenky GROUP BY mesic',
+  days: 'SELECT den, mesic, SUM(trzba) FROM uctenky GROUP BY den, mesic',
+  products: 'SELECT produkt, mesic, SUM(trzba) FROM uctenky GROUP BY produkt, mesic',
+};
+
+/** Řádky z pokladny, které se sypou při stahování dat: datum, položka, cena v Kč. */
+export const RECEIPTS: [string, string, number][] = [
+  ['2.\u00A03.', 'Snídaně', 189], ['2.\u00A03.', 'Cappuccino', 72], ['3.\u00A03.', 'Dort', 95], ['3.\u00A03.', 'Espresso', 58],
+  ['4.\u00A03.', 'Polední menu', 165], ['5.\u00A03.', 'Flat white', 78], ['6.\u00A03.', 'Bábovka', 69], ['7.\u00A03.', 'Espresso', 58],
+  ['8.\u00A03.', 'Limonáda', 64], ['9.\u00A03.', 'Cappuccino', 72], ['10.\u00A03.', 'Polední menu', 165], ['11.\u00A03.', 'Dort', 95],
+];

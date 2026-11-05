@@ -4,7 +4,7 @@
    a odstup od dolní lišty webu. */
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { LAPTOP, MOBILE, focused, hitsWidget, open, solveData, trackErrors, widgetState } from './helpers.ts';
+import { LAPTOP, MOBILE, dataBar, dataOpt, focused, hitsWidget, open, solveData, trackErrors, widgetState } from './helpers.ts';
 
 const hostTop = (page: Page) => page.evaluate(() => document.querySelector('prace-na-zkousku')!.getBoundingClientRect().top);
 
@@ -129,27 +129,26 @@ test('výsledek ukázky a pruh Hotovo nejsou schované pod lepicí hlavičkou (R
   expect(await hitsWidget(page, bar.x + 40, bar.y + 4)).toBe('widget');
 });
 
-test('mobil: Další krok není schovaný pod dolní lištou webu', async ({ page }) => {
+test('mobil: volby v datové ukázce nejsou schované pod dolní lištou webu', async ({ page }) => {
   await page.setViewportSize(MOBILE);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page, '/test-host.html?cookies=0&ukazka=data');
-  await page.locator('#d-options [data-opt="2"]').click();
-  await expect(page.locator('#d-next')).toBeVisible();
-  const next = (await page.locator('#d-next').boundingBox())!;
+  await dataOpt(page, 1);
+  const last = page.locator('#d-options .act').last();
+  await expect(last).toBeVisible();
+  const box = (await last.boundingBox())!;
   const nav = (await page.locator('.mobile-nav').boundingBox())!;
-  expect(next.y + next.height, 'tlačítko nad dolní lištou').toBeLessThanOrEqual(nav.y);
-  expect(await hitsWidget(page, next.x + next.width / 2, next.y + next.height / 2)).toBe('widget');
+  expect(box.y + box.height, 'volba nad dolní lištou').toBeLessThanOrEqual(nav.y);
+  expect(await hitsWidget(page, box.x + box.width / 2, box.y + box.height / 2)).toBe('widget');
 
-  // nový krok začíná pod horním okrajem, na mobilu web lepicí hlavičku nemá
-  await page.locator('#d-next').click();
-  await expect(page.locator('#d-step .of')).toHaveText('krok 2 ze 3');
-  const top = (await page.locator('#d-step').boundingBox())!.y;
+  // nový graf začíná pod horním okrajem, na mobilu web lepicí hlavičku nemá
+  await dataOpt(page, 2);
+  await expect(page.locator('#d-chart')).toBeVisible();
+  const top = (await page.locator('#d-clues').boundingBox())!.y;
   expect(top).toBeGreaterThanOrEqual(0);
   expect(top).toBeLessThanOrEqual(12);
 
-  await page.locator('#d-options [data-opt="2"]').click();
-  await page.locator('#d-next').click();
-  await page.locator('#d-options [data-opt="1"]').click();
+  for (const [move, n] of [[dataBar, 2], [dataOpt, 0], [dataBar, 5], [dataOpt, 1], [dataBar, 2], [dataOpt, 2]] as const) await move(page, n);
   await expect(page.locator('#d-done')).toBeVisible();
   expect((await widgetState(page)).data.status).toBe('done');
   await page.locator('#d-done [data-go="vysledek"]').click();

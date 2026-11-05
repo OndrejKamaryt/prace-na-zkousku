@@ -109,7 +109,8 @@ function validate(input: unknown): Payload {
     paths: {
       data: {
         status: status(d, 'paths.data'), seconds: sec(d, 'paths.data'),
-        mistakes: int(d.mistakes, 'paths.data.mistakes', 6),
+        // osm rozhodnutí, u každého nejvýš dvě špatné volby
+        mistakes: int(d.mistakes, 'paths.data.mistakes', 16),
         firstTry: bool(d.firstTry, 'paths.data.firstTry'), revealed: bool(d.revealed, 'paths.data.revealed'),
       },
       ai: {

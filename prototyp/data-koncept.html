@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Datová analýza, koncept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Ubuntu:wght@500;700&family=Ubuntu+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--y:#FABA20;--ink:#212529;--sky:#69CCEA;--cream:#FCF3D9;--navy:#17496F;--pink:#D81B53;--muted:#5F676F;--line:#DEE2E6}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font:400 16px/1.5 "Open Sans",sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+.concept{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 14px;font-size:13px;color:var(--muted)}
+.concept button{white-space:nowrap;font:500 13px "Ubuntu",sans-serif;background:none;border:1px solid var(--line);border-radius:99px;padding:6px 14px;cursor:pointer;color:var(--ink)}
+h2{font:700 clamp(22px,4vw,28px)/1.2 "Ubuntu",sans-serif;margin:0 0 14px}
+
+.case{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.clue{border:1.5px dashed var(--line);border-radius:6px;padding:8px 10px;min-height:62px;transition:background .3s,border-color .3s}
+.clue span{display:block;font-size:12.5px;color:var(--muted)}
+.clue b{display:block;font:700 17px/1.3 "Ubuntu",sans-serif;color:#ADB5BD}
+.clue.on{background:var(--y);border:1.5px solid var(--y);animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+.clue.on span{color:#4a3a06}.clue.on b{color:var(--ink)}
+@keyframes pop{0%{transform:scale(.9)}100%{transform:scale(1)}}
+
+.stage{position:relative;border-radius:8px;padding:22px 20px 20px;background:var(--cream);transition:background .7s,color .7s;overflow:hidden;min-height:380px}
+.stage[data-scene=raw]{background:var(--ink);color:#fff}
+.stage[data-scene=chart]{background:var(--navy);color:#fff}
+.stage[data-scene=solved]{background:var(--y)}
+.prog{position:absolute;inset:0 0 auto 0;height:5px;background:rgba(127,127,127,.22)}
+.prog i{display:block;height:100%;width:0;background:var(--y);transition:width .5s}
+.stage[data-scene=solved] .prog i{background:var(--ink)}
+
+.ava{flex:none;width:40px;height:40px;border-radius:50%;background:var(--y);color:var(--ink);font:700 18px/40px "Ubuntu",sans-serif;text-align:center}
+.chat{display:flex;gap:10px;align-items:flex-end;margin-bottom:4px}
+.bub{background:#fff;color:var(--ink);border-radius:14px 14px 14px 3px;padding:12px 16px;max-width:560px;animation:rise .3s ease-out}
+.bub small{display:block;font:500 13px "Ubuntu",sans-serif;color:var(--muted);margin-bottom:2px}
+.chat.me{justify-content:flex-end}
+.chat.me .bub{background:var(--ink);color:#fff;border-radius:14px 14px 3px 14px}
+@keyframes rise{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+.dots{display:inline-flex;gap:4px;padding:6px 2px}
+.dots i{width:7px;height:7px;border-radius:50%;background:#ADB5BD;animation:blink 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes blink{50%{opacity:.25}}
+
+.file{display:flex;justify-content:space-between;gap:12px;align-items:baseline;font:400 14px "Ubuntu Mono",monospace;color:var(--sky);margin-bottom:8px}
+.file b{font:700 26px "Ubuntu",sans-serif;color:var(--y)}
+.load{height:6px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden;margin-bottom:10px}
+.load i{display:block;height:100%;width:0;background:var(--y)}
+.tbl{font:400 14px/1.75 "Ubuntu Mono",monospace;height:147px;overflow:hidden}
+.tbl div{display:grid;grid-template-columns:5.5em minmax(0,1fr) auto;gap:10px;border-bottom:1px solid rgba(255,255,255,.08);transition:transform .35s,opacity .35s;transform-origin:top}
+.tbl.gone div{transform:scaleY(0) translateY(-30px);opacity:0}
+
+.sql{font:400 13.5px/1.4 "Ubuntu Mono",monospace;color:var(--sky);min-height:2.8em;margin-bottom:6px}
+.sql::after{content:"";display:inline-block;width:.55em;height:1em;background:var(--sky);vertical-align:-2px;margin-left:2px;animation:blink 1s infinite}
+.sql.end::after{display:none}
+.legend{display:flex;gap:16px;font-size:13px;margin-bottom:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+.cols{display:flex;align-items:stretch;gap:clamp(6px,2vw,16px);height:190px}
+.col{flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;gap:5px;background:none;border:0;padding:0;color:inherit;font:inherit;cursor:default;position:relative}
+.col .plot{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:3px;min-height:0}
+.col .bar{flex:1;max-width:70px;border-radius:4px 4px 0 0;background:var(--y);transform-origin:bottom;animation:grow .55s cubic-bezier(.2,.9,.3,1) both;animation-delay:calc(var(--i)*70ms);display:flex;justify-content:center;transition:background .25s,box-shadow .25s,opacity .25s}
+.col .bar.feb{background:var(--sky)}
+.col .val{font:500 12.5px "Ubuntu",sans-serif;text-align:center;white-space:nowrap}
+.col .lab{font:500 13.5px "Ubuntu",sans-serif;text-align:center}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+.rows{display:grid;gap:7px}
+.row{display:grid;grid-template-columns:7.2em minmax(0,1fr);gap:10px;align-items:center;background:none;border:0;padding:5px 6px;border-radius:6px;color:inherit;font:inherit;text-align:left;cursor:default;transition:background .2s,opacity .25s}
+.row .lab{font:500 14px/1.2 "Ubuntu",sans-serif}
+.row .ln{display:grid;grid-template-columns:minmax(0,1fr) 6em;gap:8px;align-items:center;font:500 12.5px "Ubuntu",sans-serif}
+.row .track{height:11px;display:block}
+.row .bar{display:block;height:100%;border-radius:0 3px 3px 0;background:var(--y);transform-origin:left;animation:growx .6s cubic-bezier(.2,.9,.3,1) both;animation-delay:calc(var(--i)*80ms);transition:background .25s,box-shadow .25s}
+.row .bar.feb{background:var(--sky)}
+@keyframes growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+.pick .col,.pick .row{cursor:pointer}
+.pick .col:not(.tried) .bar:not(.feb),.pick .row:not(.tried) .bar:not(.feb){animation:grow .55s cubic-bezier(.2,.9,.3,1) both,hum 2.2s ease-in-out infinite;animation-delay:calc(var(--i)*70ms),calc(.7s + var(--i)*160ms)}
+.pick .row:not(.tried) .bar:not(.feb){animation:growx .6s cubic-bezier(.2,.9,.3,1) both,hum 2.2s ease-in-out infinite;animation-delay:calc(var(--i)*80ms),calc(.7s + var(--i)*160ms)}
+@keyframes hum{0%,100%{box-shadow:0 0 0 rgba(250,186,32,0)}50%{box-shadow:0 0 16px 2px rgba(250,186,32,.75)}}
+@media (hover:hover){.pick .col:hover .bar,.pick .row:hover .bar{box-shadow:0 0 22px 4px rgba(255,255,255,.55)}
+.pick .row:hover{background:rgba(255,255,255,.09)}}
+.tried{opacity:.45;animation:shake .35s}
+.tried,.tried *{cursor:default}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.col.hit .bar:not(.feb),.row.hit .bar:not(.feb){background:var(--pink);box-shadow:0 0 22px 3px rgba(216,27,83,.95);animation:none}
+.chip{position:absolute;left:50%;transform:translateX(-50%);top:-4px;background:#fff;color:var(--pink);font:700 13px "Ubuntu",sans-serif;padding:3px 9px;border-radius:99px;white-space:nowrap;z-index:2;animation:pop .4s cubic-bezier(.3,1.6,.5,1)}
+.dimmed .col:not(.hit) .bar,.dimmed .row:not(.hit) .bar{background:rgba(255,255,255,.26);box-shadow:none;animation:none}
+.dimmed .col:not(.hit) .bar.feb,.dimmed .row:not(.hit) .bar.feb{background:rgba(105,204,234,.38)}
+.dimmed .col:not(.hit) .lab,.dimmed .col:not(.hit) .val,.dimmed .row:not(.hit) .lab,.dimmed .row:not(.hit) .ln{opacity:.6}
+.row.hit .lab{color:#fff;font-weight:700}
+.hintme .bar:not(.feb){background:#fff;box-shadow:0 0 26px 6px rgba(255,255,255,.9)}
+
+#ask{margin-top:16px}
+.found{display:flex;gap:9px;align-items:flex-start;font-weight:600;margin:0 0 12px;animation:rise .3s ease-out}
+.found svg{flex:none;width:22px;height:22px;stroke:var(--y);margin-top:1px}
+.q{font:700 clamp(18px,3.4vw,21px)/1.25 "Ubuntu",sans-serif;margin:0 0 12px}
+.acts{display:grid;gap:9px}
+.act{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:12px 14px;border-radius:6px;border:2px solid var(--y);background:rgba(255,255,255,.07);color:#fff;font:500 16px/1.3 "Ubuntu",sans-serif;text-align:left;cursor:pointer;transition:background .15s,color .15s,transform .15s,opacity .2s;animation:glow 2.2s ease-in-out infinite;animation-delay:calc(var(--i)*.28s)}
+.stage[data-scene=jana] .act,.stage[data-scene=solved] .act{background:#fff;color:var(--ink)}
+.act svg{flex:none;width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media (hover:hover){.act:hover:not(:disabled){background:var(--y);color:var(--ink);transform:translateY(-2px)}
+.stage[data-scene=jana] .act:hover:not(:disabled){background:var(--y)}}
+@keyframes glow{0%,100%{box-shadow:0 0 5px rgba(250,186,32,.5)}50%{box-shadow:0 0 24px 5px rgba(250,186,32,.95)}}
+.act{position:relative;overflow:hidden}
+.act::after{content:"";position:absolute;top:-20%;bottom:-20%;left:-30%;width:22%;background:rgba(255,255,255,.28);transform:skewX(-20deg);animation:shine 3.4s ease-in-out infinite;animation-delay:calc(var(--i)*.45s);pointer-events:none}
+.stage[data-scene=jana] .act::after{background:rgba(250,186,32,.3)}
+.act:disabled::after{display:none}
+@keyframes shine{0%,62%{left:-30%}100%{left:115%}}
+.act.no{border-color:var(--pink);animation:shake .35s;opacity:.55;box-shadow:none;cursor:default}
+.act.ok{background:var(--y)!important;color:var(--ink)!important;animation:none;box-shadow:0 0 28px 6px rgba(250,186,32,.9)}
+.act:disabled{cursor:default}
+.say{display:flex;gap:9px;align-items:flex-start;margin-top:12px;animation:rise .25s ease-out}
+.say .ava{width:30px;height:30px;font-size:14px;line-height:30px}
+.say p{margin:0;background:#fff;color:var(--ink);padding:8px 12px;border-radius:12px 12px 12px 3px;font-size:15px}
+
+.big{font:700 clamp(44px,10vw,68px)/1 "Ubuntu",sans-serif;margin:16px 0 2px}
+.solved-t{font:700 clamp(21px,4vw,26px)/1.2 "Ubuntu",sans-serif;margin:18px 0 0}
+.solved p{margin:0 0 10px}
+.note{font-size:15px}
+.more{margin-top:12px;font-size:14px}
+.more summary{font:500 14.5px "Ubuntu",sans-serif;cursor:pointer}
+.more pre{background:var(--ink);color:#fff;padding:12px;border-radius:6px;font:400 13px/1.45 "Ubuntu Mono",monospace;overflow:auto;margin:8px 0}
+
+.done{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-top:12px;font:500 16px "Ubuntu",sans-serif;animation:rise .35s ease-out}
+.done[hidden]{display:none}
+.pill{background:var(--y);color:var(--ink);border:0;border-radius:99px;padding:10px 20px;font:500 15px "Ubuntu",sans-serif}
+button:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+
+@media (max-width:520px){
+  .wrap{padding:12px}.stage{padding:18px 13px 14px}
+  .cols{height:160px}.col .val{font-size:10.5px}
+  .row{grid-template-columns:5.4em minmax(0,1fr);gap:6px;padding:4px 2px}.row .lab{font-size:13px}.row .ln{grid-template-columns:minmax(0,1fr) 5.2em;gap:5px;font-size:11.5px}
+  .clue{padding:6px 8px;min-height:56px}.clue b{font-size:15px}.clue span{font-size:11.5px}
+  .sql{font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head>
+<body><main class="wrap">
+<p class="concept"><span>Koncept ke schválení, zatím mimo aplikaci</span><button type="button" id="again">Začít znovu</button></p>
+<h2 id="title"></h2>
+<div class="case" aria-label="Co už víš">
+  <div class="clue" id="c1"><span>Kdy?</span><b>?</b></div>
+  <div class="clue" id="c2"><span>Které dny?</span><b>?</b></div>
+  <div class="clue" id="c3"><span>Co chybí?</span><b>?</b></div>
+</div>
+<section class="stage" id="stage" data-scene="jana">
+  <div class="prog"><i id="prog"></i></div>
+  <div id="vis"></div>
+  <div id="ask" aria-live="polite"></div>
+</section>
+<div class="done" id="done" hidden><span id="done-t"></span><button type="button" class="pill">Můj výsledek</button></div>
+</main>
+<script>
+const nb = t => t.replace(/(^|[\s(„>])([ksvzouaiKSVZOUAI]) /g, '$1$2 ');
+const kc = n => n.toLocaleString('cs-CZ') + ' Kč';
+const num = n => n.toLocaleString('cs-CZ');
+const IC = {
+  down:'M12 3v12m0 0l-4-4m4 4l4-4M4 20h16', tag:'M3 12V4h8l10 10-8 8zM7.5 8h.01', slides:'M4 5h16v10H4zM12 15v4M8 20h8',
+  sum:'M17 5H7l6 7-6 7h10', rows:'M4 6h16M4 12h16M4 18h16', trash:'M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13',
+  cal:'M4 6h16v14H4zM4 10h16M9 3v4M15 3v4', cloud:'M7 18a4 4 0 010-8 5 5 0 019.6-1.3A4 4 0 0117 18z', mega:'M4 10v4l12 5V5zM16 9a3 3 0 010 6',
+  basket:'M5 9h14l-1.5 11h-11zM9 9l3-5 3 5', avg:'M5 19L19 5M8 7a1.5 1.5 0 100 .01M16 17a1.5 1.5 0 100 .01', clock:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7v5l3 2', msg:'M4 5h16v11H9l-5 4z'
+};
+const ic = k => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + IC[k] + '"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 13l5 5L20 7"/></svg>';
+
+const MONTHS = [['Leden',312400],['Únor',298900],['Březen',241300],['Duben',306200]];
+const DAYS = [['Po',33100,32700,'V pondělí'],['Út',34800,34100,'V úterý'],['St',35600,35900,'Ve středu'],['Čt',36900,36200,'Ve čtvrtek'],['Pá',41200,40600,'V pátek'],['So',63400,33400],['Ne',53900,28400]];
+const PRODUCTS = [['Káva a nápoje',148200,146900,'Káva a nápoje se prodávají skoro stejně jako v únoru.'],['Dezerty',63400,61800,'Dezerty se prodávají skoro stejně jako v únoru.'],['Snídaně',62100,9300],['Obědové menu',25200,23300,'Obědy se prodávají skoro stejně jako v únoru.']];
+const RAW = [['2. 3.','Snídaně','189'],['2. 3.','Cappuccino','72'],['3. 3.','Dort','95'],['3. 3.','Espresso','58'],['4. 3.','Polední menu','165'],['5. 3.','Flat white','78'],['6. 3.','Bábovka','69'],['7. 3.','Espresso','58'],['8. 3.','Limonáda','64'],['9. 3.','Cappuccino','72'],['10. 3.','Polední menu','165'],['11. 3.','Dort','95']];
+
+const STEPS = [
+  { scene:'jana', vis:'jana', q:'Co uděláš jako první?', opts:[
+    {i:'tag', t:'Navrhnu slevovou akci na březen', why:'Slevu? Vždyť ještě nevíme, co se stalo.'},
+    {i:'down', t:'Stáhnu si data z pokladny', ok:1},
+    {i:'slides', t:'Rovnou udělám prezentaci', why:'Prezentaci o čem? Zatím nemáš jediné číslo.'} ]},
+  { scene:'raw', vis:'raw', q:'Z tolika řádků nic nevyčteš. Co uděláš?', opts:[
+    {i:'rows', t:'Projdu účtenky jednu po druhé', why:'9 660 účtenek? Budeš u toho do Velikonoc.'},
+    {i:'trash', t:'Smažu všechno kromě března', why:'Bez ostatních měsíců nepoznáš, co je normální. Potřebuješ srovnání.'},
+    {i:'sum', t:'Sečtu tržby po měsících', ok:1} ]},
+  { scene:'chart', vis:'months', q:'Klikni na měsíc, který nesedí.', right:[2], wrong:n => n + ' vypadá normálně. Hledej nejnižší sloupec.', clue:['c1','v březnu'], chip:'−57 600 Kč', found:'Březen je o 57 600 Kč níž než únor.' },
+  { scene:'chart', q:'Jak březen rozebereš dál?', opts:[
+    {i:'cal', t:'Porovnám dny v týdnu s únorem', ok:1},
+    {i:'cloud', t:'Zjistím, jestli v březnu pršelo', why:'Počasí může hrát roli, ale nejdřív vytěž data, která máš.'},
+    {i:'mega', t:'Napíšu Janě, ať víc propaguje kavárnu', why:'Zatím nevíš, co se pokazilo. Hledej dál.'} ]},
+  { scene:'chart', vis:'days', q:'Klikni na dny, kdy březen propadl.', right:[5,6], wrong:(n,r) => r[3] + ' je březen skoro stejný jako únor.', clue:['c2','o víkendu'], chip:'−55 500 Kč', found:'O víkendu chybí 55 500 Kč. Všední dny jsou v pořádku.' },
+  { scene:'chart', q:'Co se o víkendu změnilo? Jak to zjistíš?', opts:[
+    {i:'avg', t:'Spočítám průměrnou účtenku', why:'Průměr ti neřekne, co přesně chybí. Potřebuješ vidět jednotlivé položky.'},
+    {i:'basket', t:'Rozdělím tržby podle produktů', ok:1},
+    {i:'clock', t:'Seřadím účtenky podle času', why:'Čas už znáš, je to víkend. Teď hledej co.'} ]},
+  { scene:'chart', vis:'products', q:'Klikni na produkt, který zmizel.', right:[2], wrong:(n,r) => r[3], clue:['c3','snídaně'], chip:'−52 800 Kč', found:'Snídaně spadly z 62 100 na 9 300 Kč. Ostatní se prodává skoro stejně.' },
+  { scene:'chart', q:'Máš všechno. Co napíšeš Janě?', opts:[
+    {i:'msg', t:'Lidé přestali chodit, to se stává.', why:'Kávu si kupují pořád stejně, lidé chodí dál.'},
+    {i:'msg', t:'Zdražte kávu, to tržby vrátí.', why:'Káva problém není. Opravovala bych něco, co funguje.'},
+    {i:'msg', t:'V březnu o víkendu skoro nebyly snídaně. Stálo vás to 52 800 Kč.', ok:1} ]},
+];
+
+const $ = id => document.getElementById(id);
+const stage = $('stage'), vis = $('vis'), ask = $('ask');
+const calm = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, calm ? 0 : ms));
+let cur = 0, wrong = 0, run = 0;
+
+function typeSql(text) {
+  const box = vis.querySelector('.sql'); if (calm) { box.textContent = text; box.classList.add('end'); return; }
+  let n = 0; const me = run;
+  const t = setInterval(() => { if (me !== run) return clearInterval(t); box.textContent = text.slice(0, ++n); if (n >= text.length) { clearInterval(t); box.classList.add('end'); } }, 16);
+}
+
+function drawJana() {
+  vis.innerHTML = '<div class="chat"><div class="ava" aria-hidden="true">J</div><div class="bub"><small>Jana, kavárna Zrnko</small><span id="jt"><span class="dots"><i></i><i></i><i></i></span></span></div></div>';
+  return wait(900).then(() => { $('jt').textContent = nb('Ahoj, v březnu jsme vydělali nějak málo a vůbec nevím proč. Nemrkneš na to? Jsi přece náš datový analytik.'); });
+}
+function drawRaw() {
+  vis.innerHTML = '<div class="file"><span>pokladna_zrnko.csv</span><b id="cnt">0</b></div><div class="load"><i id="ld"></i></div><div class="tbl" id="tbl"></div>';
+  const tbl = $('tbl'), steps = calm ? 1 : 26; const me = run;
+  return new Promise(res => { let k = 0; const tick = () => {
+    if (me !== run) return;
+    k++; const p = k / steps; $('cnt').textContent = num(Math.round(9660 * p)); $('ld').style.width = p * 100 + '%';
+    const r = RAW[k % RAW.length]; tbl.insertAdjacentHTML('afterbegin', '<div><span>' + r[0] + '</span><span>' + r[1] + '</span><span>' + r[2] + ' Kč</span></div>');
+    while (tbl.children.length > 6) tbl.lastChild.remove();
+    if (k < steps) setTimeout(tick, 48); else { $('cnt').textContent = nb('9 660 účtenek'); res(); }
+  }; tick(); });
+}
+function drawMonths() {
+  const max = 312400;
+  vis.innerHTML = '<div class="sql"></div><div class="cols" id="chart">' + MONTHS.map((m, i) => '<button type="button" class="col" data-p="' + i + '" style="--i:' + i + '" aria-label="' + m[0] + ': ' + kc(m[1]) + '"><div class="plot"><div class="bar" style="height:' + (m[1] / max * 100) + '%;--i:' + i + '"></div></div><div class="val">' + kc(m[1]) + '</div><div class="lab">' + m[0] + '</div></button>').join('') + '</div>';
+  typeSql('SELECT mesic, SUM(trzba) FROM uctenky GROUP BY mesic');
+}
+function legend() { return '<div class="legend"><span><i style="background:var(--sky)"></i>únor</span><span><i style="background:var(--y)"></i>březen</span></div>'; }
+function drawDays() {
+  const max = 63400;
+  vis.innerHTML = '<div class="sql"></div>' + legend() + '<div class="cols" id="chart">' + DAYS.map((d, i) => '<button type="button" class="col" data-p="' + i + '" aria-label="' + d[0] + ': únor ' + kc(d[1]) + ', březen ' + kc(d[2]) + '"><div class="plot"><div class="bar feb" style="height:' + (d[1] / max * 100) + '%;--i:' + i + '"></div><div class="bar" style="height:' + (d[2] / max * 100) + '%;--i:' + i + '"></div></div><div class="lab">' + d[0] + '</div></button>').join('') + '</div>';
+  typeSql('SELECT den, mesic, SUM(trzba) FROM uctenky GROUP BY den, mesic');
+}
+function drawProducts() {
+  const max = 148200;
+  vis.innerHTML = '<div class="sql"></div>' + legend() + '<div class="rows" id="chart">' + PRODUCTS.map((p, i) => '<button type="button" class="row" data-p="' + i + '"><span class="lab">' + p[0] + '</span><span>' +
+    '<span class="ln"><span class="track"><span class="bar feb" style="width:' + (p[1] / max * 100) + '%;--i:' + i + '"></span></span><span>' + kc(p[1]) + '</span></span>' +
+    '<span class="ln"><span class="track"><span class="bar" style="width:' + (p[2] / max * 100) + '%;--i:' + i + '"></span></span><span>' + kc(p[2]) + '</span></span></span></button>').join('') + '</div>';
+  typeSql('SELECT produkt, mesic, SUM(trzba) FROM uctenky GROUP BY produkt, mesic');
+}
+
+function say(t) {
+  let b = ask.querySelector('.say');
+  if (b) b.remove();
+  ask.insertAdjacentHTML('beforeend', '<div class="say"><div class="ava" aria-hidden="true">J</div><p>' + nb(t) + '</p></div>');
+}
+async function go(i) {
+  cur = i; wrong = 0; const me = ++run;
+  if (i >= STEPS.length) return finish();
+  const s = STEPS[i];
+  stage.dataset.scene = s.scene; ask.innerHTML = '';
+  $('prog').style.width = (i / STEPS.length * 100) + '%';
+  if (s.vis === 'jana') await drawJana();
+  if (s.vis === 'raw') await drawRaw();
+  if (s.vis === 'months') drawMonths();
+  if (s.vis === 'days') drawDays();
+  if (s.vis === 'products') drawProducts();
+  if (me !== run) return;
+  if (s.opts) {
+    ask.innerHTML = '<p class="q">' + nb(s.q) + '</p><div class="acts">' + s.opts.map((o, n) => '<button type="button" class="act" data-o="' + n + '" style="--i:' + n + '">' + ic(o.i) + '<span>' + nb(o.t) + '</span></button>').join('') + '</div>';
+  } else {
+    ask.innerHTML = '<p class="q">' + nb(s.q) + '</p>';
+    $('chart').classList.add('pick');
+  }
+}
+async function choose(n, btn) {
+  const s = STEPS[cur], o = s.opts[n];
+  if (btn.disabled) return;
+  if (!o.ok) {
+    btn.classList.add('no'); btn.disabled = true; say(o.why); wrong++;
+    return;
+  }
+  ask.querySelectorAll('.act').forEach(b => { b.disabled = true; });
+  btn.classList.add('ok'); const me = run;
+  await wait(420); if (me !== run) return;
+  if (cur === 1) { $('tbl').classList.add('gone'); await wait(380); if (me !== run) return; }
+  if (cur === STEPS.length - 1) return finish(o.t);
+  go(cur + 1);
+}
+function pick(n, btn) {
+  const s = STEPS[cur]; if (!s.right || btn.classList.contains('tried')) return;
+  const chart = $('chart');
+  if (!chart.classList.contains('pick')) return;
+  if (!s.right.includes(n)) {
+    const data = s.vis === 'months' ? MONTHS : s.vis === 'days' ? DAYS : PRODUCTS;
+    btn.classList.add('tried'); wrong++;
+    say(s.wrong(data[n][0], data[n]));
+    if (wrong >= 2) { s.right.forEach(r => chart.querySelector('[data-p="' + r + '"]').classList.add('hintme')); say('Správná odpověď svítí.'); }
+    return;
+  }
+  chart.classList.remove('pick'); chart.classList.add('dimmed');
+  s.right.forEach(r => { const b = chart.querySelector('[data-p="' + r + '"]'); b.classList.remove('hintme'); b.classList.add('hit'); });
+  if (s.vis !== 'products') {
+    const first = chart.querySelector('[data-p="' + s.right[s.right.length - 1] + '"]');
+    first.insertAdjacentHTML('afterbegin', '<span class="chip"' + (s.vis === 'days' ? ' style="left:auto;right:0;transform:none"' : '') + '>' + s.chip.replace(' ', ' ') + '</span>');
+  }
+  const c = $(s.clue[0]); c.classList.add('on'); c.querySelector('b').textContent = nb(s.clue[1]);
+  go2(cur + 1, s.found);
+}
+async function go2(i, found) { // graf zůstává, mění se jen otázka pod ním
+  cur = i; wrong = 0; run++;
+  $('prog').style.width = (i / STEPS.length * 100) + '%';
+  const s = STEPS[i];
+  ask.innerHTML = '<p class="found">' + CHECK + '<span>' + nb(found) + '</span></p><p class="q">' + nb(s.q) + '</p><div class="acts">' + s.opts.map((o, n) => '<button type="button" class="act" data-o="' + n + '" style="--i:' + n + '">' + ic(o.i) + '<span>' + nb(o.t) + '</span></button>').join('') + '</div>';
+}
+async function finish(text) {
+  const me = ++run;
+  stage.dataset.scene = 'solved'; $('prog').style.width = '100%'; ask.innerHTML = '';
+  vis.innerHTML = '<div class="chat me"><div class="bub">' + nb(text) + '</div></div><div class="chat"><div class="ava" aria-hidden="true" style="background:#fff">J</div><div class="bub"><small>Jana, kavárna Zrnko</small><span id="jt"><span class="dots"><i></i><i></i><i></i></span></span></div></div><div id="sol"></div>';
+  await wait(1000); if (me !== run) return;
+  $('jt').textContent = nb('Aha! V březnu nám odešel kuchař a o víkendu snídaně nikdo nedělal. Díky, hned to řeším!');
+  await wait(500); if (me !== run) return;
+  $('sol').className = 'solved';
+  $('sol').innerHTML = '<p class="solved-t">' + nb('Zmizely víkendové snídaně') + '</p><div class="big" id="money">0</div><p>' + nb('Tolik kavárnu stál jeden měsíc bez víkendových snídaní.') + '</p><p class="note">' + nb('Přesně tohle dělá datový analytik: z čísel zjistí, co se ve firmě děje, a pomůže rozhodnout, co s tím.') + '</p><details class="more"><summary>' + nb('Jak na to přijde datový analytik') + '</summary><p>' + nb('Každý tvůj klik byl jeden dotaz. V databázi je píše v jazyce SQL, v Excelu mu stačí kontingenční tabulka. Nemusíš tomu teď rozumět, na kurzu se to naučíš od nuly.') + '</p><pre>SELECT produkt, mesic, SUM(trzba)\nFROM uctenky\nGROUP BY produkt, mesic;</pre></details>';
+  const start = performance.now(), T = calm ? 1 : 900;
+  (function step(t) { if (me !== run) return; const p = Math.min(1, (t - start) / T), e = 1 - Math.pow(1 - p, 3); $('money').textContent = kc(Math.round(52800 * e / 100) * 100); if (p < 1) requestAnimationFrame(step); })(start);
+  $('done-t').textContent = nb('Hotovo, víš, proč tržby klesly!'); $('done').hidden = false;
+}
+stage.addEventListener('click', e => {
+  const a = e.target.closest('[data-o]'); if (a) return choose(Number(a.dataset.o), a);
+  const p = e.target.closest('[data-p]'); if (p) pick(Number(p.dataset.p), p);
+});
+function reset() {
+  ['c1','c2','c3'].forEach(c => { const el = $(c); el.classList.remove('on'); el.querySelector('b').textContent = '?'; });
+  $('done').hidden = true; go(0);
+}
+$('again').addEventListener('click', reset);
+$('title').textContent = nb('Proč kavárně Zrnko v březnu klesly tržby?');
+reset();
+</script></body></html>

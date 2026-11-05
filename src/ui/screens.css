@@ -1,29 +1,139 @@
 /* Styly ukázek a výsledku (z prototypu, @media podle šířky převedené na @container). */
 
-/* data */
-.step-text{margin-top:10px; max-width:64ch}
-.bars{display:grid; gap:12px; margin-top:16px}
-.bar-row{display:grid; grid-template-columns:8.2em minmax(0,1fr) 6.6em; align-items:center; gap:10px; font-size:14px}
-@container (max-width:480px){ .bar-row{grid-template-columns:6.4em minmax(0,1fr) 5.8em; font-size:13px} }
-.bar-label{font-weight:600}
-.bar-row.pair{grid-template-columns:8.2em minmax(0,1fr)}
-@container (max-width:480px){ .bar-row.pair{grid-template-columns:5.6em minmax(0,1fr)} }
-.bar-pair{display:grid; gap:2px}
-.bar-line{display:grid; grid-template-columns:minmax(0,1fr) 6.6em; align-items:center; gap:10px}
-@container (max-width:480px){ .bar-line{grid-template-columns:minmax(0,1fr) 5.8em; gap:6px} }
-.bar-track{height:22px; background:var(--light); border-radius:4px; position:relative; overflow:hidden}
-.bar-track.thin{height:10px; border-radius:3px}
-.bar-fill{position:absolute; inset:0 auto 0 0; background:var(--navy); border-radius:inherit; transition:width .5s ease}
-.bar-fill.pale{background:var(--sky-pale)}
-.num{text-align:right; font-variant-numeric:tabular-nums; font:700 14px var(--head)}
-.num.pale{font-weight:500; color:var(--gray)}
-.legend{display:flex; flex-wrap:wrap; gap:16px; font-size:13px; color:var(--gray); margin-top:14px}
-.sw{width:12px; height:12px; border-radius:3px; display:inline-block; vertical-align:-1px; margin-right:6px}
-.data-step .q-title{margin-top:20px}
-.options.short{grid-template-columns:repeat(auto-fit, minmax(150px, 1fr))}
-/* tři volby se na mobilu do dvou sloupců nevejdou hezky: třetí by zůstala sama */
-@container (max-width:480px){ .options.short:has(> :nth-child(3):last-child){grid-template-columns:minmax(0,1fr)} }
-#d-next-row{margin-top:12px}
+/* data: práce analytika na jevišti, které mění barvu podle fáze */
+.data-col{max-width:760px; margin:0 auto}
+.clues{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:14px 0 10px}
+.clue{border:1.5px dashed var(--line-strong); border-radius:var(--r-card); padding:8px 10px; min-height:60px; transition:background .3s, border-color .3s}
+.clue span{display:block; font-size:12.5px; line-height:1.35; color:var(--gray)}
+.clue b{display:block; font:700 17px/1.3 var(--head); color:var(--gray)}
+.clue.on{background:var(--yellow); border:1.5px solid var(--yellow); animation:clue-pop .45s cubic-bezier(.3,1.6,.5,1)}
+.clue.on span{color:var(--ink)}
+.clue.on b{color:var(--ink-strong)}
+@keyframes clue-pop{0%{transform:scale(.9)}100%{transform:scale(1)}}
+
+.stage{position:relative; overflow:hidden; min-height:380px; padding:22px 20px 20px; border-radius:var(--r-panel); background:var(--cream); color:var(--ink); transition:background .7s, color .7s}
+.stage[data-scene=raw]{background:var(--dark); color:#fff}
+.stage[data-scene=chart]{background:var(--navy); color:#fff}
+.stage[data-scene=solved]{background:var(--yellow)}
+.stage[data-scene=raw] :focus-visible, .stage[data-scene=chart] :focus-visible{outline-color:var(--sky)}
+.stage-bar{position:absolute; inset:0 0 auto 0; height:5px; background:rgba(127,127,127,.22)}
+.stage-bar i{display:block; height:100%; width:0; background:var(--yellow); transition:width .5s}
+.stage[data-scene=solved] .stage-bar i{background:var(--dark)}
+
+.jana{flex:none; width:40px; height:40px; border-radius:50%; background:var(--yellow); color:var(--dark); font:700 18px/40px var(--head); text-align:center}
+.jana.small{width:30px; height:30px; font-size:14px; line-height:30px}
+.stage[data-scene=solved] .jana{background:#fff}
+.chat{display:flex; gap:10px; align-items:flex-end; margin-bottom:6px}
+.bub{max-width:560px; padding:12px 16px; border-radius:14px 14px 14px 3px; background:#fff; color:var(--ink); animation:stage-rise .3s ease-out}
+.bub small{display:block; margin-bottom:2px; font:500 13px var(--head); color:var(--gray)}
+.chat.me{justify-content:flex-end}
+.chat.me .bub{border-radius:14px 14px 3px 14px; background:var(--dark); color:#fff}
+@keyframes stage-rise{from{transform:translateY(8px); opacity:0}to{transform:none; opacity:1}}
+.dots{display:inline-flex; gap:4px; padding:6px 2px}
+.dots i{width:7px; height:7px; border-radius:50%; background:var(--gray); animation:blink 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}
+.dots i:nth-child(3){animation-delay:.3s}
+
+.file{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:4px 12px; margin-bottom:8px; font:400 14px var(--mono); color:var(--sky)}
+.file b{font:700 26px var(--head); color:var(--yellow)}
+.load{height:6px; margin-bottom:10px; border-radius:3px; background:rgba(255,255,255,.14); overflow:hidden}
+.load i{display:block; height:100%; width:0; background:var(--yellow)}
+.tbl{height:147px; overflow:hidden; font:400 14px/1.75 var(--mono)}
+.tbl div{display:grid; grid-template-columns:5.5em minmax(0,1fr) auto; gap:10px; border-bottom:1px solid rgba(255,255,255,.08); transform-origin:top; transition:transform .35s, opacity .35s}
+.tbl.gone div{transform:scaleY(0) translateY(-30px); opacity:0}
+
+.sql{min-height:2.8em; margin-bottom:6px; font:400 13.5px/1.4 var(--mono); color:var(--sky)}
+.sql::after{content:""; display:inline-block; width:.55em; height:1em; margin-left:2px; background:var(--sky); vertical-align:-2px; animation:blink 1s infinite}
+.sql.end::after{display:none}
+.legend{display:flex; gap:16px; margin-bottom:8px; font-size:13px}
+.sw{display:inline-block; width:12px; height:12px; margin-right:6px; border-radius:3px; background:var(--yellow); vertical-align:-1px}
+.sw.feb{background:var(--sky)}
+
+.dcols{display:flex; align-items:stretch; height:190px}
+.dcol{position:relative; flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:5px; padding:0 clamp(2px,1cqw,8px); border:0; background:none; color:inherit; font:inherit}
+.dplot{flex:1; min-height:0; display:flex; align-items:flex-end; justify-content:center; gap:3px}
+.dcol .dbar{flex:1; max-width:70px; border-radius:4px 4px 0 0; transform-origin:bottom; animation:bar-grow .55s cubic-bezier(.2,.9,.3,1) both; animation-delay:calc(var(--i)*70ms)}
+.dbar{display:block; background:var(--yellow); transition:background .25s, box-shadow .25s}
+.dbar.feb{background:var(--sky)}
+.dval{font:500 12.5px var(--head); text-align:center; white-space:nowrap}
+.dlab{font:500 13.5px/1.2 var(--head); text-align:center}
+@keyframes bar-grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+.drows{display:grid; gap:7px}
+.drow{display:grid; grid-template-columns:7.2em minmax(0,1fr); align-items:center; gap:10px; width:100%; padding:5px 6px; border:0; border-radius:var(--r-card); background:none; color:inherit; font:inherit; text-align:left; transition:background .2s}
+.drow .dlab{font-size:14px; text-align:left}
+.dlines{display:grid; gap:3px}
+.dline{display:grid; grid-template-columns:minmax(0,1fr) 6em; align-items:center; gap:8px; font:500 12.5px var(--head)}
+.dtrack{display:block; height:11px}
+.drow .dbar{height:100%; border-radius:0 3px 3px 0; transform-origin:left; animation:bar-growx .6s cubic-bezier(.2,.9,.3,1) both; animation-delay:calc(var(--i)*80ms)}
+@keyframes bar-growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+.pick .dcol, .pick .drow{cursor:pointer}
+.pick .dcol:not(:disabled) .dbar:not(.feb){animation:bar-grow .55s cubic-bezier(.2,.9,.3,1) both, bar-hum 2.2s ease-in-out infinite; animation-delay:calc(var(--i)*70ms), calc(.7s + var(--i)*160ms)}
+.pick .drow:not(:disabled) .dbar:not(.feb){animation:bar-growx .6s cubic-bezier(.2,.9,.3,1) both, bar-hum 2.2s ease-in-out infinite; animation-delay:calc(var(--i)*80ms), calc(.7s + var(--i)*160ms)}
+@keyframes bar-hum{0%,100%{box-shadow:0 0 0 rgba(250,186,32,0)}50%{box-shadow:0 0 16px 2px rgba(250,186,32,.75)}}
+@media (hover:hover){
+  .pick .dcol:hover:not(:disabled) .dbar, .pick .drow:hover:not(:disabled) .dbar{box-shadow:0 0 22px 4px rgba(255,255,255,.55)}
+  .pick .drow:hover:not(:disabled){background:rgba(255,255,255,.09)}
+}
+.tried{opacity:.45; animation:stage-shake .35s}
+.pick .tried{cursor:default}
+@keyframes stage-shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.pick .lit .dbar:not(.feb){background:#fff; box-shadow:0 0 26px 6px rgba(255,255,255,.9)}
+.hit .dbar:not(.feb){background:var(--pink); box-shadow:0 0 22px 3px rgba(216,27,83,.95); animation:none}
+.dchip{position:absolute; top:-4px; right:0; z-index:2; padding:3px 9px; border-radius:999px; background:#fff; color:var(--pink-ink); font:700 13px var(--head); white-space:nowrap; animation:clue-pop .4s cubic-bezier(.3,1.6,.5,1)}
+.dimmed .dcol:not(.hit) .dbar, .dimmed .drow:not(.hit) .dbar{background:rgba(255,255,255,.26); box-shadow:none; animation:none}
+.dimmed .dcol:not(.hit) .dbar.feb, .dimmed .drow:not(.hit) .dbar.feb{background:rgba(105,204,234,.38)}
+.dimmed .dcol:not(.hit) .dlab, .dimmed .dcol:not(.hit) .dval, .dimmed .drow:not(.hit) .dlab, .dimmed .drow:not(.hit) .dline{opacity:.6}
+.drow.hit .dlab{font-weight:700}
+
+#d-ask{margin-top:16px}
+.found{display:flex; align-items:flex-start; gap:9px; margin:0 0 12px; font-weight:600; animation:stage-rise .3s ease-out}
+.found[hidden]{display:none}
+.found svg{flex:none; width:22px; height:22px; margin-top:1px; fill:none; stroke:var(--yellow); stroke-width:3; stroke-linecap:round; stroke-linejoin:round}
+.stage-q{margin:0 0 12px; font:700 clamp(18px,3.4cqw,21px)/1.25 var(--head)}
+.stage-q:focus{outline:none}
+.acts{display:grid; gap:9px}
+.act{position:relative; overflow:hidden; display:flex; align-items:center; gap:12px; width:100%; min-height:56px; padding:12px 14px; border:2px solid var(--yellow); border-radius:var(--r-card); background:rgba(255,255,255,.07); color:#fff; font:500 16px/1.3 var(--head); text-align:left; cursor:pointer; transition:background .15s, color .15s, transform .15s, opacity .2s; animation:act-glow 2.2s ease-in-out infinite; animation-delay:calc(var(--i)*.28s)}
+.stage[data-scene=jana] .act{background:#fff; color:var(--ink)}
+.act svg{flex:none; width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+.act::after{content:""; position:absolute; top:-20%; bottom:-20%; left:-30%; width:22%; background:rgba(255,255,255,.28); transform:skewX(-20deg); animation:act-shine 3.4s ease-in-out infinite; animation-delay:calc(var(--i)*.45s); pointer-events:none}
+.stage[data-scene=jana] .act::after{background:rgba(250,186,32,.3)}
+.act:disabled{cursor:default}
+.act:disabled::after{display:none}
+@media (hover:hover){
+  .stage .act:hover:not(:disabled){background:var(--yellow); color:var(--dark); transform:translateY(-2px)}
+}
+@keyframes act-glow{0%,100%{box-shadow:0 0 5px rgba(250,186,32,.5)}50%{box-shadow:0 0 24px 5px rgba(250,186,32,.95)}}
+@keyframes act-shine{0%,62%{left:-30%}100%{left:115%}}
+.act.no{border-color:var(--pink); opacity:.55; box-shadow:none; animation:stage-shake .35s}
+.stage .act.ok, .stage .act.lit{background:var(--yellow); color:var(--dark)}
+.act.ok{box-shadow:0 0 28px 6px rgba(250,186,32,.9); animation:none}
+.say{display:flex; align-items:flex-start; gap:9px; margin-top:12px; animation:stage-rise .25s ease-out}
+.say[hidden]{display:none}
+.say p{margin:0; padding:8px 12px; border-radius:12px 12px 12px 3px; background:#fff; color:var(--ink); font-size:15px}
+
+.solved p{margin:0 0 10px}
+.solved .solved-t{margin:18px 0 0; font:700 clamp(21px,4cqw,26px)/1.2 var(--head); color:var(--ink-strong)}
+.solved-t:focus{outline:none}
+.solved .solved-sum{margin:16px 0 2px; font:700 clamp(44px,10cqw,68px)/1 var(--head); color:var(--ink-strong); font-variant-numeric:tabular-nums}
+.solved .hint-t{font-size:15px}
+.solved .more{margin-top:12px}
+.solved .more summary{color:var(--ink-strong)}
+
+@container (max-width:520px){
+  .stage{padding:18px 13px 14px}
+  .dcols{height:160px}
+  .dcol{padding:0 2px}
+  .dval{font-size:10.5px}
+  .drow{grid-template-columns:5.4em minmax(0,1fr); gap:6px; padding:4px 2px}
+  .drow .dlab{font-size:13px}
+  .dline{grid-template-columns:minmax(0,1fr) 5.2em; gap:5px; font-size:11.5px}
+  .clue{padding:6px 8px; min-height:56px}
+  .clue b{font-size:15px}
+  .clue span{font-size:11.5px}
+  .sql{font-size:12.5px}
+}
 
 /* stavění s AI */
 .ideas{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin-top:10px}

@@ -11,7 +11,7 @@ export const T0 = 1_700_000_000_000;
 export const min = (n: number) => T0 + n * 60_000;
 
 /** Datová analýza dokončená v čase now. wrong = špatné odpovědi v každém kroku (2 = správnou ukázal nástroj). */
-export function solveData(s: State, wrong: [number, number, number] = [0, 0, 0], now = min(1)): void {
+export function solveData(s: State, wrong: number[] = [0, 0, 0, 0, 0, 0, 0, 0], now = min(1)): void {
   for (const w of wrong) {
     for (let i = 0; i < w; i++) answerData(s, false, now);
     if (w < 2) answerData(s, true, now);

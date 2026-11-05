@@ -51,3 +51,24 @@ export const HERO_ART = `<svg class="hero-art" viewBox="0 0 440 330" aria-hidden
   <path d="M398 92l2.6 7.4 7.4 2.6-7.4 2.6-2.6 7.4-2.6-7.4-7.4-2.6 7.4-2.6z" fill="#FFFFFF" stroke="none"/>
   <path d="M150 26l1.8 5.2 5.2 1.8-5.2 1.8-1.8 5.2-1.8-5.2-5.2-1.8 5.2-1.8z" fill="#FFFFFF" stroke="none"/>
 </svg>`;
+
+const line = (d: string) => '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + d + '"/></svg>';
+
+/** Ikony rozhodnutí v datové ukázce, tahy se barví podle tlačítka. */
+export const DATA_ICON = {
+  down: line('M12 3v12m0 0l-4-4m4 4l4-4M4 20h16'),
+  tag: line('M3 12V4h8l10 10-8 8zM7.5 8h.01'),
+  slides: line('M4 5h16v10H4zM12 15v4M8 20h8'),
+  sum: line('M17 5H7l6 7-6 7h10'),
+  rows: line('M4 6h16M4 12h16M4 18h16'),
+  trash: line('M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13'),
+  cal: line('M4 6h16v14H4zM4 10h16M9 3v4M15 3v4'),
+  cloud: line('M7 18a4 4 0 010-8 5 5 0 019.6-1.3A4 4 0 0117 18z'),
+  mega: line('M4 10v4l12 5V5zM16 9a3 3 0 010 6'),
+  basket: line('M5 9h14l-1.5 11h-11zM9 9l3-5 3 5'),
+  avg: line('M5 19L19 5M8 7a1.5 1.5 0 100 .01M16 17a1.5 1.5 0 100 .01'),
+  clock: line('M12 3a9 9 0 100 18 9 9 0 000-18zM12 7v5l3 2'),
+  msg: line('M4 5h16v11H9l-5 4z'),
+  check: line('M4 13l5 5L20 7'),
+};
+export type DataIcon = keyof typeof DATA_ICON;

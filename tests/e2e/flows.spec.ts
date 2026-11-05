@@ -3,7 +3,7 @@
    Navigace klikáním a přes ?ukazka, ne přes hash. Panel obchodníka widget nemá,
    co by dorazilo do Pipedrivu, se ověřuje ve stavu widgetu. */
 import { expect, test } from '@playwright/test';
-import { LAPTOP, MOBILE, NBSP, focused, open, openWithAi, solveData, solveKyber, trackErrors, widgetState } from './helpers.ts';
+import { LAPTOP, MOBILE, NBSP, dataBar, dataOpt, focused, open, openWithAi, solveData, solveKyber, trackErrors, widgetState } from './helpers.ts';
 
 test('A: Datová analýza na mobilu po krocích a výsledek v jednom sloupci', async ({ page }) => {
   await page.setViewportSize(MOBILE);
@@ -15,46 +15,67 @@ test('A: Datová analýza na mobilu po krocích a výsledek v jednom sloupci', a
   // nástroj nesbírá kontakt
   await expect(page.locator('form, input[type="email"], input[type="tel"], #gate')).toHaveCount(0);
   await expect(page.locator('#d-done')).toBeHidden();
-  await expect(page.locator('#v-data .mission')).toContainText('Najdi, proč poklesly tržby.');
 
-  // krok 1: špatná odpověď zmizí a napoví, správná pustí dál
-  await expect(page.locator('#d-step .step-no')).toContainText('Porovnej měsíce');
-  await expect(page.locator('#d-step .of')).toHaveText('krok 1 ze 3');
-  await expect(page.locator('#d-step .bar-row')).toHaveCount(4);
-  const opts = page.locator('#d-options .opt');
-  await expect(opts).toHaveText(['Leden', 'Únor', 'Březen', 'Duben']);
+  // Jana přijde s problémem, špatná volba zmizí a Jana k ní řekne svoje
+  const stage = page.locator('#d-step');
+  await expect(page.locator('#d-jana')).toContainText('Nemrkneš na to?');
+  await expect(stage).toHaveAttribute('data-scene', 'jana');
+  const opts = page.locator('#d-options .act');
+  await expect(opts).toHaveCount(3);
   await opts.nth(0).click();
-  await expect(page.locator('#d-fb')).toContainText('Hledej nejkratší pruh.');
+  await expect(page.locator('#d-fb')).toContainText('Vždyť ještě nevíme');
   await expect(opts.nth(0)).toBeDisabled();
-  await expect(page.locator('#d-next')).toBeHidden();
-  await opts.nth(2).click();
-  await expect(page.locator('#d-fb')).toContainText('o 57 600 Kč méně než v únoru');
-  await expect(page.locator('#d-fb')).toHaveClass(/\bok\b/);
-  await expect(page.locator('#d-next')).toBeInViewport();
+  await expect(stage).toHaveAttribute('data-scene', 'jana');
 
-  // krok 2: dvě řady pruhů, u každého jeho částka, bez rozdílu proti únoru
-  await page.locator('#d-next').click();
-  await expect(page.locator('#d-step .step-no')).toContainText('Podívej se, co lidé kupovali');
-  expect((await focused(page)).id, 'fokus na nadpisu nového kroku').toBe('d-step-title');
-  await expect(page.locator('#d-step .bar-row.pair')).toHaveCount(4);
-  await expect(page.locator('#d-step .legend')).toHaveText('únorbřezen');
-  await expect(page.locator('#d-step .bar-row.pair').nth(2)).toContainText('62 100 Kč');
-  await expect(page.locator('#d-step .bar-row.pair').nth(2)).toContainText('9 300 Kč');
-  await opts.nth(2).click();
-  await expect(page.locator('#d-fb')).toContainText('Snídaně spadly z 62 100 na 9 300 Kč');
-
-  // krok 3: správná odpověď rovnou ukáže výsledek ukázky
-  await page.locator('#d-next').click();
-  await expect(page.locator('#d-step .step-no')).toContainText('Podívej se na dny v týdnu');
-  await expect(page.locator('#d-step .bar-row.pair')).toHaveCount(7);
-  await expect(page.locator('.prog')).toBeHidden();
+  // stažení dat: jeviště ztmavne a naskočí počet účtenek
   await opts.nth(1).click();
+  await expect(stage).toHaveAttribute('data-scene', 'raw');
+  await expect(page.locator('#d-count')).toHaveText('9 660 účtenek');
+  await opts.nth(2).click();
+
+  // měsíce: kliká se přímo na sloupec, špatný zmizí a správný odhalí první stopu
+  await expect(stage).toHaveAttribute('data-scene', 'chart');
+  const bars = page.locator('#d-chart [data-bar]');
+  await expect(bars).toHaveCount(4);
+  await expect(bars.nth(2)).toContainText('241 300 Kč');
+  await bars.nth(0).click();
+  await expect(page.locator('#d-fb')).toContainText('Hledej nejnižší sloupec.');
+  await expect(bars.nth(0)).toBeDisabled();
+  await bars.nth(2).click();
+  await expect(page.locator('#d-found')).toContainText('o 57 600 Kč níž než únor');
+  await expect(page.locator('.clue').nth(0)).toContainText('v březnu');
+  await expect(page.locator('#d-fb')).toBeHidden();
+  expect((await focused(page)).id, 'fokus na další otázce').toBe('d-q');
+
+  // dny: sloupce po dvojicích, stačí kliknout na jeden z víkendových
+  await opts.nth(0).click();
+  await expect(bars).toHaveCount(7);
+  await expect(page.locator('#d-step .legend')).toHaveText('únorbřezen');
+  await bars.nth(6).click();
+  await expect(bars.nth(5)).toHaveClass(/\bhit\b/);
+  await expect(page.locator('.clue').nth(1)).toContainText('o víkendu');
+
+  // produkty: vodorovné pruhy s částkami
+  await opts.nth(1).click();
+  await expect(bars).toHaveCount(4);
+  await expect(bars.nth(2)).toContainText('62 100 Kč');
+  await expect(bars.nth(2)).toContainText('9 300 Kč');
+  await expect(page.locator('.prog')).toBeHidden();
+  await bars.nth(2).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#d-found')).toContainText('Snídaně spadly z 62 100 na 9 300 Kč');
+  await expect(page.locator('.clue').nth(2)).toContainText('snídaně');
+
+  // závěr: zpráva Janě, její odpověď a výsledek ukázky
+  await opts.nth(2).click();
+  await expect(stage).toHaveAttribute('data-scene', 'solved');
   await expect(page.locator('#d-end')).toContainText('Zmizely víkendové snídaně');
-  await expect(page.locator('#d-step')).toContainText('Stálo ji to 52 800 Kč za měsíc.');
+  await expect(stage).toContainText('odešel kuchař');
+  await expect(page.locator('#d-lost')).toHaveText('52 800 Kč');
   await expect(page.locator('#d-sql-box')).toBeVisible();
   await expect(page.locator('#d-done')).toContainText('Hotovo, víš, proč tržby klesly!');
   await expect(page.locator('.prog')).toHaveText('Můj výsledek');
-  expect((await widgetState(page)).data).toMatchObject({ status: 'done', mistakes: 1, firstTry: false, revealed: false });
+  expect((await widgetState(page)).data).toMatchObject({ status: 'done', mistakes: 2, firstTry: false, revealed: false });
 
   await page.locator('#d-done [data-go="vysledek"]').click();
   await expect(page.locator('#r-reco h2')).toHaveText('Datová analýza');
@@ -84,27 +105,30 @@ test('A: Datová analýza na mobilu po krocích a výsledek v jednom sloupci', a
   expect(errors).toEqual([]);
 });
 
-test('A2: po dvou špatných odpovědích v kroku se ukáže správná, i v posledním', async ({ page }) => {
+test('A2: po dvou špatných volbách se rozsvítí správná, u tlačítek i v grafu', async ({ page }) => {
   await page.setViewportSize(LAPTOP);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page, '/index.html?ukazka=data');
-  const opts = page.locator('#d-options .opt');
+  const opts = page.locator('#d-options .act');
+  const bars = page.locator('#d-chart [data-bar]');
   await opts.nth(0).click();
+  await opts.nth(2).click();
+  await expect(opts.nth(1)).toHaveClass(/\blit\b/);
+  await expect(page.locator('#d-fb')).toContainText('Správná odpověď svítí.');
   await opts.nth(1).click();
-  await expect(opts.nth(2)).toHaveClass(/\bok\b/);
-  await expect(page.locator('#d-fb')).toHaveText('Správná odpověď je označená zeleně.');
-  for (const o of await opts.all()) await expect(o).toBeDisabled();
-  await page.locator('#d-next').click();
   await opts.nth(2).click();
-  await page.locator('#d-next').click();
 
-  // ve třetím kroku po dvou špatných zůstane vidět správná a dál jde tlačítkem
-  await opts.nth(0).click();
-  await expect(page.locator('#d-fb')).toContainText('Podívej se na sobotu a neděli.');
-  await opts.nth(2).click();
-  await expect(opts.nth(1)).toHaveClass(/\bok\b/);
+  // v grafu se po dvou špatných vypnou všechny ostatní sloupce
+  await bars.nth(0).click();
+  await bars.nth(1).click();
+  await expect(bars.nth(2)).toHaveClass(/\blit\b/);
+  await expect(bars.nth(3)).toBeDisabled();
+  await expect(page.locator('#d-fb')).toContainText('Správná odpověď svítí.');
   await expect(page.locator('#d-done')).toBeHidden();
-  await page.locator('#d-next').click();
+  await bars.nth(2).click();
+  await expect(page.locator('#d-found')).toBeVisible();
+
+  for (const [move, n] of [[dataOpt, 0], [dataBar, 5], [dataOpt, 1], [dataBar, 2], [dataOpt, 2]] as const) await move(page, n);
   await expect(page.locator('#d-end')).toBeVisible();
   await expect(page.locator('#d-done')).toBeVisible();
   expect((await widgetState(page)).data).toMatchObject({ status: 'done', mistakes: 4, revealed: true, firstTry: false });

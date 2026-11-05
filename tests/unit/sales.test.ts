@@ -84,7 +84,7 @@ describe('why', () => {
     const clean = snap(s => solveData(s));
     const mistakes = snap(s => { answerData(s, false, now); solveData(s, [0, 1, 0], min(3)); });
     const shown = snap(s => solveData(s, [2, 0, 0]));
-    expect(why('data', clean)[0]).toBe(typo('Všechny tři kroky správně napoprvé'));
+    expect(why('data', clean)[0]).toBe(typo('Všechny kroky správně napoprvé'));
     expect(why('data', mistakes)[0]).toBe(typo('Špatné odpovědi po cestě: 2'));
     expect(why('data', shown)[0]).toBe(typo('Správnou odpověď ukázal nástroj'));
     expect(why('data', mistakes)[1]).toBe(typo('Čas: 2 min'));

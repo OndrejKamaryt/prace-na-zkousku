@@ -5,7 +5,7 @@ Shrnutí ze dne 5. 11. 2026. Zadání zjednodušení je `ZPETNA-VAZBA.md`, schv�
 ## Stav
 
 - **Fáze 1 a 2 (sloučená s fází 3) a zjednodušení jsou hotové.** Skutečný widget `<prace-na-zkousku>` s otevřeným Shadow DOM. Hlavní je samostatná stránka (`data-variant="standalone"`), kterou Martin vloží na web přes embed na celou obrazovku. Varianta embed (`data-variant="embed"`, výchozí) a měření hlavičky dál fungují.
-- **Testy:** 82 unit testů (Vitest) a 44 Playwright testů v Edge přes `http://localhost` (`npm run test:e2e`), jeden odložený do fáze 6 (`test.fixme`, dotykové cíle 44 px). Typecheck i build jsou čisté, widget má 36,8 kB gzip (cíl 80 kB). Rozložení je ověřené na 390 × 844 i 1366 × 768.
+- **Testy:** 87 unit testů (Vitest) a 44 Playwright testů v Edge přes `http://localhost` (`npm run test:e2e`), jeden odložený do fáze 6 (`test.fixme`, dotykové cíle 44 px). Typecheck i build jsou čisté, widget má 36,8 kB gzip (cíl 80 kB). Rozložení je ověřené na 390 × 844 i 1366 × 768.
 - **Demo:** https://ondrejkamaryt.github.io/prace-na-zkousku/ ukazuje novou verzi. Sestavuje ho `node scripts/build-site.ts` (spustí i `vite build`), nasazuje `.github/workflows/pages.yml` při pushi do `main`. Adresa se nezměnila.
 
 ## Co se změnilo proti 3. 11.
@@ -14,7 +14,7 @@ Shrnutí ze dne 5. 11. 2026. Zadání zjednodušení je `ZPETNA-VAZBA.md`, schv�
 - **Konec ukázky:** krémový pruh s větou a tlačítkem „Můj výsledek“, u kyberbezpečnosti jen tlačítko, protože „Server je v bezpečí“ je hned nad ním. Dole na ukázce i ve výsledku je „Zkus si další příklady“ (ostatní ukázky, hotové odškrtnuté) místo „Zpět na výběr“.
 - **Hlavička:** „Můj výsledek“ se ukáže až po první hotové nebo přeskočené ukázce. V embedu je do té doby skrytý celý světlý pruh.
 - **Výsledek** je jeden sloupec (nejvýš 720 px): doporučený obor s jednou větou, cena s příspěvkem, „Co dál“ s větou o nové záložce, další příklady. Pryč jsou důvody, „Bavilo tě to?“, „Co od kurzu čekáš?“ a školení přes firmu. Barevně bez modrého bloku.
-- **Datová analýza** je klikačka po třech krocích (měsíce, produkty, dny). Na obrazovce je jeden krok, špatná odpověď zmizí s nápovědou, po dvou špatných v kroku se ukáže správná. Konec je „Zmizely víkendové snídaně“. Pryč jsou záložky, pohled podle hodin, útrata a účtenky, plovoucí „Znám viníka“.
+- **Datová analýza** je práce analytika v osmi rozhodnutích: Jana napíše o problému, návštěvník stáhne data z pokladny, sečte měsíce, klikne na březen, porovná dny, klikne na víkend, rozdělí tržby podle produktů, klikne na snídaně a napíše Janě závěr. Jeviště mění barvu podle fáze (krémová, tmavá, modrá, žlutá), tlačítka a sloupce svítí, nad jevištěm se plní tři stopy a nad grafy se vypisuje dotaz SQL. Špatná volba zmizí a Jana k ní řekne svoje, po dvou špatných se rozsvítí správná, na kterou se klikne. Konec je „Zmizely víkendové snídaně“ a 52 800 Kč. Klikací koncept je v `prototyp/data-koncept.html`.
 - **Kyberbezpečnost:** jeden levý sloupec (zadání, poplach, krok, výsledek), terminál vpravo jako ilustrace, na mobilu pod krokem. Texty beze změny.
 - **Hra:** plátno přes celou šířku rámečku. Plocha 12 × 7 a fyzika jsou stejné, na širokém okně je plocha uprostřed a po stranách pokračuje obloha a zem jako kulisa (při úpravách zesvětlená, klepnutí tam nic nedělá). Pořadí je plátno, text, nástroje, tlačítka. Nástroje s ikonou a vysvětlením se ukazují jen při úpravách, takže plátno při přepínání neposkočí. Texty bez slova level.
 - **Stavění s AI je schované:** nikde se nenabízí a `?ukazka=ai` ani `data-start="ai"` ji neotevřou. Kód, texty i testy zůstávají.
@@ -35,14 +35,14 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 ## Jak se chová embed (ověřeno testy)
 
 - Lepicí hlavička se měří za běhu (`data-scroll-offset="auto"`, výchozí): 199, 175 i 119 px na notebooku, 60 px mezi 992 a 1199 px, 0 na mobilu. Číslo v atributu měření přepíše.
-- Přepnutí obrazovky posune widget pod hlavičku a dá fokus na nadpis, první vykreslení stránkou neposouvá. Nový krok dat a výsledek ukázky se srovnají pod hlavičku, „Další krok“ se odkryje nad dolní lištou webu (R3).
+- Přepnutí obrazovky posune widget pod hlavičku a dá fokus na nadpis, první vykreslení stránkou neposouvá. Nový graf dat a výsledek ukázky se srovnají pod hlavičku, volby se odkryjí nad dolní lištou webu (R3).
 - Widget nemá žádnou vrstvu nad stránkou, žádný `<dialog>` ani popover.
 - Styly Bootstrapu se do widgetu nepropisují a widget nemění stránku. Hash stránky zůstává.
 
 ## Data pro fázi 4 (rozhodnuto 5. 11.)
 
 - „Hotovo“ dál znamená dokončenou ukázku (`status: 'done'`). Stav, snímek pro Pipedrive i hodnocení zůstávají, jen `badgeCount` je pryč.
-- V `DataSnap` je místo `viewsSeen` a `tries` nově `mistakes` (špatné odpovědi celkem, 0 až 6), `firstTry` (všechny kroky bez chyby) a `revealed` (správnou aspoň jednou ukázal nástroj). Hodnocení: `revealed` je bad, `firstTry` great, jinak average. Doporučení počítá data jako dřív s prohlédnutými pohledy (2,5 bodu plus 1 za `firstTry`).
+- V `DataSnap` je místo `viewsSeen` a `tries` nově `mistakes` (špatné volby celkem, 0 až 16: osm rozhodnutí, u každého nejvýš dvě), `firstTry` (všechny kroky bez chyby) a `revealed` (správnou aspoň jednou ukázal nástroj). Hodnocení: `revealed` je bad, `firstTry` great, jinak average. Doporučení počítá data jako dřív s prohlédnutými pohledy (2,5 bodu plus 1 za `firstTry`).
 - `fav`, `goal` a `firm` zůstávají ve stavu i snímku, ale obrazovka je nenastavuje, takže jsou prázdné. Poznámka pro obchod pak říká „bez odpovědi“ a „neuvedeno“. Ve fázi 4 rozhodnout, jestli ty řádky z poznámky vypustit.
 - Poznámka pro obchod má u dat nové věty (`NAVRH-TEXTU.md`), u hry zatím zůstává slovo level, návštěvník ji nevidí.
 
@@ -50,10 +50,10 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 
 - **Data od dneška (rozhodnutí 19):** rezervace ukazuje tři pracovní dny od zítřka, výpis `last` v kyberbezpečnosti má dnešek a včerejšek.
 - **Přeskočená hra (rozhodnutí 7):** na kartě úvodu a v dalších příkladech šedé „Přeskočeno“, pruh Hotovo se neukáže, „Můj výsledek“ ano.
-- **Po dvou špatných v posledním kroku dat** zůstane krok vidět se správnou odpovědí a dál se jde přes „Další krok“. Po správné odpovědi se výsledek ukáže rovnou.
+- **Po dvou špatných volbách v datech** se u tlačítek i v grafu ostatní volby vypnou a správná se rozsvítí. Dál se jde až kliknutím na ni, „Další krok“ v ukázce není. Ukázka je hotová hned po poslední správné volbě, výsledek a pruh Hotovo se ukážou po Janině odpovědi.
 - **Po odhalené odpovědi** je vidět jen „Správná odpověď je označená zeleně.“, věta za správnou odpověď začíná „Správně“ a sem by se nehodila.
 - **Plátno hry v embedu** se počítá z výšky okna pod hlavičkou webu, na samostatné stránce vyjde stejně jako v prototypu (A3). Kritérium „Hrát bez scrollování“ testuji jen na samostatné stránce.
-- **Fokus (A11):** po přepnutí obrazovky na nadpis, v kyberbezpečnosti zůstává v panelu a na konci přejde na „Můj výsledek“, v datech na nadpis nového kroku.
+- **Fokus (A11):** po přepnutí obrazovky na nadpis, v kyberbezpečnosti zůstává v panelu a na konci přejde na „Můj výsledek“, v datech na další otázku a na konci na výsledek ukázky.
 - **Ilustrace na úvodu** (`HERO_ART`) dál obsahuje malou bublinu s hvězdičkou, která naráží na AI. Nikam nevede, nechal jsem ji.
 - **Vývojové závislosti navíc:** `@playwright/test` 1.64.1 a `@types/node` 24 (jen pro vývoj a testy, runtime závislost žádná).
 

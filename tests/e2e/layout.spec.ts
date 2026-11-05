@@ -2,7 +2,7 @@
    která referenční testy nehlídaly (R2): šířky 320 až 430 px, karty bez
    scrollování, skryté prvky ve shadow root opravdu nejsou vidět. */
 import { expect, test } from '@playwright/test';
-import { LAPTOP, MOBILE, open, openWithAi, scrollWidth, solveData, solveKyber } from './helpers.ts';
+import { LAPTOP, MOBILE, dataBar, dataOpt, open, openWithAi, scrollWidth, solveData, solveKyber } from './helpers.ts';
 
 for (const vp of [MOBILE, LAPTOP]) {
   test(`kyberbezpečnost bez vodorovného přetečení, ${vp.width} px`, async ({ page }) => {
@@ -59,24 +59,33 @@ test('plátno je ostré i na displeji s vyšší hustotou', async ({ browser }) 
 });
 
 for (const vp of [MOBILE, LAPTOP]) {
-  test(`data: nový krok začíná nahoře a Další krok je vidět po odpovědi, ${vp.width} px`, async ({ page }) => {
+test(`data: v každém kroku je vidět celá otázka s volbami i graf, ${vp.width} px`, async ({ page }) => {
     await page.setViewportSize(vp);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page, '/index.html?ukazka=data');
-    await page.locator('#d-options [data-opt="2"]').click();
-    await expect(page.locator('#d-next')).toBeInViewport({ ratio: 1 });
-    await page.locator('#d-next').click();
-    await expect(page.locator('#d-step .of')).toHaveText('krok 2 ze 3');
-    const top = (await page.locator('#d-step').boundingBox())!.y;
+    const lastOpt = page.locator('#d-options .act').last();
+    const chart = page.locator('#d-chart');
+    await dataOpt(page, 1);
+    await expect(lastOpt).toBeInViewport({ ratio: 1 });
+    await dataOpt(page, 2);
+    // nový graf: stopy, graf i otázka naráz, stopy nezajedou nad horní okraj
+    await expect(chart).toBeInViewport({ ratio: 1 });
+    await expect(page.locator('#d-q')).toBeInViewport({ ratio: 1 });
+    const top = (await page.locator('#d-clues').boundingBox())!.y;
     expect(top).toBeGreaterThanOrEqual(0);
-    // na notebooku je stránka krátká a posunout se nemusí, na mobilu začíná krok nahoře
-    if (vp === MOBILE) expect(top).toBeLessThanOrEqual(12);
-    await page.locator('#d-options [data-opt="2"]').click();
-    await expect(page.locator('#d-next')).toBeInViewport({ ratio: 1 });
-    await page.locator('#d-next').click();
-    await page.locator('#d-options [data-opt="0"]').click();
+    await dataBar(page, 0);
     await expect(page.locator('#d-fb')).toBeInViewport({ ratio: 1 });
-    await page.locator('#d-options [data-opt="1"]').click();
+    await dataBar(page, 2);
+    await expect(lastOpt).toBeInViewport({ ratio: 1 });
+    await dataOpt(page, 0);
+    await expect(chart).toBeInViewport({ ratio: 1 });
+    await dataBar(page, 5);
+    await expect(lastOpt).toBeInViewport({ ratio: 1 });
+    await dataOpt(page, 1);
+    await expect(chart).toBeInViewport({ ratio: 1 });
+    await dataBar(page, 2);
+    await expect(lastOpt).toBeInViewport({ ratio: 1 });
+    await dataOpt(page, 2);
     // výsledek ukázky i cesta k výsledku jsou vidět naráz
     await expect(page.locator('#d-end')).toBeInViewport({ ratio: 1 });
     await expect(page.locator('#d-done [data-go="vysledek"]')).toBeInViewport({ ratio: 1 });
@@ -114,13 +123,7 @@ for (const width of [320, 360, 390, 430]) {
     expect(await scrollWidth(page), 'kyber').toBeLessThanOrEqual(width);
 
     await open(page, '/index.html?ukazka=data');
-    for (const [opt, label] of [[2, 'data 1'], [2, 'data 2']] as const) {
-      await page.locator(`#d-options [data-opt="${opt}"]`).click();
-      expect(await scrollWidth(page), label).toBeLessThanOrEqual(width);
-      await page.locator('#d-next').click();
-    }
-    expect(await scrollWidth(page), 'data 3').toBeLessThanOrEqual(width);
-    await page.locator('#d-options [data-opt="1"]').click();
+await solveData(page, async () => { expect(await scrollWidth(page), 'data').toBeLessThanOrEqual(width); });
     await page.locator('#d-sql-box summary').click();
     expect(await scrollWidth(page), 'data hotovo').toBeLessThanOrEqual(width);
     await page.locator('.prog').click();
