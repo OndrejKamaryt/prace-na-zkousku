@@ -27,7 +27,8 @@ for (const vp of [MOBILE, LAPTOP]) {
     const errors = trackErrors(page);
     await open(page, '/index.html?ukazka=hry');
     await expect(page.locator('#v-hry h2')).toHaveText('Zahraj si hru a pak ji uprav');
-    await expect(page.locator('#g-status')).toHaveText('Postavička běží sama, ty jen skáčeš. Zmáčkni Hrát a pak klepni kamkoli do hry.');
+    await expect(page.locator('#v-hry .sub')).toContainText('Běžíš z Coders Labu do svého prvního herního studia.');
+    await expect(page.locator('#g-status')).toHaveText('Zmáčkni Hrát a pak klepni kamkoli do hry.');
     await expect(page.locator('#g-tools')).toBeHidden();
 
     // po pádu je Hrát znovu chvíli neaktivní; okno 900 ms se pod zátěží snadno mine, proto ho zapisuje pozorovatel
@@ -51,7 +52,7 @@ for (const vp of [MOBILE, LAPTOP]) {
 
     await dieOnce(page, 2);
     await dieOnce(page, 3);
-    await expect(status).toContainText('Nevadí, i herní designéři ladí obtížnost. Uprav hru, aby šla projít');
+    await expect(status).toContainText('Životy došly, ale nevadí, i herní designéři ladí obtížnost. Uprav hru, aby šla projít');
     await expect(page.locator('#g-tools')).toBeVisible();
     await expect(page.locator('[data-gstep="1"]')).toHaveClass(/\bok\b/);
 
@@ -59,12 +60,20 @@ for (const vp of [MOBILE, LAPTOP]) {
     await tapCell(page, 5, 6);
     await page.locator('[data-tool="0"]').click();
     await tapCell(page, 8, 5);
-    await expect(page.locator('#g-stats')).toHaveText('Pokusy: 3, úpravy: 3');
+    expect((await widgetState(page)).hry.edits).toBe(3);
     await play.click();
     // při hraní nástroje zmizí, aby na obrazovce bylo jen to nutné
     await expect(page.locator('#g-tools')).toBeHidden();
-    await expect(status).toContainText('Tvoje verze hry je dohraná! Mince: ', { timeout: 10_000 });
-    await expect(status).toContainText(/Mince: \d\/3\./);
+    await expect(status).toContainText('Tvoje verze hry je dohraná! Každý bug navíc je 50 bodů', { timeout: 10_000 });
+    // karta s hvězdami a body je jen na plátně, kam klepnutí dál projde
+    const card = page.locator('#g-card');
+    await expect(card).toContainText('Tvoje hra je dohraná!');
+    await expect(card).toContainText('Nový rekord!');
+    await expect(card).toContainText(/\d+\sbodů/);
+    await expect(page.locator('#g-stars svg')).toHaveCount(3);
+    await expect(page.locator('#g-reasons li').first()).toHaveClass(/\bon\b/);
+    await expect(page.locator('#g-quests-title')).toContainText('1/4');
+    await expect(page.locator('#g-quests-list li').nth(3)).toHaveClass(/\bon\b/);
     await expect(page.locator('#g-done')).toContainText('Hotovo, tvoje verze hry je dohraná!');
     await expect(page.locator('#g-done [data-go="vysledek"]')).toHaveText('Můj výsledek');
     expect((await widgetState(page)).hry).toMatchObject({ status: 'done', ownWon: true, winAttempt: 1, edits: 3 });
@@ -73,27 +82,68 @@ for (const vp of [MOBILE, LAPTOP]) {
   });
 }
 
+test('první výhra ukáže hvězdy a body a nabídne úpravu hry, trampolína přenese přes díru', async ({ page }) => {
+  test.slow();
+  await page.setViewportSize(LAPTOP);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const errors = trackErrors(page);
+  await open(page, '/index.html?ukazka=hry');
+  const card = page.locator('#g-card');
+  // skoky načasované od startu: odpočet 0,9 s a běh 4 dlaždice za sekundu, okna jsou široká, dva pády hra odpustí
+  for (let n = 0; n < 2 && !(await card.isVisible()); n++) {
+    await page.locator('#g-play').click({ timeout: 5_000 });
+    await page.evaluate(async () => {
+      const host = document.querySelector('prace-na-zkousku')!;
+      const press = () => host.shadowRoot!.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space', bubbles: true, composed: true }));
+      const wait = (ms: number) => new Promise(r => setTimeout(r, ms));
+      await wait(1_550); press();
+      await wait(1_050); press();
+    });
+    await expect.poll(async () => (await card.isVisible()) || (await page.locator('#g-play').isEnabled() && await page.locator('#g-play').isVisible()), { timeout: 6_000 }).toBe(true);
+  }
+  await expect(card).toContainText('Jsi ve studiu!');
+  await expect(card).toContainText(/\d+\sbodů/);
+  await expect(page.locator('#g-status')).toContainText('Zkus to znovu na tři hvězdy');
+  await expect(page.locator('#g-reasons')).toContainText('Bez ztráty života');
+  // po první výhře se nabízí úprava, tlačítko svítí a do úprav se nejde samo
+  await expect(page.locator('#g-tools')).toBeHidden();
+  await expect(page.locator('#g-edit')).toHaveClass(/\bbtn-primary\b/);
+  expect((await widgetState(page)).hry.status).not.toBe('done');
+
+  await page.locator('#g-edit').click();
+  await expect(card).toBeHidden();
+  await page.locator('[data-tool="4"]').click();
+  await tapCell(page, 3, 5);
+  await expect(page.locator('#g-quests-list li').nth(2)).toHaveClass(/\bon\b/);
+  await page.locator('[data-tool="0"]').click();
+  await tapCell(page, 8, 5);
+  await page.locator('#g-play').click();
+  await expect(page.locator('#g-status')).toContainText('Tvoje verze hry je dohraná!', { timeout: 10_000 });
+  expect((await widgetState(page)).hry).toMatchObject({ status: 'done', ownWon: true });
+  expect(errors).toEqual([]);
+});
+
 test('nástroje mají ikonu a vysvětlení a Smazat je od ostatních oddělené', async ({ page }) => {
   await page.setViewportSize(LAPTOP);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page, '/index.html?ukazka=hry');
   for (let n = 1; n <= 3; n++) await dieOnce(page, n);
   const tools = page.locator('#g-tools .tool');
-  await expect(tools).toHaveCount(4);
-  await expect(tools.locator('svg')).toHaveCount(4);
-  await expect(tools.locator('b')).toHaveText(['Přidej plošinu', 'Přidej nástrahu', 'Přidej mince', 'Smazat']);
-  await expect(tools.nth(1).locator('small')).toHaveText('Když se jí postava dotkne, přijde o život.');
-  await expect(tools.nth(2).locator('small')).toHaveText('Jsou odměna, sbíráš za ně body.');
+  await expect(tools).toHaveCount(5);
+  await expect(tools.locator('svg')).toHaveCount(5);
+  await expect(tools.locator('b')).toHaveText(['Přidej plošinu', 'Přidej bug', 'Přidej kód', 'Přidej trampolínu', 'Smazat']);
+  await expect(tools.nth(1).locator('small')).toHaveText('Když se ho postava dotkne, přijde o život. Těžší hra, víc bodů.');
+  await expect(tools.nth(2).locator('small')).toHaveText('Je to odměna, každý kousek je 100 bodů.');
   await expect(page.locator('[data-tool="1"]')).toHaveAttribute('aria-pressed', 'true');
   await page.locator('[data-tool="3"]').click();
   await expect(page.locator('[data-tool="3"]')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('[data-tool="1"]')).toHaveAttribute('aria-pressed', 'false');
 
-  const coin = (await page.locator('[data-tool="3"]').boundingBox())!;
+  const spring = (await page.locator('[data-tool="4"]').boundingBox())!;
   const erase = (await page.locator('[data-tool="0"]').boundingBox())!;
   const solid = (await page.locator('[data-tool="1"]').boundingBox())!;
-  const spike = (await page.locator('[data-tool="2"]').boundingBox())!;
-  expect(erase.x - (coin.x + coin.width), 'mezera před Smazat').toBeGreaterThan(spike.x - (solid.x + solid.width));
+  const bug = (await page.locator('[data-tool="2"]').boundingBox())!;
+  expect(erase.x - (spring.x + spring.width), 'mezera před Smazat').toBeGreaterThan(bug.x - (solid.x + solid.width));
 
   // klepnutí mimo herní plochu nic nezmění
   const box = (await page.locator('#g-canvas').boundingBox())!;

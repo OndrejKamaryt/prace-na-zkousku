@@ -203,7 +203,7 @@
 .gstep.ok{color:var(--green-ink)}
 .gstep.ok b{background:var(--green); color:transparent; background-image:var(--ico-check-w); background-position:center; background-size:14px; background-repeat:no-repeat}
 /* nástroje: tři k přidání, Smazat je od nich oddělené */
-.toolbar{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px; margin-top:12px}
+.toolbar{display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:8px; margin-top:12px}
 .tool{display:flex; align-items:flex-start; gap:10px; min-height:44px; min-width:0; padding:10px 12px; border-radius:var(--r-card); border:1px solid var(--line-strong); background:var(--bg); font:inherit; text-align:left; cursor:pointer; color:var(--dark)}
 .tool[aria-pressed="true"]{border-color:var(--dark); box-shadow:inset 0 0 0 1px var(--dark); background:var(--light)}
 .tool[data-tool="0"]{margin-left:16px}
@@ -221,8 +221,30 @@
 #g-canvas{display:block; border-radius:var(--r-panel); border:1px solid var(--line); touch-action:none; cursor:crosshair; max-width:100%}
 @container (max-width:560px){ .t-game .panel{padding:14px 12px} }
 .game-status{font:500 16px/1.4 var(--head); min-height:1.6em; margin-top:12px}
-.game-stats{font-size:13px; color:var(--gray); font-variant-numeric:tabular-nums; margin-top:10px}
 .jump{width:100%}
+.score-card{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(320px,86%); padding:10px 14px; border:3px solid var(--yellow); border-radius:var(--r-panel); background:#fff; text-align:center; pointer-events:none; box-shadow:0 0 34px 8px rgba(250,186,32,.7); animation:card-pop .4s cubic-bezier(.3,1.6,.5,1)}
+.score-card[hidden]{display:none}
+.score-card h3{margin:0; font:700 19px/1.2 var(--head); color:var(--ink-strong)}
+.score-card p{margin:0; font:500 15px/1.3 var(--head)}
+.score-card small{display:block; font-size:13px; color:var(--gray)}
+@keyframes card-pop{0%{transform:translate(-50%,-50%) scale(.8)}100%{transform:translate(-50%,-50%) scale(1)}}
+.stars{display:flex; justify-content:center; gap:6px; margin:4px 0}
+.stars svg{width:clamp(30px,8cqw,44px); height:clamp(30px,8cqw,44px); fill:#E2E6EA}
+.stars svg.on{fill:var(--yellow); stroke:#C98A00; stroke-width:1; animation:star-pop .5s cubic-bezier(.3,1.8,.5,1) both; animation-delay:calc(var(--i)*.22s)}
+@keyframes star-pop{0%{transform:scale(0) rotate(-60deg)}100%{transform:scale(1) rotate(0)}}
+.star-list{display:flex; flex-wrap:wrap; gap:6px 14px; margin:6px 0 0; padding:0; list-style:none; font-size:14px}
+.star-list[hidden]{display:none}
+.star-list li{display:flex; align-items:center; gap:5px; color:var(--gray)}
+.star-list li.on{color:var(--ink); font-weight:600}
+.star-list svg{width:16px; height:16px; fill:#CED4DA}
+.star-list .on svg{fill:var(--yellow); stroke:#C98A00}
+.game-quests{margin-top:10px}
+.game-quests[hidden]{display:none}
+.game-quests p{margin:0 0 6px; font:700 15px var(--head)}
+.game-quests ul{display:flex; flex-wrap:wrap; gap:6px; margin:0; padding:0; list-style:none}
+.game-quests li{padding:5px 12px; border:1.5px dashed var(--line-strong); border-radius:999px; font-size:14px; color:var(--gray); transition:background .25s, border-color .25s}
+.game-quests li.on{border:1.5px solid var(--yellow); background:var(--yellow); color:var(--ink); font-weight:600}
+.btn.glow{animation:act-glow 2.2s ease-in-out infinite}
 button, a, #g-canvas{-webkit-tap-highlight-color:transparent}
 
 /* kyberbezpečnost */

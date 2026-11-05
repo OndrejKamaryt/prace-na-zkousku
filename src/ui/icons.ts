@@ -4,8 +4,9 @@ import type { PathKey } from '../logic/types.ts';
 /** Ikony nástrojů editoru hry, kreslené stejně jako věci na plátně. */
 export const TOOL_ICON = {
   solid: '<svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="4" fill="#212529"/><path d="M3 10V7a4 4 0 0 1 4-4h18a4 4 0 0 1 4 4v3z" fill="#69CCEA"/></svg>',
-  spike: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 29l4.3-20 4.4 20zM11.7 29L16 9l4.3 20zM20.3 29l4.4-20L29 29z" fill="#E9225B"/></svg>',
-  coin: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="#FABA20" stroke="#C98A00" stroke-width="3"/></svg>',
+  bug: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 7l3 5M23 7l-3 5M6 16l4 2M26 16l-4 2M5 23l5-1M27 23l-5-1" stroke="#212529" stroke-width="2" stroke-linecap="round" fill="none"/><ellipse cx="16" cy="18" rx="10" ry="9" fill="#D81B53"/><path d="M16 9v18" stroke="#fff" stroke-opacity=".45" stroke-width="1.5"/><circle cx="12" cy="15" r="2.6" fill="#fff"/><circle cx="20" cy="15" r="2.6" fill="#fff"/><circle cx="12.7" cy="15" r="1.2" fill="#212529"/><circle cx="20.7" cy="15" r="1.2" fill="#212529"/></svg>',
+  code: '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" fill="#FABA20" stroke="#C98A00" stroke-width="2.5"/><path d="M11 12l-4 4 4 4M21 12l4 4-4 4M18 10l-4 12" stroke="#212529" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
+  spring: '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 25l16-2M8 21l16-2M8 17l16-2" stroke="#17496F" stroke-width="2.4" stroke-linecap="round"/><rect x="4" y="8" width="24" height="5" rx="2" fill="#FABA20" stroke="#C98A00"/><rect x="4" y="26" width="24" height="3.5" rx="1.5" fill="#212529"/></svg>',
   eraser: '<svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="#212529" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 27h15"/><path d="M6.6 19.6l11-11a2.5 2.5 0 0 1 3.5 0l5.3 5.3a2.5 2.5 0 0 1 0 3.5L16.8 27h-4.6l-5.6-5.4a1.4 1.4 0 0 1 0-2z" fill="#FFFFFF"/><path d="M12 14.2l8 8"/></svg>',
 };
 
@@ -72,3 +73,6 @@ export const DATA_ICON = {
   check: line('M4 13l5 5L20 7'),
 };
 export type DataIcon = keyof typeof DATA_ICON;
+
+/** Hvězda za ukázku, barvu dostane podle třídy on. */
+export const STAR_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.6 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.2l1.5-7L2 9.4l7-.8z"/></svg>';
