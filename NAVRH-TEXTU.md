@@ -123,32 +123,34 @@ Výzvy herního designéra {n}/{total}: Přidej nástrahu, Přidej kód, Přidej
 
 Pruh: **Hotovo, tvoje verze hry je dohraná! V Unreal Enginu 5 se stejně skládají celé herní světy, ve 3D a bez programování.**
 
-## IT administrátor (schváleno 5. 11., koncept v `prototyp/admin-koncept.html`)
+## IT administrátor (schváleno 5. 11., pekárna místo Coders Labu 8. 11.)
 
-Nadpis: **Někdo se dobývá do serveru Coders Labu**
+Koncept v `prototyp/admin-koncept.html` má ještě server Coders Labu, Ondřej 8. 11. rozhodl, že ukázka zůstává na příkladu pekárny. Platí tenhle text.
 
-Podnadpis: **Máš noční službu. Na serveru běží přihlášky na kurzy a útočník zkouší hesla. Čím rychleji a přesněji zasáhneš, tím víc hvězd získáš. Všechno uděláš tlačítky, nic psát nemusíš.**
+Nadpis: **Někdo se dobývá do serveru pekárny**
 
-Přehled nahoře: Zabezpečení serveru, Čas zásahu, Pokusy útočníka. Mapa útoku: útočník, zablokováno.
+Podnadpis: **Staráš se o server pekárny Kvásek, přes který chodí objednávky z kaváren. Čím rychleji a přesněji zasáhneš, tím víc hvězd získáš. Všechno uděláš tlačítky, nic psát nemusíš.**
 
-Tereza, provoz Coders Labu, začátek: **Promiň, že budím. Od 3:00 se někdo pořád dokola pokouší přihlásit na server s přihláškami. Mrkneš na to?**
+Přehled nahoře: Zabezpečení serveru, Čas zásahu, Pokusy útočníka. Mapa útoku: Kvásek, útočník, zablokováno.
+
+Tereza, pekárna Kvásek, začátek: **Promiň, že budím. Od 3:00 se někdo pořád dokola pokouší přihlásit na server s objednávkami. Mrkneš na to?**
 
 Krok 1, Najdi útočníka: Server si zapisuje každý pokus o přihlášení. Podívej se na ty, které neprošly. Tlačítko „Ukázat neúspěšná přihlášení“. Tereza: **Všechny jdou z jedné adresy a zkouší různá jména: root, admin, petra. Spočítej, kolik pokusů přišlo odkud.** Tlačítko „Spočítat pokusy podle adresy“. **Klikni na adresu útočníka.**
 - 198.51.100.23 → Tereza: Tři pokusy? To je nejspíš někdo z kanceláře, kdo si spletl heslo.
 - 192.0.2.10 → Tereza: Jeden neúspěšný pokus je běžný překlep.
 
-Krok 2, Zavři dveře: **Správně! Tolik pokusů za pár minut nezkouší člověk, ale program, který hádá hesla. Zablokuj ho.** Tlačítko „Zablokovat adresu útočníka“. **Útočník je venku, útoky se odrážejí. Jen zkontroluj, jestli se mezitím nedostal dovnitř.** Tlačítko „Ukázat, kdo se přihlásil“. **Ve 3:12 se z adresy útočníka přihlásila lektorka Petra. Jenže ve tři ráno Petra spí. Co uděláš s jejím účtem?**
+Krok 2, Zavři dveře: **Správně! Tolik pokusů za pár minut nezkouší člověk, ale program, který hádá hesla. Zablokuj ho.** Tlačítko „Zablokovat adresu útočníka“. **Útočník je venku, útoky se odrážejí. Jen zkontroluj, jestli se mezitím nedostal dovnitř.** Tlačítko „Ukázat, kdo se přihlásil“. **Ve 3:12 se z adresy útočníka přihlásila Petra. Jenže Petra chodí do práce z kanceláře a ve tři ráno spí. Co uděláš s jejím účtem?**
 - Účet smažu i se všemi daty. → Tereza: Smazáním přijdeme o stopy, podle kterých zjistíme, co útočník na serveru dělal, a Petra přijde o svá data.
 - Účet zamknu, prověřím, co se v něm dělo, a s Petrou nastavím nové heslo. (správně)
 - Nic, útočníka už blokuje firewall. → Tereza: Útočník zná Petřino heslo a z jiné adresy se může vrátit.
 
 Krok 3, Ať se to neopakuje: **Účet je zamčený. Vyber dva štíty, které na serveru nasadíš.** Tlačítko „Nasadit štíty“.
 - Přihlašování digitálním klíčem místo hesla: Klíč se uhodnout nedá. (správně)
-- Vypínat server přes noc: Přihlášky chodí i v noci. → Tereza: Vypínat server nejde, přihlášky chodí i v noci a útok může přijít kdykoli.
+- Vypínat server přes noc: Objednávky chodí i brzy ráno. → Tereza: Vypínat server nejde, objednávky z kaváren chodí i brzy ráno a útok může přijít kdykoli.
 - Hlídač fail2ban: Po 5 neúspěšných pokusech útočníka sám zablokuje. (správně)
 - Přejmenovat server: Aby ho útočník nenašel. → Tereza: Přejmenování nepomůže, útočníci hledají otevřené porty a jméno serveru je nezajímá.
 
-Konec: **Server je v bezpečí**, Tereza: **Díky, jdu zase spát. Přihlášky jedou dál.** Hvězdy: Server ubráněný, Všechna rozhodnutí napoprvé, Rozhodnutí napoprvé: {n} ze 3, Zásah do 2 minut ({time}). Přesně tohle se učí IT administrátoři: Linux, sítě a zabezpečení serverů.
+Konec: **Server je v bezpečí**, Tereza: **Díky, jdu zpátky k pecím. Objednávky jedou dál.** Hvězdy: Server ubráněný, Všechna rozhodnutí napoprvé, Rozhodnutí napoprvé: {n} ze 3, Zásah do 2 minut ({time}). Přesně tohle se učí IT administrátoři: Linux, sítě a zabezpečení serverů.
 
 Pruh: **Hotovo, server je ubráněný!**
 

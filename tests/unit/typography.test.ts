@@ -39,5 +39,7 @@ describe('cs.json', () => {
     expect(visitor).not.toMatch(/odznak|vin[ií]k|detektiv|ztratil|zmizelo/i);
     // ve hře jsou bodce, živé bugy Ondřej vyřadil
     expect(JSON.stringify(cs.hry)).not.toMatch(/bug/i);
+    // IT admin zůstává na příkladu pekárny, ne na serverech Coders Labu
+    expect(JSON.stringify(cs.kyber)).not.toMatch(/Coders Lab/i);
   });
 });

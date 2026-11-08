@@ -1,5 +1,5 @@
-/* IT administrátor: noční poplach na serveru s přihláškami Coders Labu. Tři kroky, všechno
-   tlačítky. Vlevo Tereza z provozu a rozhodnutí, vpravo mapa útoku a terminál, na mobilu
+/* IT administrátor: noční poplach na serveru pekárny Kvásek. Tři kroky, všechno
+   tlačítky. Vlevo Tereza z pekárny a rozhodnutí, vpravo mapa útoku a terminál, na mobilu
    mapa nahoře a terminál dole. Běží čas zásahu a pokusy útočníka, na konci jsou hvězdy:
    ty žijí jen v téhle obrazovce, do stavu ani do Pipedrivu nejdou. Panel se po každém
    kroku překreslí, fokus zůstane v panelu (A11). */
@@ -97,7 +97,7 @@ export function createKyber(ctx: Ctx): Screen {
     for (let i = 0; i < 2; i++) {
       h += '<rect x="' + (SERVER.x - 19) + '" y="' + (SERVER.y + 4 + i * 11) + '" width="38" height="7" rx="2" fill="#343A40"/><circle cx="' + (SERVER.x + 14) + '" cy="' + (SERVER.y + 7.5 + i * 11) + '" r="2" fill="' + color + '"/>';
     }
-    h += '<rect x="' + (SERVER.x - 19) + '" y="' + (SERVER.y - 22) + '" width="38" height="21" rx="3" fill="#FABA20"/><text x="' + SERVER.x + '" y="' + (SERVER.y - 6.5) + '" text-anchor="middle" font-family="Ubuntu, sans-serif" font-weight="700" font-size="15" fill="#212529">CL</text>';
+    h += '<rect x="' + (SERVER.x - 19) + '" y="' + (SERVER.y - 22) + '" width="38" height="21" rx="3" fill="#FABA20"/><text x="' + SERVER.x + '" y="' + (SERVER.y - 8) + '" text-anchor="middle" font-family="Ubuntu, sans-serif" font-weight="700" font-size="10" fill="#212529">' + t.mapServer + '</text>';
     map.innerHTML = h;
   }
   /** Pakety letí na server. Dokud útočník není zablokovaný, každý jeho doletěný je další pokus. */

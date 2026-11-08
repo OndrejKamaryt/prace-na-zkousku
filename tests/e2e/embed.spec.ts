@@ -97,7 +97,7 @@ for (const o of OFFSETS) {
     expect(await page.evaluate(() => scrollY)).toBeGreaterThan(0);
     if (o.top > 0 && !o.query.includes('offset')) expect(await hitsWidget(page, 300, o.top + 4)).toBe('widget');
     // fokus na nadpis nové obrazovky, ne zpátky na začátek webu (A11)
-    expect((await focused(page)).text).toBe('Někdo se dobývá do serveru Coders Labu');
+    expect((await focused(page)).text).toBe('Někdo se dobývá do serveru pekárny');
   });
 }
 

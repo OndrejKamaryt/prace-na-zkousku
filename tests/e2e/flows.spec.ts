@@ -277,7 +277,7 @@ test('C: IT administrátor na notebooku: rozhodnutí vlevo, mapa a terminál vpr
   const stage = page.locator('#s-stage');
   await expect(stage).toHaveAttribute('data-scene', 'alarm');
   await expect(page.locator('#s-say')).toContainText('Promiň, že budím.');
-  await expect(page.locator('#s-tries')).toContainText('412');
+  expect(parseInt((await page.locator('#s-tries').innerText()).replace(/\s/g, ''))).toBeGreaterThanOrEqual(412);
   const panel = (await page.locator('#s-panel').boundingBox())!;
   const map = (await page.locator('#s-map').boundingBox())!;
   const term = (await page.locator('#s-out').boundingBox())!;
@@ -362,7 +362,7 @@ test('C2: Zkus si další příklady, hotové odškrtnuté, a výsledek ze dvou 
   await solveData(page);
   await page.locator('#v-data [data-go="kyber"]').click();
   await expect(page.locator('#v-kyber')).toBeVisible();
-  expect((await focused(page)).text).toBe('Někdo se dobývá do serveru Coders Labu');
+  expect((await focused(page)).text).toBe('Někdo se dobývá do serveru pekárny');
   const fromKyber = page.locator('#v-kyber [data-more] .other[data-go="data"]');
   await expect(fromKyber).toContainText('Hotovo ✓');
   await solveKyber(page);

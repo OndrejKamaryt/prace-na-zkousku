@@ -639,10 +639,10 @@
     "done": "Hotovo, tvoje verze hry je dohraná! V Unreal Enginu 5 se stejně skládají celé herní světy, ve 3D a bez programování."
   },
   "kyber": {
-    "title": "Někdo se dobývá do serveru Coders Labu",
-    "sub": "Máš noční službu. Na serveru běží přihlášky na kurzy a útočník zkouší hesla. Čím rychleji a přesněji zasáhneš, tím víc hvězd získáš. Všechno uděláš tlačítky, nic psát nemusíš.",
+    "title": "Někdo se dobývá do serveru pekárny",
+    "sub": "Staráš se o server pekárny Kvásek, přes který chodí objednávky z kaváren. Čím rychleji a přesněji zasáhneš, tím víc hvězd získáš. Všechno uděláš tlačítky, nic psát nemusíš.",
     "who": "T",
-    "name": "Tereza, provoz Coders Labu",
+    "name": "Tereza, pekárna Kvásek",
     "hud": {
       "meter": "Zabezpečení serveru",
       "meterValue": "{n} %",
@@ -650,6 +650,7 @@
       "tries": "Pokusy útočníka"
     },
     "mapLabel": "Mapa útoku na server",
+    "mapServer": "Kvásek",
     "mapAttacker": "útočník",
     "mapBlocked": "zablokováno",
     "cmd": {
@@ -664,7 +665,7 @@
       "Zavři dveře",
       "Ať se to neopakuje"
     ],
-    "hello": "Promiň, že budím. Od 3:00 se někdo pořád dokola pokouší přihlásit na server s přihláškami. Mrkneš na to?",
+    "hello": "Promiň, že budím. Od 3:00 se někdo pořád dokola pokouší přihlásit na server s objednávkami. Mrkneš na to?",
     "start": "Server si zapisuje každý pokus o přihlášení. Podívej se na ty, které neprošly.",
     "count": "Všechny jdou z jedné adresy a zkouší různá jména: root, admin, petra. Spočítej, kolik pokusů přišlo odkud.",
     "q1": "Klikni na adresu útočníka.",
@@ -690,7 +691,7 @@
     ],
     "block": "Správně! Tolik pokusů za pár minut nezkouší člověk, ale program, který hádá hesla. Zablokuj ho.",
     "last": "Útočník je venku, útoky se odrážejí. Jen zkontroluj, jestli se mezitím nedostal dovnitř.",
-    "q2Say": "Ve 3:12 se z adresy útočníka přihlásila lektorka Petra. Jenže ve tři ráno Petra spí.",
+    "q2Say": "Ve 3:12 se z adresy útočníka přihlásila Petra. Jenže Petra chodí do práce z kanceláře a ve tři ráno spí.",
     "q2": "Co uděláš s jejím účtem?",
     "q2Options": [
       {
@@ -721,9 +722,9 @@
       {
         "id": "k3",
         "t": "Vypínat server přes noc",
-        "d": "Přihlášky chodí i v noci.",
+        "d": "Objednávky chodí i brzy ráno.",
         "ok": false,
-        "why": "Vypínat server nejde, přihlášky chodí i v noci a útok může přijít kdykoli."
+        "why": "Vypínat server nejde, objednávky z kaváren chodí i brzy ráno a útok může přijít kdykoli."
       },
       {
         "id": "k2",
@@ -744,7 +745,7 @@
     "pickTwo": "Vyber přesně dva štíty.",
     "tryAgain": "Zkus to ještě jednou.",
     "safe": "Server je v bezpečí",
-    "thanks": "Díky, jdu zase spát. Přihlášky jedou dál.",
+    "thanks": "Díky, jdu zpátky k pecím. Objednávky jedou dál.",
     "stars": {
       "safe": "Server ubráněný",
       "clean": "Všechna rozhodnutí napoprvé",
