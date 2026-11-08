@@ -346,6 +346,40 @@ test('C1: na mobilu je mapa nahoře a terminál pod krokem', async ({ page }) =>
   expect(term.y).toBeGreaterThanOrEqual(panel.y + panel.height);
 });
 
+test('C3: IT admin: po najetí myší je text tlačítek čitelný', async ({ page }) => {
+  await page.setViewportSize(LAPTOP);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page, '/index.html?ukazka=kyber');
+  /** Kontrast textu uvnitř tlačítka vůči jeho pozadí, když je nad ním myš (WCAG, běžný text aspoň 4,5). */
+  const contrast = async (button: string, inner: string) => {
+    const b = page.locator(button);
+    await b.hover();
+    return b.evaluate((el, sel) => {
+      const lum = (c: string) => {
+        const [r, g, a] = c.match(/[\d.]+/g)!.map(v => {
+          const x = Number(v) / 255;
+          return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4;
+        });
+        return 0.2126 * r! + 0.7152 * g! + 0.0722 * a!;
+      };
+      const text = lum(getComputedStyle(el.querySelector(sel)!).color), bg = lum(getComputedStyle(el).backgroundColor);
+      return (Math.max(text, bg) + 0.05) / (Math.min(text, bg) + 0.05);
+    }, inner);
+  };
+  expect(await contrast('[data-cmd="grep"]', 'code'), 'příkaz na žlutém tlačítku').toBeGreaterThanOrEqual(4.5);
+  expect(await contrast('[data-cmd="grep"]', 'span'), 'název na žlutém tlačítku').toBeGreaterThanOrEqual(4.5);
+  await page.locator('[data-cmd="grep"]').click();
+  expect(await contrast('[data-cmd="count"]', 'code')).toBeGreaterThanOrEqual(4.5);
+  await page.locator('[data-cmd="count"]').click();
+  expect(await contrast('[data-q1="1"]', '.num'), 'počet pokusů u adresy').toBeGreaterThanOrEqual(4.5);
+  await page.locator('[data-q1="0"]').click();
+  expect(await contrast('[data-cmd="ufw"]', 'code'), 'příkaz na červeném tlačítku').toBeGreaterThanOrEqual(4.5);
+  await page.locator('[data-cmd="ufw"]').click();
+  await page.locator('[data-cmd="last"]').click();
+  await page.locator('[data-q2="1"]').click();
+  expect(await contrast('[data-shield="k1"]', 'small'), 'popis štítu').toBeGreaterThanOrEqual(4.5);
+});
+
 test('C2: Zkus si další příklady, hotové odškrtnuté, a výsledek ze dvou ukázek', async ({ page }) => {
   await page.setViewportSize(LAPTOP);
   await page.emulateMedia({ reducedMotion: 'reduce' });

@@ -5,7 +5,7 @@ Shrnutí ze dne 5. 11. 2026. Zadání zjednodušení je `ZPETNA-VAZBA.md`, schv�
 ## Stav
 
 - **Fáze 1 a 2 (sloučená s fází 3) a zjednodušení jsou hotové.** Skutečný widget `<prace-na-zkousku>` s otevřeným Shadow DOM. Hlavní je samostatná stránka (`data-variant="standalone"`), kterou Martin vloží na web přes embed na celou obrazovku. Varianta embed (`data-variant="embed"`, výchozí) a měření hlavičky dál fungují.
-- **Testy:** 87 unit testů (Vitest) a 45 Playwright testů v Edge přes `http://localhost` (`npm run test:e2e`), jeden odložený do fáze 6 (`test.fixme`, dotykové cíle 44 px). Typecheck i build jsou čisté, widget má 46,6 kB gzip (cíl 80 kB). Rozložení je ověřené na 390 × 844 i 1366 × 768.
+- **Testy:** 87 unit testů (Vitest) a 46 Playwright testů v Edge přes `http://localhost` (`npm run test:e2e`), jeden odložený do fáze 6 (`test.fixme`, dotykové cíle 44 px). Typecheck i build jsou čisté, widget má 46,7 kB gzip (cíl 80 kB). Rozložení je ověřené na 390 × 844 i 1366 × 768.
 - **Demo:** https://ondrejkamaryt.github.io/prace-na-zkousku/ ukazuje novou verzi. Sestavuje ho `node scripts/build-site.ts` (spustí i `vite build`), nasazuje `.github/workflows/pages.yml` při pushi do `main`. Adresa se nezměnila. GitHub Pages posílá `max-age=600` a skript se jmenuje pořád stejně, proto ho `_site/index.html` načítá s otiskem `?v=…`: po nasazení stačí obnovit stránku.
 
 ## Co se změnilo proti 3. 11.

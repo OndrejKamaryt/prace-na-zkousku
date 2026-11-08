@@ -171,8 +171,11 @@
 .noc-q{margin:0 0 10px; font:700 clamp(18px,3cqw,20px)/1.25 var(--head)}
 .noc .act{display:grid; gap:2px; min-height:54px; padding:11px 13px; font-size:15.5px}
 .noc .act code{font:400 12.5px/1.35 var(--mono); color:var(--sky); overflow-wrap:anywhere}
+.noc .act.ok code{color:var(--dark)}
 .noc .act.red{border-color:var(--pink); background:var(--pink); animation:noc-red 1.3s ease-in-out infinite}
 .noc .act.red code{color:#FFD7E2}
+.noc .act.red.ok{border-color:var(--yellow); background:var(--yellow); animation:none}
+.noc .act.red.ok code{color:var(--dark)}
 @keyframes noc-red{0%,100%{box-shadow:0 0 6px rgba(216,27,83,.6)}50%{box-shadow:0 0 26px 6px rgba(216,27,83,1)}}
 .noc-ip{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:3px 10px; align-items:center}
 .noc-ip .num{font:700 15px var(--head); font-variant-numeric:tabular-nums}
@@ -183,6 +186,13 @@
 .noc-box{display:grid; place-items:center; width:24px; height:24px; margin-top:1px; border:2px solid var(--yellow); border-radius:var(--r-card); color:transparent; font:700 15px/1 var(--head)}
 .act.shield.on{background:rgba(250,186,32,.2)}
 .act.shield.on .noc-box{background:var(--yellow); color:var(--dark)}
+/* po najetí myší je tlačítko žluté: tlumené barvy textu by na něm nebyly čitelné */
+@media (hover:hover){
+  .noc .act:hover:not(:disabled) code, .noc .act:hover:not(:disabled) small{color:var(--dark)}
+  .noc .act:hover:not(:disabled) .noc-box{border-color:var(--dark)}
+  .noc .act:hover:not(:disabled) .noc-bar{background:rgba(33,37,41,.18)}
+  .noc .act:hover:not(:disabled) .noc-bar i{background:var(--pink-ink)}
+}
 .noc-go{margin-top:10px}
 .noc-win h3{margin:0 0 4px; font:700 clamp(22px,3.4cqw,27px)/1.2 var(--head); color:var(--noc-green)}
 .noc-win h3:focus{outline:none}
@@ -317,6 +327,7 @@
 .game-quests li{padding:5px 12px; border:1.5px dashed var(--line-strong); border-radius:999px; font-size:14px; color:var(--gray); transition:background .25s, border-color .25s}
 .game-quests li.on{border:1.5px solid var(--yellow); background:var(--yellow); color:var(--ink); font-weight:600}
 .btn.glow{animation:act-glow 2.2s ease-in-out infinite}
+.btn.glow:disabled{animation:none}
 button, a, #g-canvas{-webkit-tap-highlight-color:transparent}
 
 /* kyberbezpečnost */
