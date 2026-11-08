@@ -86,38 +86,40 @@ Rozbalovací „Jak na to přijde datový analytik“: **SQL je jazyk, kterým s
 
 Pruh: **Hotovo, víš, proč tržby klesly!**
 
-## Tvorba her (schváleno 5. 11., koncept v `prototyp/hra-koncept.html`)
+## Tvorba her (schváleno 5. 11., bodce místo bugů a bez cedulí 8. 11.)
+
+Koncept v `prototyp/hra-koncept.html` má ještě bugy a cedule, Ondřej je 8. 11. vyřadil jako moc komplikované. Platí tenhle text.
 
 Nadpis zůstává: „Zahraj si hru a pak ji uprav“
 
-Podnadpis: **Běžíš z Coders Labu do svého prvního herního studia. Postavička běží sama, ty jen skáčeš. Sbírej kód a vyhýbej se bugům.**
+Podnadpis: **Běžíš z Coders Labu do svého prvního herního studia. Postavička běží sama, ty jen skáčeš. Sbírej kód a vyhýbej se bodcům.**
 
 Na začátku: **Zmáčkni Hrát a pak klepni kamkoli do hry.**
 
-Cedule ve hře: CODERS LAB, HERNÍ STUDIO. Přehled na plátně: životy, kód, body a rekord {n}.
+Přehled na plátně: životy, kód, body a rekord {n}.
 
 Nástroje:
 - **Přidej plošinu:** Postava po ní běží a dá se na ni vyskočit.
-- **Přidej bug:** Když se ho postava dotkne, přijde o život. Těžší hra, víc bodů.
+- **Přidej nástrahu:** Když se jí postava dotkne, přijde o život. Těžší hra, víc bodů.
 - **Přidej kód:** Je to odměna, každý kousek je 100 bodů.
-- **Přidej trampolínu:** Vystřelí postavu vysoko nad bugy.
+- **Přidej trampolínu:** Vystřelí postavu vysoko nad nástrahy.
 - **Smazat:** Klepni na věc ve hře a zmizí.
 
-Pády: **Au, bug! Přišla o život.** Postavička narazila do zdi. Spadla do díry. Zmáčkni Hrát znovu a zkus to ještě jednou.
+Pády: **Au, bodce!** Postavička narazila do zdi. Spadla do díry. Zmáčkni Hrát znovu a zkus to ještě jednou.
 
 Po třetím pádu: **Životy došly, ale nevadí, i herní designéři ladí obtížnost. Uprav hru, aby šla projít, třeba zasyp díru plošinou.**
 
-Moc pádů ve vlastní verzi: **Je to moc těžké? Herní designér obtížnost ladí, zkus bug posunout nebo přidat plošinu.**
+Moc pádů ve vlastní verzi: **Je to moc těžké? Herní designér obtížnost ladí, zkus nástrahu posunout nebo přidat plošinu.**
 
 První výhra: **Máš to! Zkus to znovu na tři hvězdy, nebo hru uprav. Teď ji navrhuješ ty.** Karta: Jsi ve studiu!
 
-Vlastní verze: **Tvoje verze hry je dohraná! Každý bug navíc je 50 bodů, zkus ji udělat těžší.** Karta: Tvoje hra je dohraná!
+Vlastní verze: **Tvoje verze hry je dohraná! Každá nástraha navíc je 50 bodů, zkus ji udělat těžší.** Karta: Tvoje hra je dohraná!
 
 Karta dál: hvězdy, {n} bodů, Nový rekord! nebo Rekord: {n}
 
-Hvězdy: Cíl, Všechen kód, Bez ztráty života, Těžká verze: aspoň 3 bugy. Třetí je „Bez ztráty života“ v původní hře a „Těžká verze: aspoň 3 bugy“ ve vlastní verzi.
+Hvězdy: Cíl, Všechen kód, Bez ztráty života, Těžká verze: aspoň 3 nástrahy. Třetí je „Bez ztráty života“ v původní hře a „Těžká verze: aspoň 3 nástrahy“ ve vlastní verzi.
 
-Výzvy herního designéra {n}/{total}: Přidej bug, Přidej kód, Přidej trampolínu, Dohraj svou verzi
+Výzvy herního designéra {n}/{total}: Přidej nástrahu, Přidej kód, Přidej trampolínu, Dohraj svou verzi
 
 Pruh: **Hotovo, tvoje verze hry je dohraná! V Unreal Enginu 5 se stejně skládají celé herní světy, ve 3D a bez programování.**
 

@@ -566,7 +566,7 @@
   },
   "hry": {
     "title": "Zahraj si hru a pak ji uprav",
-    "sub": "Běžíš z Coders Labu do svého prvního herního studia. Postavička běží sama, ty jen skáčeš. Sbírej kód a vyhýbej se bugům.",
+    "sub": "Běžíš z Coders Labu do svého prvního herního studia. Postavička běží sama, ty jen skáčeš. Sbírej kód a vyhýbej se bodcům.",
     "stepsLabel": "Postup",
     "steps": [
       "Zahraj si",
@@ -579,9 +579,9 @@
         "name": "Přidej plošinu",
         "desc": "Postava po ní běží a dá se na ni vyskočit."
       },
-      "bug": {
-        "name": "Přidej bug",
-        "desc": "Když se ho postava dotkne, přijde o život. Těžší hra, víc bodů."
+      "spike": {
+        "name": "Přidej nástrahu",
+        "desc": "Když se jí postava dotkne, přijde o život. Těžší hra, víc bodů."
       },
       "code": {
         "name": "Přidej kód",
@@ -589,7 +589,7 @@
       },
       "spring": {
         "name": "Přidej trampolínu",
-        "desc": "Vystřelí postavu vysoko nad bugy."
+        "desc": "Vystřelí postavu vysoko nad nástrahy."
       },
       "eraser": {
         "name": "Smazat",
@@ -607,18 +607,16 @@
     "jumpHere": "Tady skoč!",
     "playing": "Klepni kamkoli do hry, tlačítkem Skok nebo mezerníkem skočíš.",
     "deathWall": "Postavička narazila do zdi.",
-    "deathBug": "Au, bug! Přišla o život.",
+    "deathSpikes": "Au, bodce!",
     "deathHole": "Spadla do díry.",
     "unlock": "Životy došly, ale nevadí, i herní designéři ladí obtížnost. Uprav hru, aby šla projít, třeba zasyp díru plošinou.",
-    "tooHard": "Je to moc těžké? Herní designér obtížnost ladí, zkus bug posunout nebo přidat plošinu.",
+    "tooHard": "Je to moc těžké? Herní designér obtížnost ladí, zkus nástrahu posunout nebo přidat plošinu.",
     "retry": "Zmáčkni Hrát znovu a zkus to ještě jednou.",
     "winFirst": "Máš to! Zkus to znovu na tři hvězdy, nebo hru uprav. Teď ji navrhuješ ty.",
-    "winOwn": "Tvoje verze hry je dohraná! Každý bug navíc je 50 bodů, zkus ji udělat těžší.",
+    "winOwn": "Tvoje verze hry je dohraná! Každá nástraha navíc je 50 bodů, zkus ji udělat těžší.",
     "editHelp": "Vyber, co chceš přidat, a klepni do hry. Až budeš chtít, zmáčkni Hrát.",
     "locked": "Tady je start nebo cíl, polož to jinam.",
     "resetDone": "Hra je zase v původní podobě.",
-    "signStart": "CODERS LAB",
-    "signEnd": "HERNÍ STUDIO",
     "points": "{n} bodů",
     "record": "rekord {n}",
     "cardFirst": "Jsi ve studiu!",
@@ -629,11 +627,11 @@
       "goal": "Cíl",
       "code": "Všechen kód",
       "clean": "Bez ztráty života",
-      "hard": "Těžká verze: aspoň 3 bugy"
+      "hard": "Těžká verze: aspoň 3 nástrahy"
     },
     "questsTitle": "Výzvy herního designéra {n}/{total}",
     "quests": {
-      "bug": "Přidej bug",
+      "spike": "Přidej nástrahu",
       "code": "Přidej kód",
       "spring": "Přidej trampolínu",
       "own": "Dohraj svou verzi"

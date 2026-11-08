@@ -64,7 +64,7 @@ for (const vp of [MOBILE, LAPTOP]) {
     await play.click();
     // při hraní nástroje zmizí, aby na obrazovce bylo jen to nutné
     await expect(page.locator('#g-tools')).toBeHidden();
-    await expect(status).toContainText('Tvoje verze hry je dohraná! Každý bug navíc je 50 bodů', { timeout: 10_000 });
+    await expect(status).toContainText('Tvoje verze hry je dohraná! Každá nástraha navíc je 50 bodů', { timeout: 10_000 });
     // karta s hvězdami a body je jen na plátně, kam klepnutí dál projde
     const card = page.locator('#g-card');
     await expect(card).toContainText('Tvoje hra je dohraná!');
@@ -90,7 +90,7 @@ test('první výhra ukáže hvězdy a body a nabídne úpravu hry, trampolína p
   await open(page, '/index.html?ukazka=hry');
   const card = page.locator('#g-card');
   // skákání pořád dokola projde původní hrou při jakékoli rychlosti snímků:
-  // skok z dopadu přenese přes díru i bug a poslední vede za cíl
+  // skok z dopadu přenese přes díru i bodce a poslední vede za cíl
   await page.locator('#g-play').click();
   await page.evaluate(() => new Promise<void>(done => {
     const root = document.querySelector('prace-na-zkousku')!.shadowRoot!;
@@ -131,8 +131,8 @@ test('nástroje mají ikonu a vysvětlení a Smazat je od ostatních oddělené'
   const tools = page.locator('#g-tools .tool');
   await expect(tools).toHaveCount(5);
   await expect(tools.locator('svg')).toHaveCount(5);
-  await expect(tools.locator('b')).toHaveText(['Přidej plošinu', 'Přidej bug', 'Přidej kód', 'Přidej trampolínu', 'Smazat']);
-  await expect(tools.nth(1).locator('small')).toHaveText('Když se ho postava dotkne, přijde o život. Těžší hra, víc bodů.');
+  await expect(tools.locator('b')).toHaveText(['Přidej plošinu', 'Přidej nástrahu', 'Přidej kód', 'Přidej trampolínu', 'Smazat']);
+  await expect(tools.nth(1).locator('small')).toHaveText('Když se jí postava dotkne, přijde o život. Těžší hra, víc bodů.');
   await expect(tools.nth(2).locator('small')).toHaveText('Je to odměna, každý kousek je 100 bodů.');
   await expect(page.locator('[data-tool="1"]')).toHaveAttribute('aria-pressed', 'true');
   await page.locator('[data-tool="3"]').click();
@@ -142,8 +142,8 @@ test('nástroje mají ikonu a vysvětlení a Smazat je od ostatních oddělené'
   const spring = (await page.locator('[data-tool="4"]').boundingBox())!;
   const erase = (await page.locator('[data-tool="0"]').boundingBox())!;
   const solid = (await page.locator('[data-tool="1"]').boundingBox())!;
-  const bug = (await page.locator('[data-tool="2"]').boundingBox())!;
-  expect(erase.x - (spring.x + spring.width), 'mezera před Smazat').toBeGreaterThan(bug.x - (solid.x + solid.width));
+  const spike = (await page.locator('[data-tool="2"]').boundingBox())!;
+  expect(erase.x - (spring.x + spring.width), 'mezera před Smazat').toBeGreaterThan(spike.x - (solid.x + solid.width));
 
   // klepnutí mimo herní plochu nic nezmění
   const box = (await page.locator('#g-canvas').boundingBox())!;

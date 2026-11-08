@@ -1,5 +1,5 @@
 /* Tvorba her: nejdřív zahrát, pak upravit a dohrát vlastní verzi. Běží se z Coders Labu
-   do herního studia, sbírá se kód a uhýbá bugům. Fyzika, herní plocha a časování jsou
+   do herního studia, sbírá se kód a uhýbá bodcům. Fyzika, herní plocha a časování jsou
    z prototypu 1:1, přibyla jen trampolína. Plátno má celou šířku rámečku: plocha 12 × 7
    je uprostřed a po stranách pokračuje obloha a zem jako kulisa. Body, rekord a hvězdy
    žijí jen v téhle obrazovce, do stavu ani do Pipedrivu nejdou. Plátno se inicializuje
@@ -14,15 +14,15 @@ import { STAR_ICON, TOOL_ICON } from '../ui/icons.ts';
 import { doneBar, moreSection, viewHead } from '../ui/parts.ts';
 
 const COLS = 12, ROWS = 7;
-const EMPTY = 0, SOLID = 1, BUG = 2, CODE = 3, SPRING = 4;
+const EMPTY = 0, SOLID = 1, SPIKE = 2, CODE = 3, SPRING = 4;
 const START = { x: 0.15, y: 5.15 };
 const DOOR = { c: 11, r: 5 };
 const SPEED = 4.0, GRAV = 30, JUMP = 12, SPRING_JUMP = JUMP * 1.36, PW = 0.7, PH = 0.85;
-const LIVES = 3, HARD_BUGS = 3;
-const POINTS = { code: 100, finish: 300, bug: 50, life: 50 };
+const LIVES = 3, HARD_SPIKES = 3;
+const POINTS = { code: 100, finish: 300, spike: 50, life: 50 };
 const COL = {
   sky1: '#DDF2FA', sky2: '#FFFFFF', city: '#CDE9F4', cityWin: '#E9F6FB', grid: 'rgba(33,37,41,.08)', lock: 'rgba(23,73,111,.10)', veil: 'rgba(255,255,255,.6)', solid: '#212529', grass: '#69CCEA',
-  bug: '#D81B53', coin: '#FABA20', coinEdge: '#C98A00', navy: '#17496F', player: '#FABA20', outline: '#212529', faint: 'rgba(33,37,41,.15)',
+  spike: '#E9225B', heart: '#D81B53', coin: '#FABA20', coinEdge: '#C98A00', navy: '#17496F', player: '#FABA20', outline: '#212529', faint: 'rgba(33,37,41,.15)',
 };
 /** Výšky domů v panoramatu za hrou, opakují se dokola. */
 const CITY = [2.4, 3.3, 2.1, 3.7, 2.7, 3.1, 2.2, 3.6, 2.5, 3];
@@ -50,7 +50,7 @@ export function createGame(ctx: Ctx): Screen {
     <ul class="star-list" id="g-reasons" hidden></ul>
     <div class="game-quests" id="g-quests" hidden><p id="g-quests-title"></p><ul id="g-quests-list"></ul></div>
     <div class="toolbar" id="g-tools" role="group" aria-label="${t.toolsLabel}" hidden>
-      ${toolBtn(SOLID, 'solid', true)}${toolBtn(BUG, 'bug')}${toolBtn(CODE, 'code')}${toolBtn(SPRING, 'spring')}${toolBtn(EMPTY, 'eraser')}
+      ${toolBtn(SOLID, 'solid', true)}${toolBtn(SPIKE, 'spike')}${toolBtn(CODE, 'code')}${toolBtn(SPRING, 'spring')}${toolBtn(EMPTY, 'eraser')}
     </div>
     <div class="btn-row" id="g-buttons" style="margin-top:10px; align-items:center">
       <button class="btn btn-dark jump" id="g-jump" type="button" hidden>${t.jump}</button>
@@ -100,7 +100,7 @@ export function createGame(ctx: Ctx): Screen {
     function starter() {
       grid = Array<number>(COLS * ROWS).fill(EMPTY);
       for (let c = 0; c < COLS; c++) if (c < 4 || c > 5) put(c, 6, SOLID);
-      put(8, 5, BUG);
+      put(8, 5, SPIKE);
       put(9, 4, SOLID); put(10, 4, SOLID);
       put(2, 5, CODE); put(8, 3, CODE); put(10, 3, CODE);
     }
@@ -123,14 +123,6 @@ export function createGame(ctx: Ctx): Screen {
       g.fillStyle = COL.solid; rr(c + 0.02, r + 0.02, 0.96, 0.96, 0.12); g.fill();
       if (top) { g.fillStyle = COL.grass; rr(c + 0.02, r + 0.02, 0.96, 0.22, 0.1); g.fill(); }
     }
-    function sign(x: number, w: number, text: string) {
-      const y = 0.95;
-      g.fillStyle = COL.outline;
-      g.fillRect(x + 0.25, y - 0.22, 0.05, 0.22); g.fillRect(x + w - 0.3, y - 0.22, 0.05, 0.22);
-      rr(x, y, w, 0.58, 0.1); g.fill();
-      g.fillStyle = COL.coin; g.font = '700 0.3px "Ubuntu", Arial, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.fillText(text, x + w / 2, y + 0.3);
-    }
     function backdrop() {
       const grad = g.createLinearGradient(0, 0, 0, ROWS);
       grad.addColorStop(0, COL.sky1); grad.addColorStop(1, COL.sky2);
@@ -144,23 +136,11 @@ export function createGame(ctx: Ctx): Screen {
       }
       // zem po stranách je jen kulisa, postava na ni nedoběhne a nejde upravit
       for (let i = 1; i <= Math.ceil(side); i++) { block(-i, ROWS - 1, true); block(COLS - 1 + i, ROWS - 1, true); }
-      sign(0.1, 2.5, t.signStart);
-      sign(COLS - 2.75, 2.65, t.signEnd);
     }
-    function drawBug(c: number, r: number) {
-      const cx = c + 0.5, cy = r + 0.72, bob = ctx.reduce ? 0 : Math.sin(clock * 4 + c) * 0.012;
-      g.strokeStyle = COL.outline; g.lineWidth = 0.045; g.beginPath();
-      for (const dx of [-0.2, 0, 0.2]) {
-        const kick = ctx.reduce ? 0 : Math.sin(clock * 9 + dx * 9) * 0.04;
-        g.moveTo(cx + dx, cy + 0.1); g.lineTo(cx + dx * 1.5 + kick, cy + 0.3);
-      }
-      g.moveTo(cx - 0.12, cy - 0.22); g.lineTo(cx - 0.22, cy - 0.4);
-      g.moveTo(cx + 0.12, cy - 0.22); g.lineTo(cx + 0.22, cy - 0.4);
-      g.stroke();
-      g.fillStyle = COL.bug; g.beginPath(); g.ellipse(cx, cy + bob, 0.33, 0.26, 0, 0, Math.PI * 2); g.fill();
-      g.strokeStyle = 'rgba(255,255,255,.45)'; g.beginPath(); g.moveTo(cx, cy - 0.25 + bob); g.lineTo(cx, cy + 0.25 + bob); g.stroke();
-      g.fillStyle = '#fff'; g.beginPath(); g.arc(cx - 0.13, cy - 0.08 + bob, 0.075, 0, Math.PI * 2); g.arc(cx + 0.13, cy - 0.08 + bob, 0.075, 0, Math.PI * 2); g.fill();
-      g.fillStyle = COL.outline; g.beginPath(); g.arc(cx - 0.11, cy - 0.08 + bob, 0.035, 0, Math.PI * 2); g.arc(cx + 0.15, cy - 0.08 + bob, 0.035, 0, Math.PI * 2); g.fill();
+    function drawSpikes(c: number, r: number) {
+      g.fillStyle = COL.spike; g.beginPath();
+      for (let i = 0; i < 3; i++) { const x0 = c + 0.08 + i * 0.28; g.moveTo(x0, r + 1); g.lineTo(x0 + 0.14, r + 0.38); g.lineTo(x0 + 0.28, r + 1); }
+      g.closePath(); g.fill();
     }
     function drawCode(c: number, r: number) {
       const cx = c + 0.5, cy = r + 0.5 + (ctx.reduce ? 0 : Math.sin(clock * 3.5 + c) * 0.05);
@@ -199,7 +179,7 @@ export function createGame(ctx: Ctx): Screen {
       if (phase === 1) {
         for (let i = 0; i < LIVES; i++) {
           const x = 0.3 + i * 0.55;
-          g.fillStyle = i < LIVES - lost ? COL.bug : COL.faint;
+          g.fillStyle = i < LIVES - lost ? COL.heart : COL.faint;
           g.beginPath(); g.moveTo(x, y + 0.17);
           g.bezierCurveTo(x - 0.36, y - 0.08, x - 0.14, y - 0.3, x, y - 0.12);
           g.bezierCurveTo(x + 0.14, y - 0.3, x + 0.36, y - 0.08, x, y + 0.17);
@@ -232,7 +212,7 @@ export function createGame(ctx: Ctx): Screen {
       for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
         const v = at(c, r);
         if (v === SOLID) block(c, r, r === 0 || at(c, r - 1) !== SOLID);
-        else if (v === BUG) drawBug(c, r);
+        else if (v === SPIKE) drawSpikes(c, r);
         else if (v === SPRING) drawSpring(c, r);
         else if (v === CODE && !(mode !== 'edit' && got.has(r * COLS + c))) drawCode(c, r);
       }
@@ -317,7 +297,7 @@ export function createGame(ctx: Ctx): Screen {
       for (let r = r0; r <= r1; r++) for (let c = c0 - 1; c <= c1 + 1; c++) {
         if (r < 0 || r >= ROWS || c < 0 || c >= COLS) continue;
         const v = at(c, r);
-        if (v === BUG && overlap(pl.x, pl.y, PW, PH, c + 0.15, r + 0.42, 0.7, 0.58)) return die(t.deathBug);
+        if (v === SPIKE && overlap(pl.x, pl.y, PW, PH, c + 0.15, r + 0.42, 0.7, 0.58)) return die(t.deathSpikes);
         if (v === SPRING && pl.vy >= 0 && overlap(pl.x, pl.y, PW, PH, c + 0.1, r + 0.42, 0.8, 0.58)) {
           pl.vy = -SPRING_JUMP; pl.ground = false; coyote = 0;
           burst(c + 0.5, r + 0.45, COL.coin, 8, 2.6);
@@ -379,7 +359,7 @@ export function createGame(ctx: Ctx): Screen {
       gameDeath(s);
       const pl = p!;
       shake = 0.5;
-      burst(pl.x + PW / 2, pl.y + PH / 2, COL.bug, 16, 3.6);
+      burst(pl.x + PW / 2, pl.y + PH / 2, COL.spike, 16, 3.6);
       burst(pl.x + PW / 2, pl.y + PH / 2, COL.coin, 10, 3);
       gone = !ctx.reduce;
       lost++;
@@ -411,7 +391,7 @@ export function createGame(ctx: Ctx): Screen {
       const stars = [
         { on: true, text: t.stars.goal },
         { on: total > 0 && got.size === total, text: t.stars.code },
-        own ? { on: count(BUG) >= HARD_BUGS, text: t.stars.hard } : { on: lost === 0, text: t.stars.clean },
+        own ? { on: count(SPIKE) >= HARD_SPIKES, text: t.stars.hard } : { on: lost === 0, text: t.stars.clean },
       ];
       $(root, '#g-card-title').textContent = own ? t.cardOwn : t.cardFirst;
       $(root, '#g-stars').innerHTML = stars.map((x, i) => STAR_ICON.replace('<svg ', `<svg class="${x.on ? 'on' : ''}" style="--i:${i}" `)).join('');
@@ -429,7 +409,7 @@ export function createGame(ctx: Ctx): Screen {
       const pl = p!;
       burst(pl.x, pl.y, COL.coin, 26, 4.5);
       burst(pl.x, pl.y, COL.grass, 18, 4);
-      const points = score + POINTS.finish + count(BUG) * POINTS.bug + (own ? 0 : Math.max(0, LIVES - lost) * POINTS.life);
+      const points = score + POINTS.finish + count(SPIKE) * POINTS.spike + (own ? 0 : Math.max(0, LIVES - lost) * POINTS.life);
       const record = points > best;
       if (record) best = points;
       score = points;
@@ -514,7 +494,7 @@ export function createGame(ctx: Ctx): Screen {
       put(cell.c, cell.r, paintVal);
       gameEdit(s, ctx.now());
       diesSinceEdit = 0;
-      if (paintVal === BUG) quest('bug');
+      if (paintVal === SPIKE) quest('spike');
       if (paintVal === CODE) quest('code');
       if (paintVal === SPRING) quest('spring');
       if (paintVal !== EMPTY) burst(cell.c + 0.5, cell.r + 0.5, COL.coin, 5, 1.8);

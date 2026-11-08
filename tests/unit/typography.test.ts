@@ -37,5 +37,7 @@ describe('cs.json', () => {
   it('návštěvník nevidí odznaky, viníka, detektivku ani krádež (ZPETNA-VAZBA.md)', () => {
     const visitor = JSON.stringify([cs.ui, cs.start, cs.data, cs.result, cs.paths]);
     expect(visitor).not.toMatch(/odznak|vin[ií]k|detektiv|ztratil|zmizelo/i);
+    // ve hře jsou bodce, živé bugy Ondřej vyřadil
+    expect(JSON.stringify(cs.hry)).not.toMatch(/bug/i);
   });
 });
