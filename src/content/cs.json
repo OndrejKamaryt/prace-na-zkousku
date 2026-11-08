@@ -566,7 +566,7 @@
   },
   "hry": {
     "title": "Zahraj si hru a pak ji uprav",
-    "sub": "Běžíš z Coders Labu do svého prvního herního studia. Postavička běží sama, ty jen skáčeš. Sbírej kód a vyhýbej se bodcům.",
+    "sub": "Běžíš z Coders Labu do svého prvního herního studia. Postavička běží sama, ty jen skáčeš. Sbírej mince a vyhýbej se bodcům.",
     "stepsLabel": "Postup",
     "steps": [
       "Zahraj si",
@@ -583,9 +583,9 @@
         "name": "Přidej nástrahu",
         "desc": "Když se jí postava dotkne, přijde o život. Těžší hra, víc bodů."
       },
-      "code": {
-        "name": "Přidej kód",
-        "desc": "Je to odměna, každý kousek je 100 bodů."
+      "coin": {
+        "name": "Přidej mince",
+        "desc": "Jsou odměna, sbíráš za ně body."
       },
       "spring": {
         "name": "Přidej trampolínu",
@@ -625,14 +625,14 @@
     "cardBest": "Rekord: {n}",
     "stars": {
       "goal": "Cíl",
-      "code": "Všechen kód",
+      "coins": "Všechny mince",
       "clean": "Bez ztráty života",
       "hard": "Těžká verze: aspoň 3 nástrahy"
     },
     "questsTitle": "Výzvy herního designéra {n}/{total}",
     "quests": {
       "spike": "Přidej nástrahu",
-      "code": "Přidej kód",
+      "coin": "Přidej mince",
       "spring": "Přidej trampolínu",
       "own": "Dohraj svou verzi"
     },

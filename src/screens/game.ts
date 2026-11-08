@@ -1,5 +1,5 @@
 /* Tvorba her: nejdřív zahrát, pak upravit a dohrát vlastní verzi. Běží se z Coders Labu
-   do herního studia, sbírá se kód a uhýbá bodcům. Fyzika, herní plocha a časování jsou
+   do herního studia, sbírají se mince a uhýbá se bodcům. Fyzika, herní plocha a časování jsou
    z prototypu 1:1, přibyla jen trampolína. Plátno má celou šířku rámečku: plocha 12 × 7
    je uprostřed a po stranách pokračuje obloha a zem jako kulisa. Body, rekord a hvězdy
    žijí jen v téhle obrazovce, do stavu ani do Pipedrivu nejdou. Plátno se inicializuje
@@ -14,12 +14,12 @@ import { STAR_ICON, TOOL_ICON } from '../ui/icons.ts';
 import { doneBar, moreSection, viewHead } from '../ui/parts.ts';
 
 const COLS = 12, ROWS = 7;
-const EMPTY = 0, SOLID = 1, SPIKE = 2, CODE = 3, SPRING = 4;
+const EMPTY = 0, SOLID = 1, SPIKE = 2, COIN = 3, SPRING = 4;
 const START = { x: 0.15, y: 5.15 };
 const DOOR = { c: 11, r: 5 };
 const SPEED = 4.0, GRAV = 30, JUMP = 12, SPRING_JUMP = JUMP * 1.36, PW = 0.7, PH = 0.85;
 const LIVES = 3, HARD_SPIKES = 3;
-const POINTS = { code: 100, finish: 300, spike: 50, life: 50 };
+const POINTS = { coin: 100, finish: 300, spike: 50, life: 50 };
 const COL = {
   sky1: '#DDF2FA', sky2: '#FFFFFF', city: '#CDE9F4', cityWin: '#E9F6FB', grid: 'rgba(33,37,41,.08)', lock: 'rgba(23,73,111,.10)', veil: 'rgba(255,255,255,.6)', solid: '#212529', grass: '#69CCEA',
   spike: '#E9225B', heart: '#D81B53', coin: '#FABA20', coinEdge: '#C98A00', navy: '#17496F', player: '#FABA20', outline: '#212529', faint: 'rgba(33,37,41,.15)',
@@ -50,7 +50,7 @@ export function createGame(ctx: Ctx): Screen {
     <ul class="star-list" id="g-reasons" hidden></ul>
     <div class="game-quests" id="g-quests" hidden><p id="g-quests-title"></p><ul id="g-quests-list"></ul></div>
     <div class="toolbar" id="g-tools" role="group" aria-label="${t.toolsLabel}" hidden>
-      ${toolBtn(SOLID, 'solid', true)}${toolBtn(SPIKE, 'spike')}${toolBtn(CODE, 'code')}${toolBtn(SPRING, 'spring')}${toolBtn(EMPTY, 'eraser')}
+      ${toolBtn(SOLID, 'solid', true)}${toolBtn(SPIKE, 'spike')}${toolBtn(COIN, 'coin')}${toolBtn(SPRING, 'spring')}${toolBtn(EMPTY, 'eraser')}
     </div>
     <div class="btn-row" id="g-buttons" style="margin-top:10px; align-items:center">
       <button class="btn btn-dark jump" id="g-jump" type="button" hidden>${t.jump}</button>
@@ -102,7 +102,7 @@ export function createGame(ctx: Ctx): Screen {
       for (let c = 0; c < COLS; c++) if (c < 4 || c > 5) put(c, 6, SOLID);
       put(8, 5, SPIKE);
       put(9, 4, SOLID); put(10, 4, SOLID);
-      put(2, 5, CODE); put(8, 3, CODE); put(10, 3, CODE);
+      put(2, 5, COIN); put(8, 3, COIN); put(10, 3, COIN);
     }
     const count = (v: number) => grid.filter(x => x === v).length;
     const solidAt = (c: number, r: number) => r >= 0 && r < ROWS && c >= 0 && c < COLS && at(c, r) === SOLID;
@@ -142,12 +142,10 @@ export function createGame(ctx: Ctx): Screen {
       for (let i = 0; i < 3; i++) { const x0 = c + 0.08 + i * 0.28; g.moveTo(x0, r + 1); g.lineTo(x0 + 0.14, r + 0.38); g.lineTo(x0 + 0.28, r + 1); }
       g.closePath(); g.fill();
     }
-    function drawCode(c: number, r: number) {
-      const cx = c + 0.5, cy = r + 0.5 + (ctx.reduce ? 0 : Math.sin(clock * 3.5 + c) * 0.05);
-      g.fillStyle = COL.coin; g.beginPath(); g.arc(cx, cy, 0.28, 0, Math.PI * 2); g.fill();
-      g.lineWidth = 0.05; g.strokeStyle = COL.coinEdge; g.stroke();
-      g.fillStyle = COL.outline; g.font = '700 0.26px "Ubuntu", Arial, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.fillText('</>', cx, cy + 0.01);
+    function drawCoin(c: number, r: number) {
+      const cy = r + 0.5 + (ctx.reduce ? 0 : Math.sin(clock * 3.5 + c) * 0.05);
+      g.beginPath(); g.arc(c + 0.5, cy, 0.26, 0, Math.PI * 2);
+      g.fillStyle = COL.coin; g.fill(); g.lineWidth = 0.06; g.strokeStyle = COL.coinEdge; g.stroke();
     }
     function drawSpring(c: number, r: number) {
       g.strokeStyle = COL.navy; g.lineWidth = 0.07; g.beginPath();
@@ -162,16 +160,14 @@ export function createGame(ctx: Ctx): Screen {
       g.fillStyle = mode === 'won' ? COL.coin : COL.grass; rr(x + 0.12, y + 0.14, 0.58, 0.6, 0.06); g.fill();
       g.fillStyle = COL.coin; g.beginPath(); g.arc(x + 0.66, y + 1.15, 0.06, 0, Math.PI * 2); g.fill();
     }
-    /** Postavička je logo Coders Labu s očima. Ve vzduchu se trochu protáhne. */
+    /** Postavička je žlutý čtverec s očima. Ve vzduchu se trochu protáhne. */
     function drawPlayer() {
       if (gone) return;
       const pl = p ?? START;
       const stretch = p && !p.ground && !ctx.reduce ? Math.min(0.09, Math.abs(p.vy) * 0.008) : 0;
       const w = PW - stretch, h = PH + stretch, x = pl.x + stretch / 2, y = pl.y - stretch;
       rr(x, y, w, h, 0.14); g.fillStyle = COL.player; g.fill(); g.lineWidth = 0.06; g.strokeStyle = COL.outline; g.stroke();
-      g.fillStyle = COL.outline; g.beginPath(); g.arc(x + w * 0.62, y + 0.2, 0.055, 0, Math.PI * 2); g.arc(x + w * 0.84, y + 0.2, 0.055, 0, Math.PI * 2); g.fill();
-      g.font = '700 0.36px "Ubuntu", Arial, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.fillText('CL', x + w / 2, y + h * 0.64);
+      g.fillStyle = COL.outline; g.beginPath(); g.arc(x + w * 0.6, y + 0.3, 0.06, 0, Math.PI * 2); g.arc(x + w * 0.83, y + 0.3, 0.06, 0, Math.PI * 2); g.fill();
     }
     function drawHud() {
       const y = 0.38;
@@ -189,10 +185,14 @@ export function createGame(ctx: Ctx): Screen {
       const right = COLS - 0.15;
       g.textAlign = 'right'; g.fillStyle = COL.outline; g.font = `700 ${0.4 + scorePop * 0.16}px "Ubuntu", Arial, sans-serif`;
       g.fillText(fill(t.points, { n: nf(score) }), right, y);
+      // malá mince a vedle ní, kolik mincí z kolika je sebraných
+      const coins = got.size + '/' + count(COIN), coinsRight = right - 2.3;
       g.font = '700 0.34px "Ubuntu", Arial, sans-serif'; g.fillStyle = COL.navy;
-      g.fillText('</> ' + got.size + '/' + count(CODE), right - 2.3, y);
+      g.fillText(coins, coinsRight, y);
+      g.beginPath(); g.arc(coinsRight - g.measureText(coins).width - 0.22, y, 0.14, 0, Math.PI * 2);
+      g.fillStyle = COL.coin; g.fill(); g.lineWidth = 0.04; g.strokeStyle = COL.coinEdge; g.stroke();
       if (best && mode !== 'edit') {
-        g.textAlign = 'center'; g.font = '500 0.3px "Ubuntu", Arial, sans-serif';
+        g.textAlign = 'center'; g.fillStyle = COL.navy; g.font = '500 0.3px "Ubuntu", Arial, sans-serif';
         g.fillText(fill(t.record, { n: nf(best) }), COLS / 2 - 0.4, y);
       }
     }
@@ -214,7 +214,7 @@ export function createGame(ctx: Ctx): Screen {
         if (v === SOLID) block(c, r, r === 0 || at(c, r - 1) !== SOLID);
         else if (v === SPIKE) drawSpikes(c, r);
         else if (v === SPRING) drawSpring(c, r);
-        else if (v === CODE && !(mode !== 'edit' && got.has(r * COLS + c))) drawCode(c, r);
+        else if (v === COIN && !(mode !== 'edit' && got.has(r * COLS + c))) drawCoin(c, r);
       }
       drawPlayer();
       for (const q of sparks) {
@@ -302,10 +302,10 @@ export function createGame(ctx: Ctx): Screen {
           pl.vy = -SPRING_JUMP; pl.ground = false; coyote = 0;
           burst(c + 0.5, r + 0.45, COL.coin, 8, 2.6);
         }
-        if (v === CODE && !got.has(r * COLS + c) && circleHit(pl, c + 0.5, r + 0.5, 0.38)) {
+        if (v === COIN && !got.has(r * COLS + c) && circleHit(pl, c + 0.5, r + 0.5, 0.38)) {
           got.add(r * COLS + c);
-          score += POINTS.code; scorePop = 1;
-          if (!ctx.reduce) floaters.push({ x: c + 0.5, y: r + 0.1, text: '+' + POINTS.code, life: 0.9 });
+          score += POINTS.coin; scorePop = 1;
+          if (!ctx.reduce) floaters.push({ x: c + 0.5, y: r + 0.1, text: '+' + POINTS.coin, life: 0.9 });
           burst(c + 0.5, r + 0.5, COL.coin, 10, 3);
         }
       }
@@ -387,10 +387,10 @@ export function createGame(ctx: Ctx): Screen {
     }
     /** Karta na plátně a pod ním důvody hvězd: cíl, všechen kód a třetí podle toho, čí je to verze. */
     function showResult(own: boolean, points: number, record: boolean) {
-      const total = count(CODE);
+      const total = count(COIN);
       const stars = [
         { on: true, text: t.stars.goal },
-        { on: total > 0 && got.size === total, text: t.stars.code },
+        { on: total > 0 && got.size === total, text: t.stars.coins },
         own ? { on: count(SPIKE) >= HARD_SPIKES, text: t.stars.hard } : { on: lost === 0, text: t.stars.clean },
       ];
       $(root, '#g-card-title').textContent = own ? t.cardOwn : t.cardFirst;
@@ -495,7 +495,7 @@ export function createGame(ctx: Ctx): Screen {
       gameEdit(s, ctx.now());
       diesSinceEdit = 0;
       if (paintVal === SPIKE) quest('spike');
-      if (paintVal === CODE) quest('code');
+      if (paintVal === COIN) quest('coin');
       if (paintVal === SPRING) quest('spring');
       if (paintVal !== EMPTY) burst(cell.c + 0.5, cell.r + 0.5, COL.coin, 5, 1.8);
       ui();

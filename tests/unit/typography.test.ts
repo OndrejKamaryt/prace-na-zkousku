@@ -37,8 +37,8 @@ describe('cs.json', () => {
   it('návštěvník nevidí odznaky, viníka, detektivku ani krádež (ZPETNA-VAZBA.md)', () => {
     const visitor = JSON.stringify([cs.ui, cs.start, cs.data, cs.result, cs.paths]);
     expect(visitor).not.toMatch(/odznak|vin[ií]k|detektiv|ztratil|zmizelo/i);
-    // ve hře jsou bodce, živé bugy Ondřej vyřadil
-    expect(JSON.stringify(cs.hry)).not.toMatch(/bug/i);
+    // ve hře jsou bodce a mince, živé bugy a sbírání kódu Ondřej vyřadil
+    expect(JSON.stringify(cs.hry)).not.toMatch(/bug|\bkód/i);
     // IT admin zůstává na příkladu pekárny, ne na serverech Coders Labu
     expect(JSON.stringify(cs.kyber)).not.toMatch(/Coders Lab/i);
   });

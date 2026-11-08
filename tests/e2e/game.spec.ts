@@ -104,6 +104,7 @@ test('první výhra ukáže hvězdy a body a nabídne úpravu hry, trampolína p
   await expect(card).toContainText('Jsi ve studiu!');
   await expect(card).toContainText(/\d+\sbodů/);
   await expect(page.locator('#g-status')).toContainText('Zkus to znovu na tři hvězdy');
+  await expect(page.locator('#g-reasons')).toContainText('Všechny mince');
   await expect(page.locator('#g-reasons')).toContainText('Bez ztráty života');
   // po první výhře se nabízí úprava, tlačítko svítí a do úprav se nejde samo
   await expect(page.locator('#g-tools')).toBeHidden();
@@ -131,9 +132,9 @@ test('nástroje mají ikonu a vysvětlení a Smazat je od ostatních oddělené'
   const tools = page.locator('#g-tools .tool');
   await expect(tools).toHaveCount(5);
   await expect(tools.locator('svg')).toHaveCount(5);
-  await expect(tools.locator('b')).toHaveText(['Přidej plošinu', 'Přidej nástrahu', 'Přidej kód', 'Přidej trampolínu', 'Smazat']);
+  await expect(tools.locator('b')).toHaveText(['Přidej plošinu', 'Přidej nástrahu', 'Přidej mince', 'Přidej trampolínu', 'Smazat']);
   await expect(tools.nth(1).locator('small')).toHaveText('Když se jí postava dotkne, přijde o život. Těžší hra, víc bodů.');
-  await expect(tools.nth(2).locator('small')).toHaveText('Je to odměna, každý kousek je 100 bodů.');
+  await expect(tools.nth(2).locator('small')).toHaveText('Jsou odměna, sbíráš za ně body.');
   await expect(page.locator('[data-tool="1"]')).toHaveAttribute('aria-pressed', 'true');
   await page.locator('[data-tool="3"]').click();
   await expect(page.locator('[data-tool="3"]')).toHaveAttribute('aria-pressed', 'true');
