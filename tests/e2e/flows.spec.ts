@@ -269,66 +269,111 @@ test('B3: chyba v rezervaci a v návycích, po dvou špatných odpovědích se u
   expect(errors).toEqual([]);
 });
 
-test('C: IT administrátor na notebooku: rozhodnutí vlevo, mapa a terminál vpravo, na konci hvězdy', async ({ page }) => {
+test('C: IT administrátor na notebooku: úvod, krok po kroku, chyby a výsledková karta', async ({ page }) => {
   await page.setViewportSize(LAPTOP);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   const errors = trackErrors(page);
   await open(page, '/index.html?ukazka=kyber');
 
+  // úvod přes herní box, 2 minuty jen u IT admina, tlačítko v hlavičce schované
   const stage = page.locator('#s-stage');
-  await expect(stage).toHaveAttribute('data-scene', 'alarm');
-  await expect(page.locator('#s-say')).toContainText('Promiň, že budím.');
-  expect(parseInt((await page.locator('#s-tries').innerText()).replace(/\s/g, ''))).toBeGreaterThanOrEqual(412);
-  const panel = (await page.locator('#s-panel').boundingBox())!;
-  const map = (await page.locator('#s-map').boundingBox())!;
-  const term = (await page.locator('#s-out').boundingBox())!;
-  expect(map.x).toBeGreaterThan(panel.x + panel.width - 1);
+  await expect(stage).toHaveAttribute('data-scene', 'intro');
+  await expect(page.locator('#v-kyber .vtag')).toContainText('2 minuty');
+  await expect(page.locator('#s-intro')).toContainText('Tvůj první zásah, 2 minuty');
+  await expect(page.locator('#s-intro h3')).toHaveText('Někdo se dobývá do serveru pekárny Kvásek');
+  await expect(page.locator('#s-intro .noc-rules li')).toHaveText(['Za rychlost', 'Za správná rozhodnutí', 'Za ubráněný server']);
+  await expect(page.locator('.prog')).toBeHidden();
+  await expect(page.locator('#s-done')).toHaveCount(0);
+  await page.locator('#s-start').click();
+  await expect(page.locator('#s-intro')).toBeHidden();
+
+  // vlevo chat a krok, vpravo mapa s legendou nad terminálem, mapa zhruba 40 % výšky (UX-07)
+  await expect(page.locator('#s-chat')).toContainText('Promiň, že budím.');
+  const main = (await page.locator('.noc-main').boundingBox())!;
+  const map = (await page.locator('.noc-mapbox').boundingBox())!;
+  const term = (await page.locator('.noc-termbox').boundingBox())!;
+  expect(map.x).toBeGreaterThan(main.x + main.width - 1);
   expect(term.y).toBeGreaterThan(map.y + map.height - 1);
+  expect(map.height / (map.height + term.height)).toBeGreaterThan(0.35);
+  expect(map.height / (map.height + term.height)).toBeLessThan(0.45);
+  await expect(page.locator('.noc-legend li')).toHaveText(['útočník', 'běžní uživatelé', 'server Kvásek']);
+  await expect(page.locator('#s-map text').first()).toHaveText('útočník');
+  await expect(page.locator('.noc-chat')).toHaveCSS('height', '120px');
 
+  // příkaz má vysvětlení pod ikonou ⓘ a po spuštění lidské shrnutí, nový výpis svítí (UX-06)
+  const info = page.locator('.noc-info');
+  await info.click();
+  await expect(page.locator('#s-tip')).toHaveText('Vypíše poslední 4 neúspěšné pokusy o přihlášení ze záznamu serveru.');
+  await expect(info).toHaveAttribute('aria-expanded', 'true');
   await page.locator('[data-cmd="grep"]').click();
+  await expect(page.locator('#s-out .blk.new')).toHaveCount(1);
+  await expect(page.locator('#s-out .blk.new')).toContainText('Failed password for petra');
+  await expect(page.locator('.noc-carry')).toHaveText('Někdo zkouší hesla k účtům root, admin a petra, pořád ze stejné adresy.');
+  await expect(page.locator('#s-out .blk.new')).toHaveCount(0, { timeout: 3_000 });
   await page.locator('[data-cmd="count"]').click();
-  // špatná adresa: Tereza to komentuje a útočník získá náskok
-  const before = await page.locator('#s-ip0').innerText();
+
+  // špatná adresa: červeně s ✕, vysvětlení, Zkusit znovu a hvězda za rozhodnutí napoprvé je pryč
   await page.locator('[data-q1="1"]').click();
-  await expect(page.locator('#s-say')).toContainText('Tři pokusy? To je nejspíš někdo z kanceláře');
-  expect(parseInt((await page.locator('#s-ip0').innerText()).replace(/\s/g, ''))).toBeGreaterThanOrEqual(parseInt(before.replace(/\s/g, '')) + 25);
+  await expect(page.locator('#s-fb')).toContainText('Tři pokusy jsou nejspíš někdo z kanceláře, kdo si spletl heslo.');
+  await expect(page.locator('#s-fb')).toContainText('Hvězda za rozhodnutí napoprvé je pryč, hra ale pokračuje.');
+  await expect(page.locator('[data-q1="1"]')).toHaveClass(/\bno\b/);
+  await expect(page.locator('[data-q1="1"] .i-no')).toBeVisible();
+  await expect(page.locator('#s-stars')).toContainText('2/3');
+  await expect(page.locator('[data-q1="0"]')).toBeDisabled();
+  await page.locator('#s-retry').click();
+  await expect(page.locator('#s-fb')).toHaveCount(0);
+  await expect(page.locator('[data-q1="1"]')).toBeDisabled();
   await page.locator('[data-q1="0"]').click();
-  // po zablokování se počítadlo zastaví a poplach skončí
-  await page.locator('[data-cmd="ufw"]').click();
+
+  // zablokování je žluté jako každá akce, ne červené (UX-08); počítadlo stojí a poplach skončí
+  const ufw = page.locator('[data-cmd="ufw"]');
+  await expect(ufw).toHaveCSS('background-color', 'rgb(250, 186, 32)');
+  await ufw.click();
   await expect(stage).toHaveAttribute('data-scene', 'fight');
-  await expect(page.locator('#s-out div').last()).toHaveText('Rule inserted');
+  await expect(page.locator('#s-out .blk').last()).toContainText('Rule inserted');
+  await expect(page.locator('#s-map text').first()).toHaveText('zablokováno');
   const stopped = await page.locator('#s-tries').innerText();
-  await page.waitForTimeout(700);
-  await expect(page.locator('#s-tries')).toHaveText(stopped);
   await page.locator('[data-cmd="last"]').click();
+  await expect(page.locator('#s-chat .noc-msg')).toHaveCount(3);
+  await expect(page.locator('#s-chat .noc-msg').last()).toContainText('Jenže Petra ve tři ráno spí.');
+  await expect(page.locator('#s-chat .noc-msg.old')).toHaveCount(2);
   await page.locator('[data-q2="1"]').click();
+  await expect(page.locator('#s-tries')).toHaveText(stopped);
 
-  // štíty: dva se dají nasadit, špatný vysvětlí Tereza a zůstane označený k odebrání
-  const deploy = page.locator('#s-deploy');
-  await expect(deploy).toBeDisabled();
-  await page.locator('[data-shield="k1"]').click();
-  await page.locator('[data-shield="k3"]').click();
-  await expect(page.locator('[data-shield="k3"]')).toHaveAttribute('aria-pressed', 'true');
-  await deploy.click();
-  await expect(page.locator('#s-say')).toContainText('Vypínat server nejde');
-  await page.locator('[data-shield="k3"]').click();
-  await expect(deploy).toBeDisabled();
-  await page.locator('[data-shield="k2"]').click();
-  await deploy.click();
+  // štíty: špatný vysvětlí, Zkusit znovu ho odebere
+  await page.locator('[data-shield="klic"]').click();
+  await page.locator('[data-shield="vypinat"]').click();
+  await page.locator('#s-deploy').click();
+  await expect(page.locator('#s-fb')).toContainText('Objednávky chodí brzy ráno, pekárna by přišla o zákazníky.');
+  await expect(page.locator('#s-fb .noc-fb-star')).toHaveCount(0);
+  await page.locator('#s-retry').click();
+  await expect(page.locator('#s-count')).toHaveText('Vybráno 1/2');
+  await page.locator('[data-shield="fail2ban"]').click();
+  await page.locator('#s-deploy').click();
 
-  await expect(page.locator('#s-done')).toBeVisible({ timeout: 10_000 });
+  // výsledková karta v herním boxu: hvězdy, čas, srovnání, dovednosti a jedno hlavní tlačítko (UX-04)
+  await expect(page.locator('#s-result')).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator('#s-grid')).toBeHidden();
   await expect(stage).toHaveAttribute('data-scene', 'safe');
-  await expect(page.locator('#s-pct')).toContainText('100');
+  await expect(page.locator('#s-pct')).toHaveText('100 %');
   await expect(page.locator('#s-safe')).toHaveText('Server je v bezpečí');
-  await expect(page.locator('#s-panel .star-list')).toContainText('Rozhodnutí napoprvé: 1 ze 3');
-  await expect(page.locator('#s-panel .star-list')).toContainText('Zásah do 2 minut');
-  await expect(page.locator('#s-panel .stars svg.on')).toHaveCount(2);
+  await expect(page.locator('#s-result .noc-rstars')).toContainText('2/3');
+  await expect(page.locator('#s-result .noc-rstars svg.on')).toHaveCount(2);
+  await expect(page.locator('#s-result .noc-rtime')).toHaveText(/^Zásah za \d:\d\d$/);
+  await expect(page.locator('#s-result .noc-compare')).toHaveText('Pod 1 minutu to zvládne jen každý třetí.');
+  await expect(page.locator('#s-result .noc-skills li')).toHaveText(['Čtení logů', 'Firewall', 'Správa účtů', 'SSH klíče']);
+  await expect(page.locator('#s-result')).toContainText('Přesně tohle dělají IT administrátoři každý den. A přesně tohle se naučíš v kurzu.');
+  await expect(page.locator('#v-kyber .btn-primary:visible')).toHaveText(['Co dál?']);
+  await expect(page.locator('#s-replay')).toHaveText('Zahrát znovu');
+  await expect(page.locator('#s-share')).toHaveText('Sdílet výsledek');
+  await expect(page.locator('.prog')).toBeHidden();
   expect((await widgetState(page)).kyber).toMatchObject({ status: 'done', firstOk: 1, mistakes: 2 });
 
-  await expect(page.locator('#s-done')).toContainText('Hotovo, server je ubráněný!');
-  const go = page.locator('#s-done [data-go="vysledek"]');
-  await expect(go).toBeInViewport();
-  await go.click();
+  const next = page.locator('#s-next');
+  await expect(next).toBeInViewport({ ratio: 1 });
+  await next.click();
   await expect(page.locator('#r-reco h2')).toHaveText('Kyberbezpečnost');
+  await expect(page.locator('.prog')).toBeVisible();
   const reco = (await page.locator('#r-reco').boundingBox())!;
   const priceBox = (await page.locator('#r-price-box').boundingBox())!;
   expect(priceBox.y).toBeGreaterThan(reco.y + reco.height - 1);
@@ -336,48 +381,113 @@ test('C: IT administrátor na notebooku: rozhodnutí vlevo, mapa a terminál vpr
   expect(errors).toEqual([]);
 });
 
-test('C1: na mobilu je mapa nahoře a terminál pod krokem', async ({ page }) => {
+test('C1: na mobilu jde přehled, chat, krok, sbalitelný terminál na 6 řádků a mapa pod sebou', async ({ page }) => {
   await page.setViewportSize(MOBILE);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page, '/index.html?ukazka=kyber');
-  const panel = (await page.locator('#s-panel').boundingBox())!;
-  const map = (await page.locator('#s-map').boundingBox())!;
-  const term = (await page.locator('#s-out').boundingBox())!;
-  expect(map.y + map.height).toBeLessThanOrEqual(panel.y);
-  expect(term.y).toBeGreaterThanOrEqual(panel.y + panel.height);
+  await page.locator('#s-start').click();
+  await expect(page.locator('[data-cmd="grep"]')).toBeEnabled();
+  const order = ['.noc-hud', '#s-chat', '#s-step', '.noc-termbox', '.noc-mapbox'];
+  const boxes = await Promise.all(order.map(async sel => (await page.locator(sel).boundingBox())!));
+  for (let i = 1; i < boxes.length; i++) expect(boxes[i]!.y, order[i]).toBeGreaterThanOrEqual(boxes[i - 1]!.y + boxes[i - 1]!.height - 1);
+
+  // terminál má výšku na 6 řádků a jde sbalit
+  const lines = await page.locator('#s-out').evaluate(e => {
+    const st = getComputedStyle(e);
+    return (e.clientHeight - parseFloat(st.paddingTop) - parseFloat(st.paddingBottom)) / parseFloat(st.lineHeight);
+  });
+  expect(Math.round(lines)).toBe(6);
+  const toggle = page.locator('#s-term-toggle');
+  await expect(toggle).toHaveText('Terminál');
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#s-out')).toBeHidden();
+  await toggle.click();
+  await expect(page.locator('#s-out')).toBeVisible();
+
+  // tlačítka aspoň 44 px vysoká (UX-12)
+  for (const sel of ['[data-cmd="grep"]', '.noc-info', '#s-term-toggle']) {
+    expect((await page.locator(sel).boundingBox())!.height, sel).toBeGreaterThanOrEqual(44);
+  }
 });
 
-test('C3: IT admin: po najetí myší je text tlačítek čitelný', async ({ page }) => {
+test('C3: IT admin: text je čitelný i po najetí myší (kontrast aspoň 4,5 : 1)', async ({ page }) => {
   await page.setViewportSize(LAPTOP);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page, '/index.html?ukazka=kyber');
-  /** Kontrast textu uvnitř tlačítka vůči jeho pozadí, když je nad ním myš (WCAG, běžný text aspoň 4,5). */
-  const contrast = async (button: string, inner: string) => {
-    const b = page.locator(button);
+  /** Kontrast textu v prvku vůči pozadí pod ním, když je nad prvkem myš. Poloprůhledná pozadí se skládají až k prvnímu plnému (WCAG, běžný text aspoň 4,5). */
+  const contrast = async (target: string, inner: string | null = null) => {
+    const b = page.locator(target);
     await b.hover();
     return b.evaluate((el, sel) => {
-      const lum = (c: string) => {
-        const [r, g, a] = c.match(/[\d.]+/g)!.map(v => {
-          const x = Number(v) / 255;
+      type Rgba = [number, number, number, number];
+      const parse = (c: string): Rgba => {
+        const v = c.match(/[\d.]+/g)!.map(Number);
+        return [v[0]!, v[1]!, v[2]!, v.length > 3 ? v[3]! : 1];
+      };
+      const over = (top: Rgba, under: Rgba): Rgba => [0, 1, 2].map(i => top[i]! * top[3] + under[i]! * (1 - top[3])).concat(1) as Rgba;
+      const textEl = sel ? el.querySelector(sel)! : el;
+      const layers: Rgba[] = [];
+      for (let n: Element | null = textEl; n; n = n.parentElement ?? ((n.getRootNode() as ShadowRoot).host ?? null)) {
+        const c = parse(getComputedStyle(n).backgroundColor);
+        if (c[3] > 0) layers.push(c);
+        if (c[3] >= 1) break;
+      }
+      let bg: Rgba = [255, 255, 255, 1];
+      for (const l of layers.reverse()) bg = over(l, bg);
+      const fg = over(parse(getComputedStyle(textEl).color), bg);
+      const lum = (c: Rgba) => {
+        const [r, g, b] = c.slice(0, 3).map(v => {
+          const x = v / 255;
           return x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4;
         });
-        return 0.2126 * r! + 0.7152 * g! + 0.0722 * a!;
+        return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!;
       };
-      const text = lum(getComputedStyle(el.querySelector(sel)!).color), bg = lum(getComputedStyle(el).backgroundColor);
-      return (Math.max(text, bg) + 0.05) / (Math.min(text, bg) + 0.05);
+      const [a, z] = [lum(fg), lum(bg)];
+      return (Math.max(a, z) + 0.05) / (Math.min(a, z) + 0.05);
     }, inner);
   };
-  expect(await contrast('[data-cmd="grep"]', 'code'), 'příkaz na žlutém tlačítku').toBeGreaterThanOrEqual(4.5);
-  expect(await contrast('[data-cmd="grep"]', 'span'), 'název na žlutém tlačítku').toBeGreaterThanOrEqual(4.5);
+  const ok = async (target: string, inner: string | null, what: string) => expect(await contrast(target, inner), what).toBeGreaterThanOrEqual(4.5);
+
+  await ok('#s-start', null, 'Začít zásah');
+  await page.locator('#s-start').click();
+  await ok('[data-cmd="grep"]', 'span', 'název příkazu na žlutém tlačítku');
+  await ok('[data-cmd="grep"]', 'code', 'příkaz na žlutém tlačítku');
+  await ok('.noc-info', null, 'ikona ⓘ');
   await page.locator('[data-cmd="grep"]').click();
-  expect(await contrast('[data-cmd="count"]', 'code')).toBeGreaterThanOrEqual(4.5);
+  await ok('[data-cmd="count"]', 'code', 'příkaz Spočítat');
+  await ok('.noc-carry', 'span', 'shrnutí předchozího příkazu');
   await page.locator('[data-cmd="count"]').click();
-  expect(await contrast('[data-q1="1"]', '.num'), 'počet pokusů u adresy').toBeGreaterThanOrEqual(4.5);
+  await ok('[data-q1="1"]', '.num', 'počet pokusů u adresy');
+  await ok('[data-q1="1"]', '.noc-ip > span', 'adresa');
+  await page.locator('[data-q1="1"]').click();
+  await ok('#s-fb', 'p', 'vysvětlení chyby');
+  await ok('#s-fb', '.noc-fb-star span', 'ztracená hvězda');
+  await ok('#s-retry', null, 'Zkusit znovu');
+  await ok('[data-q1="1"]', '.noc-ip > span', 'špatná adresa');
+  await page.locator('#s-retry').click();
   await page.locator('[data-q1="0"]').click();
-  expect(await contrast('[data-cmd="ufw"]', 'code'), 'příkaz na červeném tlačítku').toBeGreaterThanOrEqual(4.5);
+  await ok('[data-cmd="ufw"]', 'code', 'příkaz Zablokovat');
   await page.locator('[data-cmd="ufw"]').click();
   await page.locator('[data-cmd="last"]').click();
+  await ok('#s-chat .noc-msg.old >> nth=0', '.bub', 'starší zpráva v chatu');
+  await ok('#s-chat .noc-msg:last-child', '.bub small', 'jméno v nejnovější zprávě');
+  await ok('[data-q2="0"]', 'span:last-child', 'volba u účtu');
   await page.locator('[data-q2="1"]').click();
-  expect(await contrast('[data-shield="k1"]', 'small'), 'popis štítu').toBeGreaterThanOrEqual(4.5);
+  await ok('[data-shield="fail2ban"]', 'small', 'podtext štítu');
+  await ok('[data-shield="klic"]', 'span > span', 'název štítu');
+  await page.locator('[data-shield="klic"]').click();
+  await page.locator('[data-shield="fail2ban"]').click();
+  await ok('#s-deploy', null, 'Nasadit štíty');
+  await ok('.noc-count', null, 'Vybráno 2/2');
+  await page.locator('#s-deploy').click();
+  await expect(page.locator('#s-result')).toBeVisible({ timeout: 10_000 });
+  await ok('#s-result .noc-compare', null, 'srovnání s hráči');
+  await ok('#s-result .noc-skills li >> nth=0', null, 'dovednost');
+  await ok('#s-safe', null, 'Server je v bezpečí');
+  await ok('#s-next', null, 'Co dál?');
+  await ok('#s-replay', null, 'Zahrát znovu');
+  await ok('#s-share', null, 'Sdílet výsledek');
 });
 
 test('C2: Zkus si další příklady, hotové odškrtnuté, a výsledek ze dvou ukázek', async ({ page }) => {
@@ -392,6 +502,7 @@ test('C2: Zkus si další příklady, hotové odškrtnuté, a výsledek ze dvou 
   await expect(more.nth(0)).toContainText('Zahraj si hru a uprav ji');
   await expect(more.nth(0)).toContainText('asi 5 minut');
   await expect(more.nth(1)).toContainText('Kyberbezpečnost');
+  await expect(more.nth(1)).toContainText('asi 2 minuty');
 
   await solveData(page);
   await page.locator('#v-data [data-go="kyber"]').click();
@@ -400,9 +511,10 @@ test('C2: Zkus si další příklady, hotové odškrtnuté, a výsledek ze dvou 
   const fromKyber = page.locator('#v-kyber [data-more] .other[data-go="data"]');
   await expect(fromKyber).toContainText('Hotovo ✓');
   await solveKyber(page);
+  await expect(page.locator('.prog')).toBeHidden();
 
   // dvě hotové: doporučení s bonusem za vstup, ostatní odškrtnuté
-  await page.locator('.prog').click();
+  await page.locator('#s-next').click();
   await expect(page.locator('#r-reco h2')).toHaveText('Datová analýza');
   await expect(page.locator('#r-reco .tagline')).toHaveText('Tvůj nejsilnější směr');
   await expect(page.locator('#r-others [data-go="kyber"]')).toContainText('Hotovo ✓');
@@ -414,5 +526,7 @@ test('C2: Zkus si další příklady, hotové odškrtnuté, a výsledek ze dvou 
   await expect(page.locator('[data-state="data"]')).toHaveText('Hotovo ✓');
   await expect(page.locator('[data-state="kyber"]')).toHaveText('Hotovo ✓');
   await expect(page.locator('[data-state="hry"]')).toHaveText('Zkusit');
+  await expect(page.locator('.path-card[data-go="kyber"] .foot')).toContainText('2 minuty');
+  await expect(page.locator('.path-card[data-go="hry"] .foot')).toContainText('5 minut');
   await expect(page.locator('#start-badges, .badges, .minis')).toHaveCount(0);
 });

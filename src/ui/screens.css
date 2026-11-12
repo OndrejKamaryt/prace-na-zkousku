@@ -102,12 +102,12 @@
 .act:disabled{cursor:default}
 .act:disabled::after{display:none}
 @media (hover:hover){
-  .stage .act:hover:not(:disabled), .noc .act:hover:not(:disabled){background:var(--yellow); color:var(--dark); transform:translateY(-2px)}
+  .stage .act:hover:not(:disabled){background:var(--yellow); color:var(--dark); transform:translateY(-2px)}
 }
 @keyframes act-glow{0%,100%{box-shadow:0 0 5px rgba(250,186,32,.5)}50%{box-shadow:0 0 24px 5px rgba(250,186,32,.95)}}
 @keyframes act-shine{0%,62%{left:-30%}100%{left:115%}}
 .act.no{border-color:var(--pink); opacity:.55; box-shadow:none; animation:stage-shake .35s}
-.stage .act.ok, .stage .act.lit, .noc .act.ok{background:var(--yellow); color:var(--dark)}
+.stage .act.ok, .stage .act.lit{background:var(--yellow); color:var(--dark)}
 .act.ok{box-shadow:0 0 28px 6px rgba(250,186,32,.9); animation:none}
 .say{display:flex; align-items:flex-start; gap:9px; margin-top:12px; animation:stage-rise .25s ease-out}
 .say[hidden]{display:none}
@@ -136,86 +136,199 @@
   .sql{font-size:12.5px}
 }
 
-/* IT administrátor: noční velín, který se z poplachu uklidňuje */
-.noc{--noc-green:#2FBF71; position:relative; overflow:hidden; padding:14px; border-radius:var(--r-panel); background:var(--dark); color:#fff; transition:background .8s, box-shadow .8s}
+/* IT administrátor: noční velín podle Martinova zadání UX (11. 11.). Scéna jde
+   z úvodu přes poplach a klid do zeleného konce. Jediná akce v kroku je plné
+   žluté tlačítko, volby jsou obrysové karty a červená je jen pro chybu (UX-08).
+   Pozadí karet a tlačítek jsou neprůhledná, ať jde kontrast textu změřit (test C3). */
+.noc{--noc-green:#2FA35A; --noc-mint:#7EDCA4; --noc-card:#2B3035; --noc-card-hover:#353B41; --noc-line:#868E96; --noc-dim:#C7CDD3; position:relative; overflow:hidden; padding:14px; border-radius:var(--r-panel); background:var(--dark); color:#fff; transition:background .8s, box-shadow .8s}
 .noc[data-scene=alarm]{animation:noc-alarm 1.6s ease-in-out infinite}
 @keyframes noc-alarm{0%,100%{box-shadow:inset 0 0 0 3px rgba(216,27,83,.25)}50%{box-shadow:inset 0 0 0 3px rgba(216,27,83,1), inset 0 0 50px rgba(216,27,83,.4)}}
 .noc[data-scene=safe]{background:var(--navy); box-shadow:inset 0 0 0 3px var(--noc-green)}
 .noc :focus-visible{outline-color:var(--sky)}
-.noc-hud{display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr); gap:8px; margin-bottom:12px}
-.noc-tile{min-width:0; padding:7px 10px; border-radius:var(--r-card); background:rgba(255,255,255,.08)}
-.noc-tile span{display:block; font-size:12.5px; line-height:1.3; color:#C7CDD3}
-.noc-tile > b{display:block; font:700 19px/1.25 var(--head); font-variant-numeric:tabular-nums; white-space:nowrap}
-.noc-tile.hot > b{color:#FF6B93}
+.noc .sr{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0}
+.noc .i-ok, .noc .i-no{fill:none; stroke:currentColor; stroke-width:3; stroke-linecap:round; stroke-linejoin:round}
+.noc-hstars svg.on, .noc-rstars svg.on{fill:var(--yellow)}
+.noc-hstars svg.off, .noc-rstars svg.off{fill:none; stroke:#ADB5BD; stroke-width:1.6}
+
+/* přehled nahoře */
+.noc-hud{display:grid; grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr)); gap:8px; margin-bottom:12px}
+.noc-tile{min-width:0; padding:7px 10px; border-radius:var(--r-card); background:#2E3338}
+.noc-tile > span{display:block; font-size:12.5px; line-height:1.3; color:var(--noc-dim)}
+.noc-tile > b{display:flex; align-items:center; gap:4px; min-height:24px; font:700 19px/1.25 var(--head); font-variant-numeric:tabular-nums; white-space:nowrap}
+.noc[data-scene=alarm] #s-tries{color:#FF8FA9}
 .noc-pct{font-weight:700; color:#fff}
-.noc-meter{height:9px; margin-top:5px; border-radius:5px; background:rgba(255,255,255,.16); overflow:hidden}
-.noc-meter i{display:block; height:100%; width:15%; background:var(--pink); transition:width .7s cubic-bezier(.2,.9,.3,1), background .4s}
+.noc-meter{height:9px; margin-top:5px; border-radius:5px; background:#495057; overflow:hidden}
+.noc-meter i{display:block; height:100%; width:15%; background:var(--pink); transition:width .4s ease-out, background .4s}
 .noc-meter i.mid{background:var(--yellow)}
 .noc-meter i.top{background:var(--noc-green)}
-.noc-grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); grid-template-areas:"main map" "main term"; grid-template-rows:auto 1fr; gap:10px 14px; align-items:start}
-.noc-main{grid-area:main; min-width:0}
-.noc-map{grid-area:map; display:block; width:100%; height:auto; border-radius:var(--r-card); background:rgba(0,0,0,.22)}
-.noc-term{grid-area:term; display:flex; flex-direction:column; justify-content:flex-end; height:150px; padding:9px 11px; overflow:hidden; border-radius:var(--r-card); background:#14171A; color:var(--term-ink); font:400 13px/1.45 var(--mono)}
-.noc-term div{flex:none; white-space:pre-wrap; overflow-wrap:anywhere}
+.noc-hstars svg{flex:none; width:18px; height:18px}
+.noc-hstars span{margin-left:4px; font:500 14px var(--head); color:var(--noc-dim)}
+
+/* herní plocha: vlevo chat a krok, vpravo mapa (40 %) a terminál (60 %) */
+.noc-grid{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); gap:14px; min-height:430px}
+.noc-grid[hidden]{display:none}
+.noc-main{min-width:0; display:flex; flex-direction:column; gap:12px}
+.noc-side{min-width:0; display:grid; grid-template-rows:minmax(0,2fr) minmax(0,3fr); gap:10px}
+.noc-mapbox{min-height:0; display:flex; flex-direction:column; padding:6px 8px 7px; border-radius:var(--r-card); background:#1A1D20}
+.noc-map{display:block; flex:1 1 0; min-height:0; width:100%}
+.noc-legend{display:flex; flex-wrap:wrap; gap:3px 14px; margin:4px 0 0; padding:0; list-style:none; font-size:12.5px; line-height:1.3; color:var(--noc-dim)}
+.noc-legend li{display:flex; align-items:center; gap:6px}
+.noc-legend i{width:10px; height:10px; border-radius:50%}
+.noc-legend .lg-att{background:var(--pink)}
+.noc-legend .lg-usr{background:var(--noc-line)}
+.noc-legend .lg-srv{background:var(--yellow); border-radius:2px}
+.noc-termbox{min-height:0; display:flex; flex-direction:column}
+.noc-term-toggle{display:none}
+.noc-term{flex:1 1 0; min-height:0; overflow-y:auto; padding:8px 11px; border-radius:var(--r-card); background:#14171A; color:var(--term-ink); font:400 13px/1.45 var(--mono); scrollbar-width:thin; scrollbar-color:#495057 transparent}
+.noc-term .blk{margin:0 -6px 3px; padding:2px 6px; border:2px solid transparent; border-radius:4px; transition:border-color .4s}
+.noc-term .blk.new{border-color:var(--yellow); animation:noc-flash 1.5s ease-out}
+@keyframes noc-flash{0%{box-shadow:0 0 0 0 rgba(250,186,32,.55)}35%{box-shadow:0 0 14px 2px rgba(250,186,32,.45)}100%{box-shadow:0 0 0 0 rgba(250,186,32,0)}}
+.noc-term .blk div{white-space:pre-wrap; overflow-wrap:anywhere}
 .noc-term .p{color:var(--term-green)}
 .noc-term .p b{color:var(--term-ink); font-weight:700}
 .noc-term .o{color:var(--term-code)}
 .noc-term .c{color:var(--term-dim)}
 .noc-term .hl{color:var(--term-yellow)}
 .noc-term .bad{color:var(--term-red)}
-.noc .chat{align-items:flex-start; margin-bottom:12px}
-.noc .jana{width:36px; height:36px; font-size:16px; line-height:36px}
-.noc .bub{padding:9px 13px; border-radius:12px 12px 12px 3px; font-size:15px}
-.noc .bub.no{box-shadow:0 0 0 2px var(--pink)}
-.noc-step{margin:0 0 3px; font:500 13.5px var(--head); color:var(--yellow)}
-.noc-q{margin:0 0 10px; font:700 clamp(18px,3cqw,20px)/1.25 var(--head)}
-.noc .act{display:grid; gap:2px; min-height:54px; padding:11px 13px; font-size:15.5px}
-.noc .act code{font:400 12.5px/1.35 var(--mono); color:var(--sky); overflow-wrap:anywhere}
-.noc .act.ok code{color:var(--dark)}
-.noc .act.red{border-color:var(--pink); background:var(--pink); animation:noc-red 1.3s ease-in-out infinite}
-.noc .act.red code{color:#FFD7E2}
-.noc .act.red.ok{border-color:var(--yellow); background:var(--yellow); animation:none}
-.noc .act.red.ok code{color:var(--dark)}
-@keyframes noc-red{0%,100%{box-shadow:0 0 6px rgba(216,27,83,.6)}50%{box-shadow:0 0 26px 6px rgba(216,27,83,1)}}
-.noc-ip{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:3px 10px; align-items:center}
-.noc-ip .num{font:700 15px var(--head); font-variant-numeric:tabular-nums}
-.noc-bar{grid-column:1 / -1; display:block; height:7px; border-radius:4px; background:rgba(255,255,255,.14); overflow:hidden}
-.noc-bar i{display:block; height:100%; background:#FF6B93}
-.act.shield{grid-template-columns:24px minmax(0,1fr); gap:11px; align-items:flex-start}
-.act.shield small{display:block; font:400 13px/1.35 var(--font); color:#C7CDD3}
-.noc-box{display:grid; place-items:center; width:24px; height:24px; margin-top:1px; border:2px solid var(--yellow); border-radius:var(--r-card); color:transparent; font:700 15px/1 var(--head)}
-.act.shield.on{background:rgba(250,186,32,.2)}
-.act.shield.on .noc-box{background:var(--yellow); color:var(--dark)}
-/* po najetí myší je tlačítko žluté: tlumené barvy textu by na něm nebyly čitelné */
+
+/* chat s Terezou: pevná výška, uvnitř se posouvá, nejnovější zpráva dole a bílá (UX-01, UX-02) */
+.noc-chat{flex:none; height:120px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding-right:4px; scrollbar-width:thin; scrollbar-color:#495057 transparent}
+.noc-chat > :first-child{margin-top:auto}
+.noc-msg{flex:none; display:flex; gap:8px; align-items:flex-start}
+.noc-msg .jana{width:28px; height:28px; font-size:13px; line-height:28px}
+.noc-msg .bub{max-width:none; padding:6px 11px; border-radius:12px 12px 12px 3px; font-size:14.5px; line-height:1.4}
+.noc-msg .bub small{font-size:12px; margin-bottom:1px}
+.noc-msg.old .bub{background:#CED4DA; color:#343A40; animation:none}
+.noc-msg.old small{display:none}
+.noc-msg.typing .bub{display:flex; gap:4px; align-items:center; padding:11px 12px}
+.noc-msg.typing i{width:6px; height:6px; border-radius:50%; background:var(--noc-line); animation:noc-dot 1s ease-in-out infinite}
+.noc-msg.typing i:nth-child(2){animation-delay:.15s}
+.noc-msg.typing i:nth-child(3){animation-delay:.3s}
+@keyframes noc-dot{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* oblast kroku: štítek, shrnutí předchozího příkazu, pokyn a volby */
+.noc-step{min-width:0}
+.noc-step:focus{outline:none}
+.noc-steplabel{margin:0 0 4px; font:500 13.5px var(--head); color:var(--yellow)}
+.noc-carry{display:flex; gap:7px; align-items:flex-start; margin:0 0 8px; font-size:14px; line-height:1.4; color:var(--noc-dim)}
+.noc-carry svg{flex:none; width:16px; height:16px; margin-top:2px; color:var(--noc-mint)}
+.noc-q{margin:0 0 10px; font:700 19px/1.3 var(--head)}
+/* volby se objeví na místě, kde se pak klikají: jen se rozsvítí, neposouvají se */
+.noc-cmd, .noc-opts, .noc-deploy{transition:opacity .2s ease-out}
+.noc-step[data-phase=question] :is(.noc-cmd, .noc-opts, .noc-deploy){opacity:0}
+
+.noc-cmd{display:flex; gap:8px; align-items:stretch}
+.noc-act{flex:1 1 auto; min-width:0; display:flex; flex-wrap:wrap; align-items:center; gap:2px 8px; min-height:56px; padding:9px 16px; border:2px solid var(--yellow); border-radius:var(--r-card); background:var(--yellow); color:var(--dark); font:500 16px/1.3 var(--head); text-align:left; cursor:pointer; transition:background .15s, border-color .15s}
+.noc-act code{flex-basis:100%; font:400 12.5px/1.35 var(--mono); color:#343A40; overflow-wrap:anywhere}
+.noc-act .i-ok{display:none; flex:none; width:18px; height:18px}
+.noc-step[data-phase=choices] .noc-act:not(.ok){animation:act-glow 2.2s ease-in-out infinite}
 @media (hover:hover){
-  .noc .act:hover:not(:disabled) code, .noc .act:hover:not(:disabled) small{color:var(--dark)}
-  .noc .act:hover:not(:disabled) .noc-box{border-color:var(--dark)}
-  .noc .act:hover:not(:disabled) .noc-bar{background:rgba(33,37,41,.18)}
-  .noc .act:hover:not(:disabled) .noc-bar i{background:var(--pink-ink)}
+  .noc-act:hover:not(:disabled){background:var(--yellow-deep); border-color:var(--yellow-deep)}
 }
-.noc-go{margin-top:10px}
-.noc-win h3{margin:0 0 4px; font:700 clamp(22px,3.4cqw,27px)/1.2 var(--head); color:var(--noc-green)}
-.noc-win h3:focus{outline:none}
-.noc .stars{justify-content:flex-start; margin:6px 0}
-.noc .stars svg{fill:rgba(255,255,255,.14)}
-.noc .stars svg.on{fill:var(--yellow)}
-.noc .star-list{flex-direction:column; gap:4px; margin:8px 0; font-size:15px}
-.noc .star-list li{color:#C7CDD3}
-.noc .star-list li.on{color:#fff}
-.noc .star-list svg{flex:none; fill:rgba(255,255,255,.2)}
-.noc .star-list .on svg{fill:var(--yellow)}
-.noc-note{margin:8px 0 0; font-size:15px; color:#D5DEE5}
+.noc-act:disabled{cursor:default}
+.noc-act.ok{background:#3A3424; color:#fff}
+.noc-act.ok .i-ok{display:block; color:var(--yellow)}
+.noc-act.ok code{color:var(--noc-dim)}
+.noc-info{flex:none; display:grid; place-items:center; width:44px; min-height:44px; padding:0; border:2px solid var(--noc-line); border-radius:var(--r-card); background:var(--noc-card); color:#fff; cursor:pointer}
+.noc-info svg{width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round}
+.noc-info:hover, .noc-info[aria-expanded=true]{border-color:var(--yellow)}
+.noc-tip{margin:8px 0 0; padding:8px 11px; border-radius:var(--r-card); background:var(--noc-card); color:#E9ECEF; font-size:14px; line-height:1.45}
+.noc-sum{margin:10px 0 0; padding:2px 0 2px 11px; border-left:3px solid var(--yellow); font:600 15px/1.45 var(--font); color:#fff; animation:stage-rise .3s ease-out}
+.noc-tip[hidden], .noc-sum[hidden], .noc-hint[hidden]{display:none}
+
+.noc-opts{display:grid; gap:8px}
+.noc-opt{display:flex; align-items:center; gap:11px; width:100%; min-height:52px; padding:10px 13px; border:2px solid var(--noc-line); border-radius:var(--r-card); background:var(--noc-card); color:#fff; font:500 15.5px/1.3 var(--head); text-align:left; cursor:pointer; transition:background .15s, border-color .15s}
+@media (hover:hover){
+  .noc-opt:hover:not(:disabled){border-color:var(--yellow); background:var(--noc-card-hover)}
+}
+.noc-opt:disabled{cursor:default}
+.noc-mark, .noc-box{flex:none; display:grid; place-items:center; width:22px; height:22px; border:2px solid var(--noc-line); border-radius:50%}
+.noc-box{margin-top:1px; border-radius:4px}
+.noc-mark svg, .noc-box svg{display:none; width:14px; height:14px}
+.noc-opt.no{border-color:var(--pink); background:#3A2028; animation:stage-shake .35s}
+.noc-opt.ok{border-color:var(--noc-green); background:#1F3A2B}
+.noc-opt.no :is(.noc-mark, .noc-box){border-color:var(--pink); background:var(--pink); color:#fff}
+.noc-opt.ok :is(.noc-mark, .noc-box){border-color:var(--noc-green); background:var(--noc-green); color:#fff}
+.noc-opt.no :is(.noc-mark, .noc-box) .i-no, .noc-opt.ok :is(.noc-mark, .noc-box) .i-ok{display:block}
+.noc-ip{flex:1; min-width:0; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 10px; align-items:center}
+.noc-ip .num{font:700 15px var(--head); font-variant-numeric:tabular-nums}
+.noc-bar{grid-column:1 / -1; display:block; height:7px; border-radius:4px; background:#495057; overflow:hidden}
+.noc-bar i{display:block; height:100%; background:#FF6B93}
+.noc-shields{grid-template-columns:repeat(2,minmax(0,1fr))}
+.noc-shield{align-items:flex-start}
+.noc-shield small{display:block; margin-top:2px; font:400 13px/1.35 var(--font); color:var(--noc-dim)}
+.noc-shield.on:not(.no):not(.ok){border-color:var(--yellow); background:#3A3424}
+.noc-shield.on:not(.no):not(.ok) .noc-box{border-color:var(--yellow); background:var(--yellow); color:var(--dark)}
+.noc-shield.on:not(.no):not(.ok) .noc-box .i-ok{display:block}
+.noc-deploy{display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; margin-top:12px}
+.noc-count{font:500 15px var(--head); color:var(--noc-dim)}
+.noc-hint{margin:8px 0 0; font-size:14px; line-height:1.4; color:#FFD27A}
+
+/* zpětná vazba na chybu (UX-10) */
+.noc-fb{padding:10px 13px; border-left:4px solid var(--pink); border-radius:var(--r-card); background:#34242A; animation:stage-rise .25s ease-out}
+.noc-fb p{margin:0 0 6px; font-size:15px; line-height:1.45; color:#fff}
+.noc-fb .noc-fb-star{display:flex; gap:7px; align-items:flex-start; font-size:14px; color:#FFD7E2}
+.noc-fb-star svg{flex:none; width:16px; height:16px; margin-top:2px; fill:none; stroke:var(--yellow); stroke-width:1.8}
+.noc-fb .btn{margin-top:4px}
+
+/* úvod přes herní box (UX-05) */
+.noc-intro{position:absolute; inset:0; z-index:2; display:grid; place-items:center; padding:20px; background:rgba(20,23,26,.92); text-align:center}
+.noc-intro[hidden]{display:none}
+.noc-intro-in{max-width:540px}
+.noc-intro .ptag{margin-bottom:14px}
+.noc-intro h3{margin:0 0 10px; font:700 clamp(22px,3.2cqi,28px)/1.2 var(--head); color:#fff}
+.noc-intro-in > p:not(.ptag){color:#DEE2E6; font-size:16.5px}
+.noc-start{min-width:200px; margin:18px 0 16px; font-size:17px}
+.noc-rules{display:flex; flex-wrap:wrap; justify-content:center; gap:6px 16px; margin:0; padding:0; list-style:none; font-size:14px; color:#DEE2E6}
+.noc-rules li{display:flex; align-items:center; gap:5px}
+.noc-rules svg{flex:none; width:16px; height:16px; fill:var(--yellow)}
+
+/* výsledková karta v herním boxu (UX-04, UX-11) */
+.noc-result{padding:4px 4px 2px; text-align:center}
+.noc-result[hidden]{display:none}
+.noc-result .noc-msg{justify-content:center; margin-bottom:12px; text-align:left}
+.noc-result h3{margin:0; font:700 clamp(24px,3.4cqi,30px)/1.2 var(--head); color:var(--noc-mint)}
+.noc-result h3:focus{outline:none}
+.noc-rstars{display:flex; justify-content:center; align-items:center; gap:6px; margin:8px 0 4px}
+.noc-rstars svg{width:36px; height:36px}
+.noc-rstars b{margin-left:6px; font:700 22px var(--head)}
+.noc-rtime{font:700 17px var(--head); color:#fff}
+.noc-compare{margin-top:2px; font-size:15px; color:#DEE2E6}
+.noc-skills{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:14px 0; padding:0; list-style:none}
+.noc-skills li{display:flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; background:#285A80; font:500 14px var(--head)}
+.noc-skills svg{width:15px; height:15px; color:var(--noc-mint)}
+.noc-course{max-width:56ch; margin:0 auto 14px; font-size:15.5px; color:#fff}
+.noc-ractions{display:flex; flex-wrap:wrap; justify-content:center; gap:10px}
+.noc-ghost{background:transparent; border-color:#fff; color:#fff}
+.noc-ghost:hover{background:#fff; color:var(--dark)}
+.noc-copied{min-height:1.4em; margin-top:8px; font-size:14px; color:var(--noc-mint)}
+
+/* mobil: přehled, chat, krok, sbalitelný terminál na 6 řádků a zmenšená mapa (UX-12) */
 @container (max-width:760px){
   .noc{padding:11px}
-  .noc-hud{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr)}
-  .noc-tile{padding:6px 8px}
-  .noc-tile > b{font-size:16px}
-  .noc-tile span{font-size:11.5px}
-  .noc-grid{grid-template-columns:minmax(0,1fr); grid-template-areas:"map" "main" "term"; grid-template-rows:none}
-  .noc-map{aspect-ratio:400 / 120}
-  .noc-term{height:112px; font-size:12px}
-  /* po zásahu terminál jen překáží cestě k výsledku */
-  .noc[data-scene=safe] .noc-term{display:none}
+  .noc-hud{grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin-bottom:10px}
+  .noc-tile-meter{grid-column:1 / -1}
+  .noc-tile{padding:5px 8px}
+  .noc-tile > b{font-size:16px; min-height:20px}
+  .noc-tile > span{font-size:11.5px}
+  .noc-hstars svg{width:15px; height:15px}
+  .noc-hstars span{font-size:12.5px}
+  .noc-grid{grid-template-columns:minmax(0,1fr); min-height:0}
+  .noc-chat{height:104px}
+  .noc-side{display:flex; flex-direction:column}
+  .noc-termbox{order:1}
+  .noc-mapbox{order:2}
+  .noc-map{flex:none; height:104px}
+  .noc-term-toggle{display:flex; align-items:center; gap:8px; width:100%; min-height:44px; padding:0 12px; border:0; border-bottom:1px solid #2E3338; border-radius:var(--r-card) var(--r-card) 0 0; background:#14171A; color:#fff; font:500 14px var(--head); cursor:pointer}
+  .noc-term-toggle::after{content:""; width:8px; height:8px; margin-left:auto; border-right:2px solid; border-bottom:2px solid; transform:translateY(-2px) rotate(45deg)}
+  .noc-term-toggle[aria-expanded=false]::after{transform:rotate(-135deg)}
+  .noc-term{flex:none; height:calc(6 * 1.45 * 12px + 16px); font-size:12px; border-radius:0 0 var(--r-card) var(--r-card)}
+  .noc-termbox.closed .noc-term{display:none}
+  .noc-termbox.closed .noc-term-toggle{border-radius:var(--r-card)}
+  .noc-shields{grid-template-columns:minmax(0,1fr)}
+  .noc-intro{place-items:start center; padding:26px 16px}
+  .noc-ractions .btn-primary{flex:1 1 100%}
+  .noc-ractions .noc-ghost{flex:1 1 0; padding-left:12px; padding-right:12px}
 }
 
 /* stavění s AI */

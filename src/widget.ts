@@ -24,7 +24,8 @@ import { measureBottom, measureTop, resetPinnedCache, scrollPage } from './ui/sc
 import baseCss from './ui/styles.css?inline';
 import screensCss from './ui/screens.css?inline';
 
-const DONE_BAR: Record<PathKey, string> = { data: '#d-done', ai: '#a-done', hry: '#g-done', kyber: '#s-done' };
+/** Pruh Hotovo pod ukázkou. IT admin ho nemá, konec ukazuje výsledková karta v herním boxu. */
+const DONE_BAR: Partial<Record<PathKey, string>> = { data: '#d-done', ai: '#a-done', hry: '#g-done' };
 const SCREENS: Record<PathKey, (ctx: Ctx) => Screen> = { data: createData, ai: createAi, hry: createGame, kyber: createKyber };
 /** Mezera nad prvkem nebo pod ním po posunu stránky, v px. */
 const TOP_GAP = 8;
@@ -182,15 +183,18 @@ export class PraceNaZkousku extends HTMLElement {
 
   #completed(k: PathKey, reveal: boolean) {
     this.#renderProgress();
-    const bar = $(this.#root!, DONE_BAR[k]);
+    const sel = DONE_BAR[k];
+    if (!sel) return;
+    const bar = $(this.#root!, sel);
     bar.hidden = false;
     if (reveal) setTimeout(() => this.#reveal(bar), 400);
   }
 
   #renderProgress() {
     const root = this.#root!, s = this.#state;
-    // „Můj výsledek“ v hlavičce až ve chvíli, kdy je co ukázat
-    this.#progBox.hidden = !this.#offered.some(k => s[k].status === 'done' || s[k].status === 'skipped');
+    // „Můj výsledek“ v hlavičce až ve chvíli, kdy je co ukázat. U IT admina vede dál „Co dál?“
+    // na výsledkové kartě a druhé tlačítko by soupeřilo (rozhodnutí Ondřeje 12. 11.)
+    this.#progBox.hidden = this.#view === 'kyber' || !this.#offered.some(k => s[k].status === 'done' || s[k].status === 'skipped');
     for (const box of $$(root, '[data-more]')) {
       box.innerHTML = otherCards(box.dataset.more as PathKey, this.#offered, s);
       box.parentElement!.hidden = !box.innerHTML;

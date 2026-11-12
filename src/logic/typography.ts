@@ -7,7 +7,7 @@ export const NBSP = ' ';
 // za k, s, v, z, o, u, a, i (i na začátku věty), když po nich něco následuje
 const ONE_LETTER = /(?<=^|[\s („"'/])([ksvzouaiKSVZOUAI]) (?=\S)/gu;
 // číslo nebo zástupný symbol {x} a za ním jednotka
-const UNIT = /(?<=[\d}]) (?=(?:Kč|%|min|minut|minuty|s|h|kB)(?![\p{L}\d]))/gu;
+const UNIT = /(?<=[\d}]) (?=(?:Kč|%|min|minut|minuty|minutu|s|h|kB)(?![\p{L}\d]))/gu;
 // skupiny tisíců: 64 000, 1 840
 const THOUSANDS = /(?<=\d) (?=\d{3}(?!\d))/gu;
 

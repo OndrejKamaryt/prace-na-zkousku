@@ -13,6 +13,8 @@ import type { PathKey } from '../logic/types.ts';
 import type { Ctx, Screen } from '../ui/ctx.ts';
 import { $, el } from '../ui/dom.ts';
 import { otherCards } from '../ui/parts.ts';
+import { track } from '../ui/track.ts';
+import type { TrackEvent } from '../ui/track.ts';
 
 const LINK = 'target="_blank" rel="noopener"';
 const rate = (r: number) => (r * 100).toLocaleString('cs-CZ', { maximumFractionDigits: 2 }) + NBSP + '%';
@@ -85,13 +87,19 @@ export function createResult(ctx: Ctx): Screen {
 
     const next = config.courses[k].next as keyof typeof cs.cta;
     $(root, '#r-next-text').textContent = p.nextText;
-    $(root, '#r-next').innerHTML = '<a class="btn btn-primary" href="' + config.links[next] + '" ' + LINK + '>' + cs.cta[next] + '</a>' +
-      '<a class="btn btn-ghost" href="' + config.courses[k].url + '" ' + LINK + '>' + t.detail + '</a>';
+    $(root, '#r-next').innerHTML = '<a class="btn btn-primary" href="' + config.links[next] + '" ' + LINK + (next === 'webinar' ? ' data-track="webinar_click"' : '') + '>' + cs.cta[next] + '</a>' +
+      '<a class="btn btn-ghost" href="' + config.courses[k].url + '" ' + LINK + ' data-track="course_detail_click">' + t.detail + '</a>';
     const others = otherCards(k, ctx.offered, s);
     $(root, '#r-others').innerHTML = others;
     $(root, '#r-others-box').hidden = !others;
     renderPrice(k);
   }
+
+  // analytika IT admina: webinář a detail kurzu se měří, jen když výsledek doporučuje kyberbezpečnost
+  $(root, '#r-next').addEventListener('click', e => {
+    const a = (e.target as Element).closest<HTMLElement>('[data-track]');
+    if (a && current === 'kyber') track(ctx.host, a.dataset.track as TrackEvent);
+  });
 
   lowinc.addEventListener('change', () => {
     setLowIncome(s, lowinc.checked);

@@ -7,12 +7,13 @@ import type { PathKey } from '../logic/types.ts';
 import type { Screen } from '../ui/ctx.ts';
 import { $, el } from '../ui/dom.ts';
 import { CARD_BLOB, CARD_ICON, DOODLES, HERO_ART, THEME } from '../ui/icons.ts';
+import { duration } from '../ui/parts.ts';
 
 function card(k: PathKey): string {
   const c = cs.start.cards[k];
   return '<button class="path-card ' + THEME[k] + '" data-go="' + k + '" type="button">' + CARD_BLOB + CARD_ICON[k] +
     '<span class="field-name">' + c.field + '</span><h3>' + c.title + '</h3><p class="desc">' + c.desc + '</p>' +
-    '<span class="foot"><span>' + cs.ui.duration + '</span><span class="go" data-state="' + k + '">' + cs.ui.try + '</span></span></button>';
+    '<span class="foot"><span>' + duration(k) + '</span><span class="go" data-state="' + k + '">' + cs.ui.try + '</span></span></button>';
 }
 
 export function createStart(offered: readonly PathKey[]): Screen {

@@ -92,13 +92,14 @@ test(`data: v každém kroku je vidět celá otázka s volbami i graf, ${vp.widt
   });
 }
 
-test('kyberbezpečnost na mobilu: po vyřešení je vidět Server je v bezpečí i Můj výsledek', async ({ page }) => {
+test('kyberbezpečnost na mobilu: po vyřešení je vidět Server je v bezpečí i Co dál?', async ({ page }) => {
   await page.setViewportSize(MOBILE);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page, '/index.html?ukazka=kyber');
   await solveKyber(page);
   await expect(page.locator('#s-safe')).toBeInViewport({ ratio: 1 });
-  await expect(page.locator('#s-done [data-go="vysledek"]')).toBeInViewport({ ratio: 1 });
+  await expect(page.locator('#s-next')).toBeInViewport({ ratio: 1 });
+  await expect(page.locator('#s-done')).toHaveCount(0);
 });
 
 test('na mobilu jsou vidět všechny tři karty bez scrollování', async ({ page }) => {

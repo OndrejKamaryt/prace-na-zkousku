@@ -1,7 +1,7 @@
 /* Společné pomůcky pro testy widgetu. Lokátory Playwrightu procházejí otevřeným
    shadow root, kód v page.evaluate ne: tam se vždy jde přes host.shadowRoot (R1, A16). */
 import { expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { FrameLocator, Page } from '@playwright/test';
 import type { State } from '../../src/logic/state.ts';
 
 export const MOBILE = { width: 390, height: 844 };
@@ -64,15 +64,30 @@ export async function solveData(page: Page, onStep: () => Promise<void> = async 
   await expect(page.locator('#d-done')).toBeVisible();
 }
 
-/** Kyberbezpečnost bez chyby až po tlačítko k výsledku. onStep se volá po každém kroku. */
-export async function solveKyber(page: Page, onStep: () => Promise<void> = async () => {}): Promise<void> {
-  for (const sel of ['[data-cmd="grep"]', '[data-cmd="count"]', '[data-q1="0"]', '[data-cmd="ufw"]', '[data-cmd="last"]', '[data-q2="1"]', '[data-shield="k1"]', '[data-shield="k2"]']) {
+/** Kroky IT admina bez chyby: Začít zásah, tři příkazy, adresa, účet, dva štíty a nasazení. */
+export const KYBER_MOVES = ['#s-start', '[data-cmd="grep"]', '[data-cmd="count"]', '[data-q1="0"]', '[data-cmd="ufw"]', '[data-cmd="last"]', '[data-q2="1"]', '[data-shield="klic"]', '[data-shield="fail2ban"]', '#s-deploy'];
+
+/** IT admin bez chyby až po výsledkovou kartu. Klik počká, až volba jde zmáčknout (po Terezině zprávě). onStep se volá po každém kroku. Jde i v iframe. */
+export async function solveKyber(page: Page | FrameLocator, onStep: () => Promise<void> = async () => {}): Promise<void> {
+  for (const sel of KYBER_MOVES) {
     await page.locator(sel).click();
     await onStep();
   }
-  await page.locator('#s-deploy').click();
-  await expect(page.locator('#s-done')).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator('#s-result')).toBeVisible({ timeout: 15_000 });
   await onStep();
+}
+
+/** Číslo z textu prvku, bez mezer mezi tisíci. */
+export const num = async (page: Page, sel: string) => parseInt((await page.locator(sel).innerText()).replace(/\s/g, ''), 10);
+
+/** Tabulátorem na prvek ve widgetu, jako by hrál někdo jen s klávesnicí. */
+export async function tabTo(page: Page, sel: string, max = 40): Promise<void> {
+  for (let i = 0; i < max; i++) {
+    const hit = await page.evaluate(s => document.querySelector('prace-na-zkousku')!.shadowRoot!.activeElement?.matches(s) ?? false, sel);
+    if (hit) return;
+    await page.keyboard.press('Tab');
+  }
+  throw new Error('Tabulátorem se nedá dojít na ' + sel);
 }
 
 /** Prohlížeč bere fixed prvky shadow DOM jako hostitele, elementFromPoint proto vrací widget nebo prvek webu. */

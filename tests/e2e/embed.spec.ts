@@ -4,7 +4,7 @@
    a odstup od dolní lišty webu. */
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { LAPTOP, MOBILE, dataBar, dataOpt, focused, hitsWidget, open, solveData, trackErrors, widgetState } from './helpers.ts';
+import { KYBER_MOVES, LAPTOP, MOBILE, dataBar, dataOpt, focused, hitsWidget, open, solveData, trackErrors, widgetState } from './helpers.ts';
 
 const hostTop = (page: Page) => page.evaluate(() => document.querySelector('prace-na-zkousku')!.getBoundingClientRect().top);
 
@@ -164,4 +164,103 @@ test('rozložení řídí šířka widgetu, ne okna (@container)', async ({ page
   await page.evaluate(() => { const h = document.querySelector<HTMLElement>('prace-na-zkousku')!; h.style.maxWidth = '420px'; h.style.margin = '0 auto'; });
   await expect.poll(() => page.evaluate(() => getComputedStyle(document.querySelector('prace-na-zkousku')!.shadowRoot!.querySelector('.paths')!).gridTemplateColumns.split(' ').length)).toBe(1);
   await expect(page.locator('.hero-art')).toBeHidden();
+});
+
+test('IT admin pod lepicí hlavičkou webu: po startu je celý herní box vidět a pruh s výsledkem je schovaný', async ({ page }) => {
+  await page.setViewportSize(LAPTOP);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await open(page, '/test-host.html?cookies=0&ukazka=kyber&podmenu=80');
+  await page.locator('#s-start').click();
+  await expect(page.locator('[data-cmd="grep"]')).toBeEnabled();
+  await expect.poll(async () => Math.round((await page.locator('#s-stage').boundingBox())!.y)).toBeGreaterThanOrEqual(199);
+  const stage = (await page.locator('#s-stage').boundingBox())!;
+  expect(stage.y + stage.height).toBeLessThanOrEqual(LAPTOP.height);
+  expect(await hitsWidget(page, stage.x + 40, stage.y + 4)).toBe('widget');
+  for (const sel of KYBER_MOVES.slice(1)) await page.locator(sel).click();
+  await expect(page.locator('#s-result')).toBeVisible({ timeout: 15_000 });
+  // „Co dál?“ je jediná cesta dál: pruh „Můj výsledek“ se u IT admina neukáže
+  await expect(page.locator('.pnz-bar')).toBeHidden();
+  const next = (await page.locator('#s-next').boundingBox())!;
+  expect(next.y).toBeGreaterThanOrEqual(199);
+  expect(next.y + next.height).toBeLessThanOrEqual(LAPTOP.height);
+  // na jiné ukázce se pruh s výsledkem vrátí
+  await page.locator('#v-kyber [data-more] [data-go="data"]').click();
+  await expect(page.locator('.pnz-bar .prog')).toBeVisible();
+});
+
+test('analytika: IT admin v iframe posílá události stránce nad sebou ve správném pořadí a bez osobních údajů', async ({ page, context }) => {
+  test.setTimeout(90_000);
+  // odkazy na web Coders Labu se otevřou v nové záložce, test je obslouží sám
+  await context.route(/coderslab\.cz/, route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>ok</title>' }));
+  await page.route('**/iframe-host.html', route => route.fulfill({
+    contentType: 'text/html',
+    body: '<!doctype html><meta charset="utf-8"><body style="margin:0"><iframe src="/index.html?ukazka=kyber" style="width:1300px;height:900px;border:0"></iframe>' +
+      '<script>window.got = []; addEventListener("message", e => { if (e.data && e.data.source === "prace-na-zkousku") window.got.push(e.data); });</script></body>',
+  }));
+  // CustomEvent na prvku widgetu se zapisuje přímo v iframe, od prvního vykreslení
+  await page.addInitScript(() => {
+    const w = window as unknown as { custom: unknown[] };
+    w.custom = [];
+    document.addEventListener('prace-na-zkousku', e => w.custom.push((e as CustomEvent).detail));
+  });
+  await page.setViewportSize({ width: 1366, height: 1000 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/iframe-host.html');
+  const app = page.frameLocator('iframe');
+  await expect(app.locator('#s-start')).toBeVisible();
+
+  // první hra s jednou chybou, pak znovu, pak Co dál, webinář a detail kurzu
+  await app.locator('#s-start').click();
+  for (const sel of ['[data-cmd="grep"]', '[data-cmd="count"]', '[data-q1="1"]', '#s-retry']) await app.locator(sel).click();
+  for (const sel of ['[data-q1="0"]', '[data-cmd="ufw"]', '[data-cmd="last"]', '[data-q2="1"]', '[data-shield="klic"]', '[data-shield="fail2ban"]', '#s-deploy']) await app.locator(sel).click();
+  await expect(app.locator('#s-result')).toBeVisible({ timeout: 15_000 });
+  await app.locator('#s-replay').click();
+  for (const sel of KYBER_MOVES.slice(1)) await app.locator(sel).click();
+  await expect(app.locator('#s-result')).toBeVisible({ timeout: 15_000 });
+  await app.locator('#s-next').click();
+  await expect(app.locator('#r-reco h2')).toHaveText('Kyberbezpečnost');
+  for (const name of ['Webinář zdarma', 'Detail kurzu']) {
+    const popup = page.waitForEvent('popup');
+    await app.locator('#r-next a', { hasText: name }).click();
+    await (await popup).close();
+  }
+
+  const got = await page.evaluate(() => (window as unknown as { got: Record<string, unknown>[] }).got);
+  const frame = page.frames().find(f => f.url().includes('index.html'))!;
+  const custom = await frame.evaluate(() => (window as unknown as { custom: unknown[] }).custom);
+  expect(custom, 'CustomEvent na widgetu nese totéž co postMessage').toEqual(got);
+
+  const step = (n: number, wrong: number, replay: boolean) => ({ event: 'step_complete', step: n, wrong_count: wrong, replay });
+  const brief = got.map(e => {
+    const { source, game, time, ...rest } = e;
+    expect(source).toBe('prace-na-zkousku');
+    expect(game).toBe('kyber');
+    if (time !== undefined) expect(typeof time).toBe('number');
+    return rest;
+  });
+  expect(brief).toEqual([
+    { event: 'game_view' },
+    { event: 'game_start', replay: false },
+    { event: 'wrong_answer', step: 1, option: '198.51.100.23', replay: false },
+    step(1, 1, false), step(2, 0, false), step(3, 0, false),
+    { event: 'game_finish', stars: 2, replay: false },
+    { event: 'replay_click' },
+    { event: 'game_start', replay: true },
+    step(1, 0, true), step(2, 0, true), step(3, 0, true),
+    { event: 'game_finish', stars: 3, replay: true },
+    { event: 'result_cta_click' },
+    { event: 'webinar_click' },
+    { event: 'course_detail_click' },
+  ]);
+  // bez osobních údajů: jen povolené klíče a krátké hodnoty
+  const allowed = new Set(['source', 'event', 'game', 'step', 'time', 'wrong_count', 'option', 'stars', 'replay']);
+  for (const e of got) {
+    for (const [k, v] of Object.entries(e)) {
+      expect(allowed.has(k), k).toBe(true);
+      expect(['string', 'number', 'boolean']).toContain(typeof v);
+      if (typeof v === 'string') expect(v.length).toBeLessThanOrEqual(40);
+    }
+  }
+  // do stavu pro Pipedrive se počítá jen první hra
+  expect(await frame.evaluate(() => (document.querySelector('prace-na-zkousku') as unknown as { state: { kyber: unknown } }).state.kyber)).toMatchObject({ status: 'done', firstOk: 2, mistakes: 1 });
 });

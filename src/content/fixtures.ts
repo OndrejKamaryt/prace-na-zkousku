@@ -2,6 +2,7 @@
    texty rozhraní (ty jsou v cs.json), ale přípravky, které ukázka jen
    vypisuje, a proto se na ně nevztahují typografická pravidla. Data v nich
    se počítají od dneška (rozhodnutí 19). */
+import { ATTACKER, OFFICE, TYPO } from '../logic/kyber.ts';
 import type { IdeaKey } from '../logic/types.ts';
 
 export const SQL = "SELECT produkt, mesic, SUM(trzba) AS trzby\nFROM uctenky\nWHERE mesic IN ('únor', 'březen')\nGROUP BY produkt, mesic\nORDER BY produkt;";
@@ -33,7 +34,7 @@ export function nextWorkdays(today: Date, count = 3): Date[] {
 }
 
 /* ---------- terminál serveru pekárny ---------- */
-export const IP = '203.0.113.47';
+export const IP = ATTACKER;
 export const PROMPT = 'admin@kvasek-srv:~$ ';
 export const BANNER = '# server pekárny Kvásek, Ubuntu 24.04';
 
@@ -46,7 +47,11 @@ const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct
 /** Datum jako ve výpisu příkazu last: „Tue Nov  3 03:12“. */
 const lastDate = (d: Date, time: string) => DOW[d.getDay()] + ' ' + MON[d.getMonth()] + ' ' + String(d.getDate()).padStart(2, ' ') + ' ' + time;
 
-export function commands(today: Date): Record<CmdKey, { cmd: string; out: TermLine[] }> {
+/** Počet pokusů ve výpisu uniq -c, zarovnaný doprava jako v terminálu. */
+const uniq = (n: number, ip: string) => String(n).padStart(5, ' ') + '  ' + ip;
+
+/** Výpisy příkazů. Počty pokusů podle adresy jdou ze stavu hry (Martinovo zadání UX-03). */
+export function commands(today: Date, byIp: Record<string, number>): Record<CmdKey, { cmd: string; out: TermLine[] }> {
   const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
   return {
     grep: { cmd: 'grep "Failed password" /var/log/auth.log | tail -n 4', out: [
@@ -55,7 +60,7 @@ export function commands(today: Date): Record<CmdKey, { cmd: string; out: TermLi
       ['o', '03:11:58  Failed password for petra from ' + hl(IP)],
       ['o', '03:12:01  Failed password for root from ' + hl(IP)]] },
     count: { cmd: "grep \"Failed password\" /var/log/auth.log | awk '{print $(NF-3)}' | sort | uniq -c", out: [
-      ['o', '  412  ' + hl(IP)], ['o', '    3  198.51.100.23'], ['o', '    1  192.0.2.10']] },
+      ['o', uniq(byIp[IP]!, hl(IP))], ['o', uniq(byIp[OFFICE]!, OFFICE)], ['o', uniq(byIp[TYPO]!, TYPO)]] },
     ufw: { cmd: 'sudo ufw insert 1 deny from ' + IP, out: [['o', 'Rule inserted']] },
     last: { cmd: 'last -i -n 3', out: [
       ['bad', 'petra   203.0.113.47    ' + lastDate(today, '03:12')],

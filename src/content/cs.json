@@ -640,24 +640,60 @@
   },
   "kyber": {
     "title": "Někdo se dobývá do serveru pekárny",
-    "sub": "Staráš se o server pekárny Kvásek, přes který chodí objednávky z kaváren. Čím rychleji a přesněji zasáhneš, tím víc hvězd získáš. Všechno uděláš tlačítky, nic psát nemusíš.",
+    "sub": "Staráš se o server pekárny Kvásek, přes který chodí objednávky z kaváren.",
+    "duration": "2 minuty",
+    "moreTime": "asi 2 minuty",
     "who": "T",
     "name": "Tereza, pekárna Kvásek",
+    "intro": {
+      "tag": "Tvůj první zásah, 2 minuty",
+      "title": "Někdo se dobývá do serveru pekárny Kvásek",
+      "text": "Jsi správce serveru. Najdi útočníka, zavři mu dveře a zabezpeč server. Všechno uděláš tlačítky.",
+      "start": "Začít zásah",
+      "stars": [
+        "Za rychlost",
+        "Za správná rozhodnutí",
+        "Za ubráněný server"
+      ]
+    },
     "hud": {
       "meter": "Zabezpečení serveru",
       "meterValue": "{n} %",
       "time": "Čas zásahu",
-      "tries": "Pokusy útočníka"
+      "tries": "Pokusy útočníka",
+      "stars": "Hvězdy"
     },
     "mapLabel": "Mapa útoku na server",
     "mapServer": "Kvásek",
     "mapAttacker": "útočník",
     "mapBlocked": "zablokováno",
+    "legend": {
+      "attacker": "útočník",
+      "users": "běžní uživatelé",
+      "server": "server Kvásek"
+    },
+    "terminal": "Terminál",
     "cmd": {
-      "grep": "Ukázat neúspěšná přihlášení",
-      "count": "Spočítat pokusy podle adresy",
-      "ufw": "Zablokovat adresu útočníka",
-      "last": "Ukázat, kdo se přihlásil"
+      "grep": {
+        "label": "Ukázat neúspěšná přihlášení",
+        "info": "Vypíše poslední 4 neúspěšné pokusy o přihlášení ze záznamu serveru.",
+        "sum": "Někdo zkouší hesla k účtům root, admin a petra, pořád ze stejné adresy."
+      },
+      "count": {
+        "label": "Spočítat pokusy podle adresy",
+        "info": "Vybere neúspěšná přihlášení a spočítá je podle IP adresy.",
+        "sum": "Jedna adresa to zkusila {n}×, ostatní jen jednou nebo třikrát. To bude útočník."
+      },
+      "ufw": {
+        "label": "Zablokovat adresu útočníka",
+        "info": "Přidá do firewallu pravidlo, které zahodí vše z této adresy.",
+        "sum": "Hotovo, útočník se k serveru už nedostane."
+      },
+      "last": {
+        "label": "Ukázat, kdo se přihlásil",
+        "info": "Vypíše poslední úspěšná přihlášení včetně IP adresy.",
+        "sum": "Pozor: ve 3:12 se z adresy útočníka přihlásil účet petra."
+      }
     },
     "stepOf": "Krok {n} ze 3: {title}",
     "steps": [
@@ -667,7 +703,7 @@
     ],
     "hello": "Promiň, že budím. Od 3:00 se někdo pořád dokola pokouší přihlásit na server s objednávkami. Mrkneš na to?",
     "start": "Server si zapisuje každý pokus o přihlášení. Podívej se na ty, které neprošly.",
-    "count": "Všechny jdou z jedné adresy a zkouší různá jména: root, admin, petra. Spočítej, kolik pokusů přišlo odkud.",
+    "countAsk": "Spočítej, kolikrát to zkusila která adresa.",
     "q1": "Klikni na adresu útočníka.",
     "q1Options": [
       {
@@ -680,7 +716,7 @@
         "ip": "198.51.100.23",
         "n": 3,
         "ok": false,
-        "why": "Tři pokusy? To je nejspíš někdo z kanceláře, kdo si spletl heslo."
+        "why": "Tři pokusy jsou nejspíš někdo z kanceláře, kdo si spletl heslo."
       },
       {
         "ip": "192.0.2.10",
@@ -690,70 +726,84 @@
       }
     ],
     "block": "Správně! Tolik pokusů za pár minut nezkouší člověk, ale program, který hádá hesla. Zablokuj ho.",
-    "last": "Útočník je venku, útoky se odrážejí. Jen zkontroluj, jestli se mezitím nedostal dovnitř.",
-    "q2Say": "Ve 3:12 se z adresy útočníka přihlásila Petra. Jenže Petra chodí do práce z kanceláře a ve tři ráno spí.",
-    "q2": "Co uděláš s jejím účtem?",
+    "last": "Útočník je venku. Jen zkontroluj, jestli se nestihl dostat dovnitř.",
+    "q2Say": "Ve 3:12 se z adresy útočníka přihlásila Petra. Jenže Petra ve tři ráno spí.",
+    "q2": "Co uděláš s Petřiným účtem?",
     "q2Options": [
       {
+        "id": "smazat",
         "t": "Účet smažu i se všemi daty.",
         "ok": false,
-        "why": "Smazáním přijdeme o stopy, podle kterých zjistíme, co útočník na serveru dělal, a Petra přijde o svá data."
+        "why": "Smazáním přijdeš o stopy, co útočník dělal, a Petra o data. Účet radši zamkni a prověř."
       },
       {
-        "t": "Účet zamknu, prověřím, co se v něm dělo, a s Petrou nastavím nové heslo.",
+        "id": "zamknout",
+        "t": "Účet zamknu, prověřím a s Petrou nastavím nové heslo.",
         "ok": true,
         "why": ""
       },
       {
+        "id": "nic",
         "t": "Nic, útočníka už blokuje firewall.",
         "ok": false,
-        "why": "Útočník zná Petřino heslo a z jiné adresy se může vrátit."
+        "why": "Firewall blokuje jen jednu adresu. Útočník zná Petřino heslo a může přijít odjinud."
       }
     ],
     "q3": "Účet je zamčený. Vyber dva štíty, které na serveru nasadíš.",
     "q3Options": [
       {
-        "id": "k1",
+        "id": "klic",
         "t": "Přihlašování digitálním klíčem místo hesla",
-        "d": "Klíč se uhodnout nedá.",
+        "d": "",
         "ok": true,
         "why": ""
       },
       {
-        "id": "k3",
+        "id": "vypinat",
         "t": "Vypínat server přes noc",
-        "d": "Objednávky chodí i brzy ráno.",
+        "d": "",
         "ok": false,
-        "why": "Vypínat server nejde, objednávky z kaváren chodí i brzy ráno a útok může přijít kdykoli."
+        "why": "Objednávky chodí brzy ráno, pekárna by přišla o zákazníky. A útok může přijít i ve dne."
       },
       {
-        "id": "k2",
-        "t": "Hlídač fail2ban",
-        "d": "Po 5 neúspěšných pokusech útočníka sám zablokuje.",
+        "id": "fail2ban",
+        "t": "Automaticky blokovat po 5 chybných pokusech",
+        "d": "nástroj fail2ban",
         "ok": true,
         "why": ""
       },
       {
-        "id": "k4",
+        "id": "prejmenovat",
         "t": "Přejmenovat server",
-        "d": "Aby ho útočník nenašel.",
+        "d": "",
         "ok": false,
-        "why": "Přejmenování nepomůže, útočníci hledají otevřené porty a jméno serveru je nezajímá."
+        "why": "Útočník útočí na adresu, ne na jméno. Přejmenování nic nezmění."
       }
     ],
+    "picked": "Vybráno {n}/2",
     "deploy": "Nasadit štíty",
-    "pickTwo": "Vyber přesně dva štíty.",
-    "tryAgain": "Zkus to ještě jednou.",
-    "safe": "Server je v bezpečí",
-    "thanks": "Díky, jdu zpátky k pecím. Objednávky jedou dál.",
-    "stars": {
-      "safe": "Server ubráněný",
-      "clean": "Všechna rozhodnutí napoprvé",
-      "firstOk": "Rozhodnutí napoprvé: {n} ze 3",
-      "fast": "Zásah do 2 minut ({time})"
-    },
-    "doneHint": "Přesně tohle se učí IT administrátoři: Linux, sítě a zabezpečení serverů.",
-    "done": "Hotovo, server je ubráněný!"
+    "pickTwo": "Vybrat jde jen dva štíty. Nejdřív jeden odeber.",
+    "retry": "Zkusit znovu",
+    "starLost": "Hvězda za rozhodnutí napoprvé je pryč, hra ale pokračuje.",
+    "result": {
+      "thanks": "Díky, jdu zpátky k pecím. Objednávky jedou dál.",
+      "title": "Server je v bezpečí",
+      "stars": "{n}/3",
+      "time": "Zásah za {time}",
+      "compare": "Pod 1 minutu to zvládne jen každý třetí.",
+      "skills": [
+        "Čtení logů",
+        "Firewall",
+        "Správa účtů",
+        "SSH klíče"
+      ],
+      "course": "Přesně tohle dělají IT administrátoři každý den. A přesně tohle se naučíš v kurzu.",
+      "next": "Co dál?",
+      "replay": "Zahrát znovu",
+      "share": "Sdílet výsledek",
+      "shareText": "Server pekárny Kvásek je v bezpečí. Hvězdy {n}/3, čas zásahu {time}. Zvládneš to rychleji?",
+      "copied": "Odkaz je zkopírovaný."
+    }
   },
   "result": {
     "emptyTitle": "Zatím nemáš hotovou žádnou ukázku",
