@@ -93,7 +93,7 @@ Když se widget vloží přímo jako `<prace-na-zkousku>` (bez iframe), stačí 
 
 ## Jak vrátit Stavění s AI
 
-Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit podnadpis úvodu („Tři pětiminutové ukázky“) a rozhodnout, jestli ve výsledku vrátit jiné texty. Atribut `data-ukazky="data ai hry kyber"` nabídku přepíše na jedné stránce, přes něj běží testy AI (`openWithAi` v `tests/e2e/helpers.ts`). Mřížka karet se přizpůsobí počtu ukázek.
+Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit podnadpis úvodu („Tři krátké ukázky“) a rozhodnout, jestli ve výsledku vrátit jiné texty. Atribut `data-ukazky="data ai hry kyber"` nabídku přepíše na jedné stránce, přes něj běží testy AI (`openWithAi` v `tests/e2e/helpers.ts`). Mřížka karet se přizpůsobí počtu ukázek.
 
 ## Struktura
 
@@ -139,7 +139,7 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 - Token `?pnz` je jen na stránce, kam člověk přijde z e-mailu. Na dalších stránkách webu widget nic nezapíše, pokud token neuloží (`sessionStorage` = zásah do hostitele).
 - Ubuntu Mono v embedu: přidat do CSS webu, vložit `<link>` do hlavičky (zásah do hostitele), nebo systémový monospace (teď záloha).
 - Tabulka spouštěčů analytiky (fáze 4).
-- **Úvod a prázdný výsledek mluví o pěti minutách:** „Tři pětiminutové ukázky skutečné práce.“ a „zabere asi pět minut“. IT admin má teď 2 minuty. Návrh: „Tři krátké ukázky skutečné práce.“ a „zabere pár minut“. Texty jsem bez souhlasu neměnil.
+- **Prázdný výsledek mluví o pěti minutách:** „Vyber si jednu práci, zabere asi pět minut.“ IT admin má teď 2 minuty. Návrh: „zabere pár minut“. Podnadpis úvodu je od 12. 11. „Tři krátké ukázky skutečné práce.“
 - **Odkaz ke sdílení:** je to adresa stránky, kde ukázka běží, s `?ukazka=kyber`. V iframe tedy vede na demo na GitHub Pages. Chce Martin raději odkaz na stránku webu Coders Labu? Pak by se adresa dala do `config.json`.
 - **Srovnání s hráči** je pevná věta „Pod 1 minutu to zvládne jen každý třetí.“ Až bude z analytiky dost `game_finish`, dá se nahradit skutečným číslem.
 - **Slovo „Terminál“** na sbalovací liště terminálu na mobilu je z Martinova nákresu F, v textech ke schválení nebylo. Stačí říct, jestli může zůstat.

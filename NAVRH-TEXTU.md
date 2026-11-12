@@ -14,7 +14,7 @@
 
 Zůstává rozcestník se třemi kartami: Datová analýza, Tvorba her, Kyberbezpečnost. Pruh s odznaky pod kartami zmizí.
 
-- Podnadpis: ~~Čtyři pětiminutové ukázky skutečné práce.~~ → **Tři pětiminutové ukázky skutečné práce.** Stačí zkusit jednu a hned uvidíš, co ti sedí.
+- Podnadpis: ~~Čtyři pětiminutové ukázky skutečné práce.~~ → ~~Tři pětiminutové ukázky skutečné práce.~~ → **Tři krátké ukázky skutečné práce.** Stačí zkusit jednu a hned uvidíš, co ti sedí. (12. 11., IT admin trvá 2 minuty)
 - Karta dat, popis: ~~Zahraj si na detektiva v datech z pokladny a najdi, kam zmizelo 57 600 Kč.~~ → **Projdi s majitelkou data z pokladny a zjisti, proč kavárna v březnu vydělala méně.**
 - Karta hry, nadpis: ~~Zahraj si a postav level~~ → **Zahraj si hru a uprav ji**
 - Karta hry, popis: ~~Nejdřív si level zahraj, pak ho předělej podle sebe.~~ → **Nejdřív si hru zahraj, pak ji předělej podle sebe.**
