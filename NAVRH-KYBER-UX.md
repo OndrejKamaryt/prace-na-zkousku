@@ -1,5 +1,7 @@
 # IT administrátor podle Martinova zadání UX (11. 11.): postup a texty ke schválení
 
+**Stav 12. 11.: zapracováno.** Popis, analytika a otevřené otázky jsou v `PREDANI.md`, texty v `NAVRH-TEXTU.md`.
+
 Podklad: `Zadani_UX_hra_kyberbezpecnost.pdf` od Martina (u Ondřeje ve Stažených souborech), požadavky UX-01 až UX-12. Týká se jen IT admina (pekárna Kvásek), data a hra se nemění. Ceny a stránka s doporučením zůstávají, jak jsou.
 
 ## Rozhodnutí Ondřeje 12. 11.

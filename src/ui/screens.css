@@ -300,7 +300,9 @@
 .noc-course{max-width:56ch; margin:0 auto 14px; font-size:15.5px; color:#fff}
 .noc-ractions{display:flex; flex-wrap:wrap; justify-content:center; gap:10px}
 .noc-ghost{background:transparent; border-color:#fff; color:#fff}
-.noc-ghost:hover{background:#fff; color:var(--dark)}
+@media (hover:hover){
+  .noc-ghost:hover{background:#fff; color:var(--dark)}
+}
 .noc-copied{min-height:1.4em; margin-top:8px; font-size:14px; color:var(--noc-mint)}
 
 /* mobil: přehled, chat, krok, sbalitelný terminál na 6 řádků a zmenšená mapa (UX-12) */

@@ -535,17 +535,18 @@ export function createKyber(ctx: Ctx): Screen {
       return ok;
     }
   }
-  /** Na telefonu systémové sdílení, na počítači odkaz do schránky. */
+  /** Na telefonu systémové sdílení, na počítači odkaz do schránky. Když sdílení iframe nedovolí, odkaz se zkopíruje. */
   async function share() {
     const text = fill(r.shareText, { n: stars(g), time: clock(seconds(g)) });
     const url = location.origin + location.pathname + '?ukazka=kyber';
     if (typeof navigator.share === 'function' && matchMedia('(pointer: coarse)').matches) {
       try {
         await navigator.share({ text, url });
-      } catch {
-        /* návštěvník sdílení zavřel */
+        return;
+      } catch (e) {
+        // návštěvník sdílení zavřel
+        if (e instanceof DOMException && e.name === 'AbortError') return;
       }
-      return;
     }
     if (await copy(text + ' ' + url)) $(result, '#s-copied').textContent = r.copied;
   }
