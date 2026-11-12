@@ -72,6 +72,8 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 
 ## Další kroky
 
+- **Rozpracováno 12. 11.: IT admin podle Martinova zadání UX.** Postup, schválené texty a Ondřejova rozhodnutí jsou v `NAVRH-KYBER-UX.md`, podklad je `Zadani_UX_hra_kyberbezpecnost.pdf` (text z něj vytáhne `pdftotext -layout` z Git for Windows). Stavba běží v nové session.
+
 0. **Mimo kód:** Ondřej pošle Martinovi adresu dema. Martin ji vloží na web přes embed na celou obrazovku a na stránky kurzů dá bannery s `?ukazka=data`, `?ukazka=kyber` a `?ukazka=hry`. Pak změřit, jestli to přináší leady.
 1. **Fáze 4:** události do `dataLayer` podle tabulky spouštěčů (ke schválení), odesílání snímku s debounce 2 s a `sendBeacon` jako `text/plain`. Čtení `?pnz` a UTM. Stav pro odeslání dává `host.state` a `buildPayload()`.
 2. **Fáze 5:** endpoint v `DRY_RUN`.
