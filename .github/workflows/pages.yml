@@ -26,8 +26,18 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
-      # Sestaví widget (vite build) a demo: widget vložený do napodobeniny coderslab.cz,
-      # samostatnou stránku a původní prototyp pro porovnání.
+      # Widget je vložený na webu, takže každý push do main jde hned k lidem.
+      # Nasadí se jen verze, které projdou i Playwright testy v Edge (na runneru je předinstalovaný).
+      - name: Playwright testy v Edge
+        run: npx playwright test
+      - name: Zpráva z Playwrightu, když testy selžou
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+      # Sestaví widget (vite build) a demo: samostatnou stránku s widgetem.
       - name: Sestavit widget a web
         run: node scripts/build-site.ts
       - name: Velikost widgetu (cíl do 80 kB gzip)

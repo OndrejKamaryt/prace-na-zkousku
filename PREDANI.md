@@ -118,6 +118,12 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 - `fav`, `goal` a `firm` zůstávají ve stavu i snímku, ale obrazovka je nenastavuje, takže jsou prázdné. Poznámka pro obchod pak říká „bez odpovědi“ a „neuvedeno“. Ve fázi 4 rozhodnout, jestli ty řádky z poznámky vypustit.
 - Poznámka pro obchod má u dat nové věty (`NAVRH-TEXTU.md`), u hry zatím zůstává slovo level, návštěvník ji nevidí.
 
+## Rozhodnuto 16. 11.
+
+- **Všechny kurzy budou s dotací DIGIkurzy.** Text pro kurz s `digikurzy: false` není potřeba.
+- **Slovo „Terminál“** na sbalovací liště terminálu na mobilu zůstává.
+- **Testy před nasazením:** GitHub Actions pouští před nasazením i Playwright testy v Edge (na runneru je předinstalovaný, v CI jeden opakovaný pokus). Když selžou, demo se nenasadí a zpráva z testů je v artefaktu `playwright-report`.
+
 ## Co jsem rozhodl při stavbě (ke kontrole, texty se neměnily)
 
 - **Data od dneška (rozhodnutí 19):** rezervace ukazuje tři pracovní dny od zítřka, výpis `last` v kyberbezpečnosti má dnešek a včerejšek.
@@ -135,15 +141,12 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 - **`CLAUDE.md`:** věta o neutrálních názvech odznaků je zastaralá a prototyp už není zdroj pravdy pro data, hru a výsledek. Nechal jsem soubor být, stačí říct a upravím ho.
 - **Školení přes firmu:** z widgetu zmizelo včetně zájmu pro LifeScale Business. Odkaz `skoleniFirmy` v `config.json` zůstal nepoužitý pro případ návratu.
 - Kapitola 9: hosting (1), adresa nástroje (2), formulář před nástrojem a deal nebo lead (3), DIGIkurzy při spuštění (4), osobní údaje (6).
-- **Kurz s `digikurzy: false`:** widget zatím ukáže stejný blok jako s příspěvkem (tedy „Dotace 0 Kč“). Před první změnou na `false` je potřeba rozhodnout text (souvisí s otázkou 4).
 - Token `?pnz` je jen na stránce, kam člověk přijde z e-mailu. Na dalších stránkách webu widget nic nezapíše, pokud token neuloží (`sessionStorage` = zásah do hostitele).
 - Ubuntu Mono v embedu: přidat do CSS webu, vložit `<link>` do hlavičky (zásah do hostitele), nebo systémový monospace (teď záloha).
 - Tabulka spouštěčů analytiky (fáze 4).
 - **Prázdný výsledek mluví o pěti minutách:** „Vyber si jednu práci, zabere asi pět minut.“ IT admin má teď 2 minuty. Návrh: „zabere pár minut“. Podnadpis úvodu je od 12. 11. „Tři krátké ukázky skutečné práce.“
 - **Odkaz ke sdílení:** je to adresa stránky, kde ukázka běží, s `?ukazka=kyber`. V iframe tedy vede na demo na GitHub Pages. Chce Martin raději odkaz na stránku webu Coders Labu? Pak by se adresa dala do `config.json`.
 - **Srovnání s hráči** je pevná věta „Pod 1 minutu to zvládne jen každý třetí.“ Až bude z analytiky dost `game_finish`, dá se nahradit skutečným číslem.
-- **Slovo „Terminál“** na sbalovací liště terminálu na mobilu je z Martinova nákresu F, v textech ke schválení nebylo. Stačí říct, jestli může zůstat.
-- Pouštět Playwright testy i v GitHub Actions před nasazením? Lokálně prochází stabilně, v CI by běžely v Edge na Linuxu.
 
 ## Další kroky
 
@@ -157,7 +160,7 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 ## Prostředí a zvyklosti
 
 - Windows. Terminál v aplikaci je Windows PowerShell 5.1, který nezná `&&`. Bash nástroj ano.
-- Node 24 spouští `.ts` přímo. Edge i Chrome jsou nainstalované, Playwright používá `channel: 'msedge'` a prohlížeč nestahuje.
+- Node 24 spouští `.ts` přímo. Edge i Chrome jsou nainstalované, Playwright používá `channel: 'msedge'` a prohlížeč nestahuje. Stejně běží i v GitHub Actions před nasazením.
 - `.claude/launch.json`: `widget` servíruje `dist/` (vite preview, port 4173), `dev` spouští vite na 5173, `site` servíruje `_site/` na 8765.
 - Commity jsou česky a končí řádkem `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 - Před workflow nebo víc než třemi agenty napsat odhad spotřeby a počkat na souhlas (Ondřejův globální CLAUDE.md).

@@ -8,8 +8,9 @@ export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: 0,
-  reporter: 'list',
+  // na GitHubu hlídají testy nasazení, jeden pokus navíc odfiltruje náhodné zpomalení stroje
+  retries: process.env.CI ? 1 : 0,
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'list',
   timeout: 60_000,
   expect: { timeout: 8_000 },
   use: {
