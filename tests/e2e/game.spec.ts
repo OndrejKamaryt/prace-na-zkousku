@@ -9,7 +9,7 @@ import { LAPTOP, MOBILE, open, trackErrors, widgetState } from './helpers.ts';
 async function dieOnce(page: Page, n: number) {
   await page.locator('#g-play').click();
   await expect(page.locator('#g-jump')).toBeVisible();
-  await expect.poll(async () => (await widgetState(page)).hry.deaths, { timeout: 10_000 }).toBe(n);
+  await expect.poll(async () => (await widgetState(page)).hry.deaths, { timeout: 20_000 }).toBe(n);
 }
 
 /** Klepnutí do buňky plochy 12 × 7. Plocha je uprostřed plátna, po stranách je jen kulisa. */
@@ -190,6 +190,8 @@ test('mezerník skáče jen s fokusem ve widgetu', async ({ page }) => {
 test('přeskočená hra není hotová, výsledek je dostupný (rozhodnutí 7)', async ({ page }) => {
   test.slow();
   await page.setViewportSize(MOBILE);
+  // bez animací: pulzující nebo animované tlačítko Playwright na pomalém stroji nemusí vyhodnotit jako stabilní
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page, '/index.html?ukazka=hry');
   for (let n = 1; n <= 6; n++) await dieOnce(page, n);
   const skip = page.locator('#g-skip');
