@@ -303,7 +303,6 @@
 @media (hover:hover){
   .noc-ghost:hover{background:#fff; color:var(--dark)}
 }
-.noc-copied{min-height:1.4em; margin-top:8px; font-size:14px; color:var(--noc-mint)}
 
 /* mobil: přehled, chat, krok, sbalitelný terminál na 6 řádků a zmenšená mapa (UX-12) */
 @container (max-width:760px){

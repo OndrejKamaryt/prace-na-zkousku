@@ -278,15 +278,3 @@ test('Zahrát znovu začne od kroku 1, do stavu se počítá jen první hra', as
   await expect(page.locator('#s-stars')).toContainText('2/3');
   expect((await widgetState(page)).kyber).toEqual(first);
 });
-
-test('Sdílet výsledek na počítači zkopíruje text s odkazem na ukázku', async ({ page, context }) => {
-  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await page.setViewportSize(LAPTOP);
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await open(page, '/index.html?ukazka=kyber');
-  await solveKyber(page);
-  await page.locator('#s-share').click();
-  await expect(page.locator('#s-copied')).toHaveText('Odkaz je zkopírovaný.');
-  const text = (await page.evaluate(() => navigator.clipboard.readText())).replace(/\u00a0/g, ' ');
-  expect(text).toMatch(/^Server pekárny Kvásek je v bezpečí\. Hvězdy 3\/3, čas zásahu \d:\d\d\. Zvládneš to rychleji\? http:\/\/localhost:\d+\/index\.html\?ukazka=kyber$/);
-});

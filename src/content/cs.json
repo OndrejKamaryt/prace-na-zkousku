@@ -799,10 +799,7 @@
       ],
       "course": "Přesně tohle dělají IT administrátoři každý den. A přesně tohle se naučíš v kurzu.",
       "next": "Co dál?",
-      "replay": "Zahrát znovu",
-      "share": "Sdílet výsledek",
-      "shareText": "Server pekárny Kvásek je v bezpečí. Hvězdy {n}/3, čas zásahu {time}. Zvládneš to rychleji?",
-      "copied": "Odkaz je zkopírovaný."
+      "replay": "Zahrát znovu"
     }
   },
   "result": {

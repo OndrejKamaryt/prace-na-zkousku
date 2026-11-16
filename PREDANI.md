@@ -32,9 +32,9 @@ Podklad je Martinovo `Zadani_UX_hra_kyberbezpecnost.pdf` (UX-01 až UX-12), post
 - **Chyba:** volba červeně s ✕, pod ní vysvětlení a „Zkusit znovu“. První chyba za hru vezme hvězdu za rozhodnutí napoprvé. Po „Zkusit znovu“ zůstane špatná volba označená a vypnutá, u štítů se špatné odeberou a správné zůstanou vybrané.
 - **Krok 3:** „Vybráno n/2“, „Nasadit štíty“ jde až při dvou, třetí výběr nejde a ukáže se hláška.
 - **Hvězdy:** za ubráněný server, za rozhodnutí napoprvé (pryč při první chybě) a za rychlost (pryč po 2:00). Vidět jsou v přehledu po celou hru i s počtem „n/3“.
-- **Výsledková karta** v herním boxu místo pruhu Hotovo: Tereza, „Server je v bezpečí“, hvězdy a „n/3“, čas zásahu, pevná věta „Pod 1 minutu to zvládne jen každý třetí.“, čtyři dovednosti, věta o kurzu a tlačítka „Co dál?“ (vede na doporučení s cenou), „Zahrát znovu“ a „Sdílet výsledek“. „Můj výsledek“ v hlavičce je na obrazovce IT admina schovaný, u dat a hry zůstává.
+- **Výsledková karta** v herním boxu místo pruhu Hotovo: Tereza, „Server je v bezpečí“, hvězdy a „n/3“, čas zásahu, pevná věta „Pod 1 minutu to zvládne jen každý třetí.“, čtyři dovednosti, věta o kurzu a tlačítka „Co dál?“ (vede na doporučení s cenou), „Zahrát znovu“. „Můj výsledek“ v hlavičce je na obrazovce IT admina schovaný, u dat a hry zůstává.
 - **Zahrát znovu** začne rovnou krokem 1. Do stavu návštěvníka (a do Pipedrivu) se počítá jen první hra: `kyberAnswer` a `finish` se při opakování nevolají.
-- **Sdílet výsledek:** na dotykovém zařízení systémové sdílení (`navigator.share`), na počítači kopie textu s odkazem do schránky a „Odkaz je zkopírovaný.“ Když iframe sdílení nepovolí, odkaz se zkopíruje. V iframe bez povolení schránky se kopíruje starší cestou přes výběr textu.
+- **Sdílet výsledek** Ondřej 16. 11. vyřadil, nebylo jasné, k čemu by bylo. Tlačítko, texty i kód sdílení jsou pryč.
 - **„2 minuty“** jen u IT admina: štítek nad nadpisem, karta na úvodu a „asi 2 minuty“ v dalších příkladech (`duration()` v `src/ui/parts.ts`). Perex nad hrou je kratší.
 - **Přístupnost:** chat je `role="log"`, shrnutí a vysvětlení hlásí čtečce skrytá oblast `aria-live`. Fokus jde po startu a po každém kroku na oblast kroku (čtečka přečte otázku, Tab vede na první volbu), po chybě na „Zkusit znovu“, na konci na „Server je v bezpečí“. Tlačítka mají aspoň 44 px, text v IT adminovi kontrast aspoň 4,5 : 1 i po najetí myší (test C3). Bez animací se netočí prstence, nepulzují a nelétají tečky.
 
@@ -58,11 +58,11 @@ Každá zpráva má `source: 'prace-na-zkousku'`, `event` a `game: 'kyber'`. Po�
 
 `replay: true` znamená opakovanou hru, pro konverzi stačí první hry (`replay: false`).
 
-Vložení přes iframe na web Coders Labu. `allow` povolí sdílení na telefonu a kopii do schránky:
+Vložení přes iframe na web Coders Labu:
 
 ```html
 <iframe src="https://ondrejkamaryt.github.io/prace-na-zkousku/index.html?ukazka=kyber"
-        title="Práce na zkoušku" allow="clipboard-write; web-share"
+        title="Práce na zkoušku"
         style="width:100%; height:100vh; border:0"></iframe>
 ```
 
@@ -140,21 +140,20 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 - **Nízký příjem:** zaškrtávátko se u dat, her ani kyberbezpečnosti neukazuje, protože u všech tří platí strop 35 000 Kč a cenu nezmění. Měnilo by ji jen u Stavění s AI. Vysvětlení je dál v rozbalovacím „Jak příspěvek funguje“.
 - **`CLAUDE.md`:** věta o neutrálních názvech odznaků je zastaralá a prototyp už není zdroj pravdy pro data, hru a výsledek. Nechal jsem soubor být, stačí říct a upravím ho.
 - **Školení přes firmu:** z widgetu zmizelo včetně zájmu pro LifeScale Business. Odkaz `skoleniFirmy` v `config.json` zůstal nepoužitý pro případ návratu.
-- Kapitola 9: hosting (1), adresa nástroje (2), formulář před nástrojem a deal nebo lead (3), DIGIkurzy při spuštění (4), osobní údaje (6).
+- Kapitola 9: hosting (1), adresa nástroje (2), formulář před nástrojem (3) a osobní údaje (6). DIGIkurzy (4) jsou rozhodnuté: všechny kurzy s dotací. K otázce 3 a zápisu do Pipedrivu viz `PIPEDRIVE-B2C.md`: Ondřej chce zapisovat stejně jako ostatní B2C zájemce, hlavní otevřená věc je, odkud bude kontakt u lidí z bannerů.
 - Token `?pnz` je jen na stránce, kam člověk přijde z e-mailu. Na dalších stránkách webu widget nic nezapíše, pokud token neuloží (`sessionStorage` = zásah do hostitele).
 - Ubuntu Mono v embedu: přidat do CSS webu, vložit `<link>` do hlavičky (zásah do hostitele), nebo systémový monospace (teď záloha).
 - Tabulka spouštěčů analytiky (fáze 4).
 - **Prázdný výsledek mluví o pěti minutách:** „Vyber si jednu práci, zabere asi pět minut.“ IT admin má teď 2 minuty. Návrh: „zabere pár minut“. Podnadpis úvodu je od 12. 11. „Tři krátké ukázky skutečné práce.“
-- **Odkaz ke sdílení:** je to adresa stránky, kde ukázka běží, s `?ukazka=kyber`. V iframe tedy vede na demo na GitHub Pages. Chce Martin raději odkaz na stránku webu Coders Labu? Pak by se adresa dala do `config.json`.
 - **Srovnání s hráči** je pevná věta „Pod 1 minutu to zvládne jen každý třetí.“ Až bude z analytiky dost `game_finish`, dá se nahradit skutečným číslem.
 
 ## Další kroky
 
-- **Hotovo 12. 11.: IT admin podle Martinova zadání UX** (viz sekce výše). Martin potřebuje k nasazení na web: iframe s `allow="clipboard-write; web-share"` a posluchač `message`, který posílá události do `dataLayer` (ukázka kódu je výše v sekci o analytice).
+- **Hotovo 12. 11.: IT admin podle Martinova zadání UX** (viz sekce výše). Martin potřebuje k nasazení na web: iframe a posluchač `message`, který posílá události do `dataLayer` (ukázka kódu je výše v sekci o analytice).
 
 0. **Mimo kód:** Ondřej pošle Martinovi adresu dema. Martin ji vloží na web přes embed na celou obrazovku a na stránky kurzů dá bannery s `?ukazka=data`, `?ukazka=kyber` a `?ukazka=hry`. Pak změřit, jestli to přináší leady.
 1. **Fáze 4:** události do `dataLayer` podle tabulky spouštěčů (ke schválení), odesílání snímku s debounce 2 s a `sendBeacon` jako `text/plain`. Čtení `?pnz` a UTM. Stav pro odeslání dává `host.state` a `buildPayload()`.
-2. **Fáze 5:** endpoint v `DRY_RUN`.
+2. **Fáze 5:** endpoint v `DRY_RUN`, zápis podle návrhu v `PIPEDRIVE-B2C.md` (po schválení).
 3. **Fáze 6:** editor hry z klávesnice (šipky, Enter, mezerník, číslice z `e.code`), dotykové cíle 44 px, fokus na tmavých plochách. Texty nápovědy ke schválení.
 
 ## Prostředí a zvyklosti

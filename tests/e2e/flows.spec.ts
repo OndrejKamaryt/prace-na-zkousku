@@ -365,7 +365,7 @@ test('C: IT administrátor na notebooku: úvod, krok po kroku, chyby a výsledko
   await expect(page.locator('#s-result')).toContainText('Přesně tohle dělají IT administrátoři každý den. A přesně tohle se naučíš v kurzu.');
   await expect(page.locator('#v-kyber .btn-primary:visible')).toHaveText(['Co dál?']);
   await expect(page.locator('#s-replay')).toHaveText('Zahrát znovu');
-  await expect(page.locator('#s-share')).toHaveText('Sdílet výsledek');
+  await expect(page.locator('#s-share')).toHaveCount(0);
   await expect(page.locator('.prog')).toBeHidden();
   expect((await widgetState(page)).kyber).toMatchObject({ status: 'done', firstOk: 1, mistakes: 2 });
 
@@ -487,7 +487,6 @@ test('C3: IT admin: text je čitelný i po najetí myší (kontrast aspoň 4,5 :
   await ok('#s-safe', null, 'Server je v bezpečí');
   await ok('#s-next', null, 'Co dál?');
   await ok('#s-replay', null, 'Zahrát znovu');
-  await ok('#s-share', null, 'Sdílet výsledek');
 });
 
 test('C2: Zkus si další příklady, hotové odškrtnuté, a výsledek ze dvou ukázek', async ({ page }) => {

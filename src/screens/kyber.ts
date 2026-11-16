@@ -504,53 +504,11 @@ export function createKyber(ctx: Ctx): Screen {
       '<ul class="noc-skills">' + r.skills.map(x => '<li>' + CHECK + x + '</li>').join('') + '</ul>' +
       '<p class="noc-course">' + r.course + '</p>' +
       '<div class="noc-ractions"><button class="btn btn-primary" type="button" id="s-next">' + r.next + '</button>' +
-      '<button class="btn noc-ghost" type="button" id="s-replay">' + r.replay + '</button>' +
-      '<button class="btn noc-ghost" type="button" id="s-share">' + r.share + '</button></div>' +
-      '<p class="noc-copied" id="s-copied" role="status"></p>';
+      '<button class="btn noc-ghost" type="button" id="s-replay">' + r.replay + '</button></div>';
     result.hidden = false;
     if (!root.hidden) ctx.alignTop(stage);
     if (hadFocus) $(result, '#s-safe').focus({ preventScroll: true });
   }
-  /** Kopie přes schránku, v iframe bez povolení schránky starší cestou přes výběr textu. */
-  async function copy(text: string): Promise<boolean> {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      const area = document.createElement('textarea'), back = ctx.root.activeElement as HTMLElement | null;
-      area.value = text;
-      area.readOnly = true;
-      area.className = 'sr';
-      result.appendChild(area);
-      area.focus({ preventScroll: true });
-      area.select();
-      let ok = false;
-      try {
-        ok = document.execCommand('copy');
-      } catch {
-        ok = false;
-      }
-      area.remove();
-      back?.focus({ preventScroll: true });
-      return ok;
-    }
-  }
-  /** Na telefonu systémové sdílení, na počítači odkaz do schránky. Když sdílení iframe nedovolí, odkaz se zkopíruje. */
-  async function share() {
-    const text = fill(r.shareText, { n: stars(g), time: clock(seconds(g)) });
-    const url = location.origin + location.pathname + '?ukazka=kyber';
-    if (typeof navigator.share === 'function' && matchMedia('(pointer: coarse)').matches) {
-      try {
-        await navigator.share({ text, url });
-        return;
-      } catch (e) {
-        // návštěvník sdílení zavřel
-        if (e instanceof DOMException && e.name === 'AbortError') return;
-      }
-    }
-    if (await copy(text + ' ' + url)) $(result, '#s-copied').textContent = r.copied;
-  }
-
   /* ---------- úvod, start a nová hra ---------- */
   function start(focus: boolean) {
     if (g.started) return;
@@ -628,7 +586,6 @@ export function createKyber(ctx: Ctx): Screen {
       return ctx.go('vysledek');
     }
     if (hit('#s-replay')) return replay();
-    if (hit('#s-share')) return void share();
   });
 
   return {
