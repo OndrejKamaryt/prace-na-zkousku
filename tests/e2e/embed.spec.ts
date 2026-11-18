@@ -243,17 +243,17 @@ test('analytika: IT admin v iframe posílá události stránce nad sebou ve spr�
     { event: 'game_start', replay: false },
     { event: 'wrong_answer', step: 1, option: '198.51.100.23', replay: false },
     step(1, 1, false), step(2, 0, false), step(3, 0, false),
-    { event: 'game_finish', stars: 2, replay: false },
+    { event: 'game_finish', replay: false },
     { event: 'replay_click' },
     { event: 'game_start', replay: true },
     step(1, 0, true), step(2, 0, true), step(3, 0, true),
-    { event: 'game_finish', stars: 3, replay: true },
+    { event: 'game_finish', replay: true },
     { event: 'result_cta_click' },
     { event: 'webinar_click' },
     { event: 'course_detail_click' },
   ]);
   // bez osobních údajů: jen povolené klíče a krátké hodnoty
-  const allowed = new Set(['source', 'event', 'game', 'step', 'time', 'wrong_count', 'option', 'stars', 'replay']);
+  const allowed = new Set(['source', 'event', 'game', 'step', 'time', 'wrong_count', 'option', 'replay']);
   for (const e of got) {
     for (const [k, v] of Object.entries(e)) {
       expect(allowed.has(k), k).toBe(true);

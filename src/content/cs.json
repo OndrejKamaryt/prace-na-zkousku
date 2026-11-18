@@ -649,28 +649,10 @@
       "tag": "Tvůj první zásah, 2 minuty",
       "title": "Někdo se dobývá do serveru pekárny Kvásek",
       "text": "Jsi správce serveru. Najdi útočníka, zavři mu dveře a zabezpeč server. Všechno uděláš tlačítky.",
-      "start": "Začít zásah",
-      "stars": [
-        "Za rychlost",
-        "Za správná rozhodnutí",
-        "Za ubráněný server"
-      ]
+      "start": "Začít zásah"
     },
     "hud": {
-      "meter": "Zabezpečení serveru",
-      "meterValue": "{n} %",
-      "time": "Čas zásahu",
-      "tries": "Pokusy útočníka",
-      "stars": "Hvězdy"
-    },
-    "mapLabel": "Mapa útoku na server",
-    "mapServer": "Kvásek",
-    "mapAttacker": "útočník",
-    "mapBlocked": "zablokováno",
-    "legend": {
-      "attacker": "útočník",
-      "users": "běžní uživatelé",
-      "server": "server Kvásek"
+      "time": "Čas zásahu"
     },
     "terminal": "Terminál",
     "cmd": {
@@ -784,11 +766,9 @@
     "deploy": "Nasadit štíty",
     "pickTwo": "Vybrat jde jen dva štíty. Nejdřív jeden odeber.",
     "retry": "Zkusit znovu",
-    "starLost": "Hvězda za rozhodnutí napoprvé je pryč, hra ale pokračuje.",
     "result": {
       "thanks": "Díky, jdu zpátky k pecím. Objednávky jedou dál.",
       "title": "Server je v bezpečí",
-      "stars": "{n}/3",
       "time": "Zásah za {time}",
       "compare": "Pod 1 minutu to zvládne jen každý třetí.",
       "skills": [

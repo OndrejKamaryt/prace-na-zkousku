@@ -10,25 +10,20 @@ async function toShields(page: Page) {
   await expect(page.locator('[data-shield="klic"]')).toBeEnabled();
 }
 
-test('QA1: po 20 s bez akce je čas 0:00, útok neběží a je vidět Začít zásah; skrytá záložka čas zastaví', async ({ page }) => {
+test('QA1: po 20 s bez akce je čas 0:00 a je vidět Začít zásah; skrytá záložka čas zastaví', async ({ page }) => {
   await page.clock.install();
   await page.setViewportSize(LAPTOP);
   await open(page, '/index.html?ukazka=kyber');
-  const tries = await page.locator('#s-tries').innerText();
   await page.clock.runFor(20_000);
   await expect(page.locator('#s-time')).toHaveText('0:00');
-  await expect(page.locator('#s-tries')).toHaveText(tries);
   await expect(page.locator('#s-stage')).toHaveAttribute('data-scene', 'intro');
-  await expect(page.locator('#s-packets circle')).toHaveCount(0);
-  await expect(page.locator('#s-map animate, #s-map animateTransform')).toHaveCount(0);
   await expect(page.locator('#s-start')).toBeInViewport({ ratio: 1 });
   await expect(page.locator('#s-start')).toHaveText('Začít zásah');
 
-  // po startu běží čas od nuly a přibývají pokusy
+  // po startu běží čas od nuly
   await page.locator('#s-start').click();
   await page.clock.runFor(3_000);
   await expect(page.locator('#s-time')).toHaveText('0:03');
-  expect(await num(page, '#s-tries')).toBeGreaterThan(parseInt(tries.replace(/\s/g, ''), 10));
 
   // skrytá záložka čas zastaví, po návratu běží dál
   const visibility = (hidden: boolean) => page.evaluate(h => {
@@ -89,47 +84,31 @@ test('QA2: volby nejdou zvolit, dokud není celá zpráva, a mezi objevením a k
   }
 });
 
-test('QA3: v kroku 1 ukazuje přehled, terminál i karta adresy stejné číslo', async ({ page }) => {
+test('QA3: v kroku 1 ukazuje terminál, karta adresy i shrnutí stejné číslo', async ({ page }) => {
   await page.setViewportSize(LAPTOP);
   await open(page, '/index.html?ukazka=kyber');
   await page.locator('#s-start').click();
   await page.locator('[data-cmd="grep"]').click();
-  // do spočítání útočníkovi pokusy přibývají
   await expect(page.locator('[data-cmd="count"]')).toBeEnabled({ timeout: 15_000 });
-  const before = await num(page, '#s-tries');
-  await expect.poll(() => num(page, '#s-tries')).toBeGreaterThan(before);
   await page.locator('[data-cmd="count"]').click();
   await expect(page.locator('[data-q1="0"]')).toBeEnabled({ timeout: 15_000 });
 
-  const hud = await num(page, '#s-tries');
   const card = await num(page, '#s-ip0');
   const line = (await page.locator('#s-out .blk').last().innerText()).split('\n').find(l => l.includes('203.0.113.47'))!;
   const term = parseInt(line.trim(), 10);
-  expect(card).toBe(hud);
-  expect(term).toBe(hud);
-  await expect(page.locator('.noc-carry')).toContainText('Jedna adresa to zkusila ' + hud.toLocaleString('cs-CZ') + '×');
+  expect(term).toBe(card);
+  await expect(page.locator('.noc-carry')).toContainText('Jedna adresa to zkusila ' + card.toLocaleString('cs-CZ') + '×');
   // po spočítání počítadlo stojí
   await page.waitForTimeout(800);
-  expect(await num(page, '#s-tries')).toBe(hud);
+  expect(await num(page, '#s-ip0')).toBe(card);
 });
 
-test('QA4: bez chyby je pruh 100 % plný a zelený, 3/3 hvězdy a výsledková karta je před cenou', async ({ page }) => {
+test('QA4: výsledková karta ukáže čas zásahu a je před cenou', async ({ page }) => {
   await page.setViewportSize(LAPTOP);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page, '/index.html?ukazka=kyber');
-  // pod 40 % je pruh červený, od 40 % žlutý
-  await expect(page.locator('#s-meter')).toHaveCSS('background-color', 'rgb(216, 27, 83)');
-  await solveKyber(page, async () => {
-    if ((await page.locator('#s-pct').innerText()).startsWith('50')) await expect(page.locator('#s-meter')).toHaveCSS('background-color', 'rgb(250, 186, 32)');
-  });
-  const meter = await page.locator('#s-meter').evaluate(e => ({ w: e.getBoundingClientRect().width, track: e.parentElement!.getBoundingClientRect().width, bg: getComputedStyle(e).backgroundColor }));
-  expect(Math.abs(meter.w - meter.track)).toBeLessThan(1);
-  expect(meter.bg).toBe('rgb(47, 163, 90)');
-  await expect(page.locator('#s-pct')).toHaveText('100 %');
-  await expect(page.locator('#s-stars svg.on')).toHaveCount(3);
-  await expect(page.locator('#s-stars')).toContainText('3/3');
-  await expect(page.locator('#s-result .noc-rstars svg.on')).toHaveCount(3);
-  await expect(page.locator('#s-result .noc-rstars')).toContainText('3/3');
+  await solveKyber(page);
+  await expect(page.locator('#s-result .noc-rtime')).toContainText('Zásah za');
   // cena se objeví až po výsledkové kartě
   await expect(page.locator('#r-price')).toBeHidden();
   expect((await widgetState(page)).kyber).toMatchObject({ status: 'done', firstOk: 3, mistakes: 0 });
@@ -137,25 +116,22 @@ test('QA4: bez chyby je pruh 100 % plný a zelený, 3/3 hvězdy a výsledková k
   await expect(page.locator('#r-price')).toBeVisible();
 });
 
-test('QA5: každá špatná volba má vysvětlení, Zkusit znovu a první chyba vezme hvězdu', async ({ page }) => {
+test('QA5: každá špatná volba má vysvětlení a Zkusit znovu', async ({ page }) => {
   await page.setViewportSize(LAPTOP);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await open(page, '/index.html?ukazka=kyber');
   const fb = page.locator('#s-fb');
-  /** Špatná volba: označená ✕, vysvětlení, „Zkusit znovu“, hvězda jen při první chybě. Po „Zkusit znovu“ zůstane vypnutá. */
-  const wrong = async (sel: string, why: string, first = false) => {
+  /** Špatná volba: označená ✕, vysvětlení, „Zkusit znovu“. Po „Zkusit znovu“ zůstane vypnutá. */
+  const wrong = async (sel: string, why: string) => {
     await page.locator(sel).click();
     await expect(fb).toContainText(why);
-    await expect(fb.locator('.noc-fb-star')).toHaveCount(first ? 1 : 0);
     await expect(page.locator(sel)).toHaveClass(/\bno\b/);
-    await expect(page.locator('#s-stars')).toContainText('2/3');
     await page.locator('#s-retry').click();
     await expect(fb).toHaveCount(0);
     await expect(page.locator(sel)).toBeDisabled();
   };
   for (const sel of KYBER_MOVES.slice(0, 3)) await page.locator(sel).click();
-  await expect(page.locator('#s-stars')).toContainText('3/3');
-  await wrong('[data-q1="1"]', 'Tři pokusy jsou nejspíš někdo z kanceláře, kdo si spletl heslo.', true);
+  await wrong('[data-q1="1"]', 'Tři pokusy jsou nejspíš někdo z kanceláře, kdo si spletl heslo.');
   await wrong('[data-q1="2"]', 'Jeden neúspěšný pokus je běžný překlep.');
   for (const sel of ['[data-q1="0"]', '[data-cmd="ufw"]', '[data-cmd="last"]']) await page.locator(sel).click();
   await wrong('[data-q2="0"]', 'Smazáním přijdeš o stopy, co útočník dělal, a Petra o data. Účet radši zamkni a prověř.');
@@ -176,8 +152,8 @@ test('QA5: každá špatná volba má vysvětlení, Zkusit znovu a první chyba 
   await page.locator('[data-shield="klic"]').click();
   await page.locator('[data-shield="fail2ban"]').click();
   await page.locator('#s-deploy').click();
-  // hra pokračuje do konce, chyby vzaly jen hvězdu za rozhodnutí
-  await expect(page.locator('#s-result .noc-rstars')).toContainText('2/3');
+  // hra pokračuje do konce
+  await expect(page.locator('#s-result')).toBeVisible({ timeout: 10_000 });
   expect((await widgetState(page)).kyber).toMatchObject({ status: 'done', firstOk: 0, mistakes: 5 });
 });
 
@@ -249,10 +225,6 @@ test('QA8: hra jde dohrát jen klávesnicí i s omezenými animacemi', async ({ 
   }
   await expect(page.locator('#s-result')).toBeVisible({ timeout: 10_000 });
   expect((await focused(page)).id).toBe('s-safe');
-  // bez animací: prstence se netočí, tečky nepulzují a nelétají
-  await expect(page.locator('#s-map .ring')).toHaveCount(3);
-  await expect(page.locator('#s-map animate, #s-map animateTransform')).toHaveCount(0);
-  await expect(page.locator('#s-packets circle')).toHaveCount(0);
   await tabTo(page, '#s-next');
   await page.keyboard.press('Enter');
   await expect(page.locator('#v-vysledek')).toBeVisible();
@@ -269,12 +241,25 @@ test('Zahrát znovu začne od kroku 1, do stavu se počítá jen první hra', as
   await page.locator('#s-replay').click();
   await expect(page.locator('#s-result')).toBeHidden();
   await expect(page.locator('#s-intro')).toBeHidden();
-  await expect(page.locator('#s-pct')).toHaveText('15 %');
-  await expect(page.locator('#s-stars')).toContainText('3/3');
+  await expect(page.locator('#s-time')).toHaveText('0:00');
   await expect(page.locator('#s-out .blk')).toHaveCount(1);
   await page.locator('[data-cmd="grep"]').click();
   await page.locator('[data-cmd="count"]').click();
   await page.locator('[data-q1="1"]').click();
-  await expect(page.locator('#s-stars')).toContainText('2/3');
+  await expect(page.locator('#s-fb')).toBeVisible();
   expect((await widgetState(page)).kyber).toEqual(first);
+});
+
+test('IT admin: nahoře jen čas, bez mapy, procent, pokusů a hvězd, čas běží', async ({ page }) => {
+  await page.clock.install();
+  await page.setViewportSize(LAPTOP);
+  await open(page, '/index.html?ukazka=kyber');
+  await expect(page.locator('#s-intro .noc-rules')).toHaveCount(0);
+  await page.locator('#s-start').click();
+  await expect(page.locator('.noc-tile')).toHaveCount(1);
+  for (const sel of ['#s-pct', '#s-tries', '#s-stars', '#s-map', '.noc-rstars']) await expect(page.locator(sel), sel).toHaveCount(0);
+  await page.clock.runFor(2_000);
+  await expect(page.locator('#s-time')).toHaveText('0:02');
+  await page.clock.runFor(3_000);
+  await expect(page.locator('#s-time')).toHaveText('0:05');
 });

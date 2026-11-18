@@ -25,14 +25,14 @@ Shrnutí ze dne 5. 11. 2026, IT admin je přepracovaný 12. 11. podle Martinova 
 Podklad je Martinovo `Zadani_UX_hra_kyberbezpecnost.pdf` (UX-01 až UX-12), postup a texty schválil Ondřej 12. 11. v `NAVRH-KYBER-UX.md`, texty jsou i v `NAVRH-TEXTU.md`. Data, hra a ceny se nemění.
 
 - **Stavový automat** (`src/screens/kyber.ts`): úvod, krok 1 až 3, výsledek (`data-step` na `#s-stage`). Kroky se skládají z taktů a každý takt má fáze zpráva, otázka, volby a zpětná vazba (`data-phase` na `#s-step`). Terezina zpráva se nejdřív „píše“, pak je pauza 400 ms, otázka a volby. Volby se vykreslí na místě, kde se pak klikají, a do konce zprávy jsou vypnuté.
-- **Jeden stav hry** (`src/logic/kyber.ts`): pokusy podle adresy, zabezpečení v procentech, chyby v krocích, čas a z nich hvězdy. Přehled, karty adres i výpis `uniq -c` v terminálu (`src/content/fixtures.ts`) berou čísla odsud. Útočníkovi od 412 přibývá asi 7 pokusů za sekundu, příkaz „Spočítat“ číslo zastaví. Penalizace +25 pokusů za špatnou adresu je pryč.
+- **Jeden stav hry** (`src/logic/kyber.ts`): pokusy podle adresy, chyby v krocích a čas. Karty adres i výpis `uniq -c` v terminálu (`src/content/fixtures.ts`) berou čísla odsud. Útočníkovi od 412 přibývá asi 7 pokusů za sekundu, příkaz „Spočítat“ číslo zastaví. Penalizace +25 pokusů za špatnou adresu je pryč.
 - **Úvod přes herní box** se „Začít zásah“. Čas i útok na mapě běží až po startu, při skryté záložce (`visibilitychange`) a mimo obrazovku IT admina stojí. Po startu se stránka posune na herní box.
-- **Rozložení:** nahoře zabezpečení, čas, pokusy a hvězdy. Vlevo chat s pevnou výškou 120 px (poslední 3 zprávy, nejnovější bílá dole, jméno jen u ní) a oblast kroku. Vpravo mapa s legendou (40 %) a terminál (60 %), který se posouvá na poslední příkaz a nový výpis 1,5 s zvýrazní. Na mobilu přehled, chat, krok, sbalitelný terminál na 6 řádků a zmenšená mapa.
+- **Rozložení:** nahoře jen čas zásahu. Vlevo chat s pevnou výškou 120 px (poslední 3 zprávy, nejnovější bílá dole, jméno jen u ní) a oblast kroku. Vpravo jen terminál přes celou výšku, který se posouvá na poslední příkaz a nový výpis 1,5 s zvýrazní. Na mobilu čas, chat, krok a sbalitelný terminál na 6 řádků.
 - **Příkazy:** jediná akce v kroku je plné žluté tlačítko, vedle něj ⓘ s vysvětlením (klepnutím, jde i z klávesnice), po spuštění shrnutí pod tlačítkem. Shrnutí zůstane nad dalším pokynem ve stejném kroku, ať nezmizí. Volby jsou obrysové karty, červená je jen chyba.
-- **Chyba:** volba červeně s ✕, pod ní vysvětlení a „Zkusit znovu“. První chyba za hru vezme hvězdu za rozhodnutí napoprvé. Po „Zkusit znovu“ zůstane špatná volba označená a vypnutá, u štítů se špatné odeberou a správné zůstanou vybrané.
+- **Chyba:** volba červeně s ✕, pod ní vysvětlení a „Zkusit znovu“. Po „Zkusit znovu“ zůstane špatná volba označená a vypnutá, u štítů se špatné odeberou a správné zůstanou vybrané.
 - **Krok 3:** „Vybráno n/2“, „Nasadit štíty“ jde až při dvou, třetí výběr nejde a ukáže se hláška.
-- **Hvězdy:** za ubráněný server, za rozhodnutí napoprvé (pryč při první chybě) a za rychlost (pryč po 2:00). Vidět jsou v přehledu po celou hru i s počtem „n/3“.
-- **Výsledková karta** v herním boxu místo pruhu Hotovo: Tereza, „Server je v bezpečí“, hvězdy a „n/3“, čas zásahu, pevná věta „Pod 1 minutu to zvládne jen každý třetí.“, čtyři dovednosti, věta o kurzu a tlačítka „Co dál?“ (vede na doporučení s cenou), „Zahrát znovu“. „Můj výsledek“ v hlavičce je na obrazovce IT admina schovaný, u dat a hry zůstává.
+- **Hodnotí se jen čas.** Hvězdy, procenta zabezpečení, pokusy útočníka v horním panelu i mapa útoku jsou pryč (rozhodnutí 18. 11.).
+- **Výsledková karta** v herním boxu místo pruhu Hotovo: Tereza, „Server je v bezpečí“, čas zásahu, pevná věta „Pod 1 minutu to zvládne jen každý třetí.“, čtyři dovednosti, věta o kurzu a tlačítka „Co dál?“ (vede na doporučení s cenou), „Zahrát znovu“. „Můj výsledek“ v hlavičce je na obrazovce IT admina schovaný, u dat a hry zůstává.
 - **Zahrát znovu** začne rovnou krokem 1. Do stavu návštěvníka (a do Pipedrivu) se počítá jen první hra: `kyberAnswer` a `finish` se při opakování nevolají.
 - **Sdílet výsledek** Ondřej 16. 11. vyřadil, nebylo jasné, k čemu by bylo. Tlačítko, texty i kód sdílení jsou pryč.
 - **„2 minuty“** jen u IT admina: štítek nad nadpisem, karta na úvodu a „asi 2 minuty“ v dalších příkladech (`duration()` v `src/ui/parts.ts`). Perex nad hrou je kratší.
@@ -50,7 +50,7 @@ Každá zpráva má `source: 'prace-na-zkousku'`, `event` a `game: 'kyber'`. Po�
 | `game_start` | „Začít zásah“ nebo „Zahrát znovu“ | `replay` |
 | `wrong_answer` | špatná volba | `step`, `option` (IP adresa nebo klíč volby: `smazat`, `nic`, `vypinat`, `prejmenovat`), `replay` |
 | `step_complete` | krok 1, 2 nebo 3 je hotový | `step`, `time` (sekundy od startu), `wrong_count`, `replay` |
-| `game_finish` | server je zabezpečený | `stars`, `time`, `replay` |
+| `game_finish` | server je zabezpečený | `time`, `replay` |
 | `result_cta_click` | „Co dál?“ | |
 | `replay_click` | „Zahrát znovu“ | |
 | `webinar_click` | „Webinář zdarma“ na stránce s doporučením, jen když doporučuje kyberbezpečnost | |
@@ -82,7 +82,6 @@ Posluchač na stránce webu, který události přepošle do GTM:
       pnz_time: d.time,
       pnz_wrong_count: d.wrong_count,
       pnz_option: d.option,
-      pnz_stars: d.stars,
       pnz_replay: d.replay
     });
   });
@@ -124,6 +123,10 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 - **Prázdný výsledek:** „Vyber si jednu práci, zabere pár minut.“ místo „asi pět minut“, IT admin trvá 2 minuty.
 - **Slovo „Terminál“** na sbalovací liště terminálu na mobilu zůstává.
 - **Testy před nasazením:** GitHub Actions pouští před nasazením i Playwright testy v Edge (na runneru je předinstalovaný, v CI jeden opakovaný pokus). Když selžou, demo se nenasadí a zpráva z testů je v artefaktu `playwright-report`.
+
+## Rozhodnuto 18. 11.
+
+- **IT admin se zjednodušil:** z horního panelu zůstal jen čas zásahu, zmizela mapa útoku i hvězdy (úvod, hláška po chybě, výsledek) a hodnotí se jen čas. Událost `game_finish` už nenese `stars`. Hra „Tvorba her“ si hvězdy nechává.
 
 ## Co jsem rozhodl při stavbě (ke kontrole, texty se neměnily)
 
