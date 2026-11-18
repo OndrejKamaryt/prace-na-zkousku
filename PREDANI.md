@@ -121,6 +121,7 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 ## Rozhodnuto 16. 11.
 
 - **Všechny kurzy budou s dotací DIGIkurzy.** Text pro kurz s `digikurzy: false` není potřeba.
+- **Prázdný výsledek:** „Vyber si jednu práci, zabere pár minut.“ místo „asi pět minut“, IT admin trvá 2 minuty.
 - **Slovo „Terminál“** na sbalovací liště terminálu na mobilu zůstává.
 - **Testy před nasazením:** GitHub Actions pouští před nasazením i Playwright testy v Edge (na runneru je předinstalovaný, v CI jeden opakovaný pokus). Když selžou, demo se nenasadí a zpráva z testů je v artefaktu `playwright-report`.
 
@@ -144,7 +145,6 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 - Token `?pnz` je jen na stránce, kam člověk přijde z e-mailu. Na dalších stránkách webu widget nic nezapíše, pokud token neuloží (`sessionStorage` = zásah do hostitele).
 - Ubuntu Mono v embedu: přidat do CSS webu, vložit `<link>` do hlavičky (zásah do hostitele), nebo systémový monospace (teď záloha).
 - Tabulka spouštěčů analytiky (fáze 4).
-- **Prázdný výsledek mluví o pěti minutách:** „Vyber si jednu práci, zabere asi pět minut.“ IT admin má teď 2 minuty. Návrh: „zabere pár minut“. Podnadpis úvodu je od 12. 11. „Tři krátké ukázky skutečné práce.“
 - **Srovnání s hráči** je pevná věta „Pod 1 minutu to zvládne jen každý třetí.“ Až bude z analytiky dost `game_finish`, dá se nahradit skutečným číslem.
 
 ## Další kroky
