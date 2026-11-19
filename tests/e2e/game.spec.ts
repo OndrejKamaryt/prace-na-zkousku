@@ -202,9 +202,7 @@ test('přeskočená hra není hotová, výsledek je dostupný (rozhodnutí 7)', 
   await expect(page.locator('.prog')).toBeVisible();
   expect((await widgetState(page)).hry.status).toBe('skipped');
 
-  await page.locator('.logo').click();
-  await expect(page.locator('[data-state="hry"]')).toHaveText('Přeskočeno');
-  await page.locator('.path-card[data-go="data"]').click();
+  await page.locator('#r-others [data-go="data"]').click();
   await expect(page.locator('#v-data [data-more] [data-go="hry"]')).toContainText('Přeskočeno');
   await page.locator('#v-data [data-more] [data-go="hry"]').click();
   await expect(page.locator('#g-done')).toBeHidden();

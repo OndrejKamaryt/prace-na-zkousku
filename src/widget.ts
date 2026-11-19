@@ -140,12 +140,10 @@ export class PraceNaZkousku extends HTMLElement {
 
     const ui = cs.ui;
     const prog = '<button class="prog" type="button" data-go="vysledek">' + ui.myResult + '</button>';
-    const top = this.#variant === 'standalone'
-      ? '<header class="site"><div class="container site-in"><button class="logo" type="button" data-go="start" aria-label="' + ui.logoLabel + '"><span class="logo-mark" aria-hidden="true"><b>C</b><span>L</span></span><span class="tool-name">' + ui.toolName + '</span></button>' + prog + '</div></header>'
-      : '<div class="pnz-bar"><div class="container">' + prog + '</div></div>';
-    const wrap = el('<div class="pnz">' + top + '<main></main></div>');
+    // bez vlastní hlavičky s logem i na samostatné stránce (19. 11.), nahoře jen světlý pruh
+    const wrap = el('<div class="pnz"><div class="pnz-bar"><div class="container">' + prog + '</div></div><main></main></div>');
     const main = $(wrap, 'main');
-    this.#progBox = wrap.querySelector<HTMLElement>('.pnz-bar') ?? $(wrap, '.prog');
+    this.#progBox = $(wrap, '.pnz-bar');
 
     this.#screens = { start: createStart(this.#offered), vysledek: createResult(ctx) };
     for (const k of this.#offered) this.#screens[k] = SCREENS[k](ctx);

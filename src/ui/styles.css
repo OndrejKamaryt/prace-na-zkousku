@@ -46,23 +46,11 @@ p{margin:0}
 b, strong{font-weight:700}
 button{font-family:inherit}
 
-/* hlavička samostatné stránky jako na webu: tmavá lišta a žlutý čtverec s CL */
-.site{background:var(--dark); color:var(--on-dark)}
-.site-in{display:flex; align-items:center; gap:12px; min-height:56px}
-.logo{display:flex; align-items:center; gap:14px; text-decoration:none; color:var(--on-dark); align-self:stretch; background:none; border:0; padding:0; margin:0; cursor:pointer; font:inherit}
-.logo-mark{width:56px; background:var(--yellow); display:flex; align-items:center; justify-content:center; font:700 27px/1 var(--head); letter-spacing:-.03em; align-self:stretch}
-.logo-mark b{color:#4D4D4D; font-weight:700} .logo-mark span{color:#FFFFFF}
-.tool-name{font:500 18px var(--head)}
-.site :focus-visible{outline-color:var(--yellow)}
-.prog{margin-left:auto; display:inline-flex; align-items:center; min-height:40px; padding:4px 16px; border:1px solid var(--yellow); border-radius:999px; background:transparent; color:var(--yellow); font:500 15px var(--head); text-decoration:none; white-space:nowrap; cursor:pointer; transition:background .15s, color .15s}
-.prog:hover{background:var(--yellow); color:var(--dark)}
-@container (max-width:560px){ .tool-name{display:none} .logo-mark{width:48px; font-size:24px} .site-in{min-height:52px} }
-
-/* embed: světlý pruh s tlačítkem Můj výsledek místo tmavé hlavičky */
+/* světlý pruh s tlačítkem Můj výsledek, bez vlastní hlavičky s logem (19. 11.) */
 .pnz-bar{background:var(--light); border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
 .pnz-bar .container{display:flex; justify-content:flex-end; padding-top:8px; padding-bottom:8px}
-.pnz-bar .prog{color:var(--dark); border-color:var(--line-strong); background:#FFFFFF}
-.pnz-bar .prog:hover{background:var(--yellow); border-color:var(--yellow)}
+.prog{display:inline-flex; align-items:center; min-height:40px; padding:4px 16px; border:1px solid var(--line-strong); border-radius:999px; background:#FFFFFF; color:var(--dark); font:500 15px var(--head); text-decoration:none; white-space:nowrap; cursor:pointer; transition:background .15s, border-color .15s}
+.prog:hover{background:var(--yellow); border-color:var(--yellow)}
 
 /* tlačítka jako na webu: pilulky, Ubuntu, bez kapitálek */
 .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:44px; padding:9px 22px; border-radius:999px; border:1px solid transparent; font:500 16px/1.2 var(--head); cursor:pointer; text-decoration:none; text-align:center; transition:background .15s, border-color .15s, color .15s}

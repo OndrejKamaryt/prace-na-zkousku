@@ -12,7 +12,7 @@ Shrnutí ze dne 5. 11. 2026, IT admin je přepracovaný 12. 11. podle Martinova 
 
 - **Odznaky jsou pryč:** pruh, vyzvednutí, okno s konfetami i „Odznaky n/4“. `src/ui/celebrate.ts` je smazaný.
 - **Konec ukázky:** krémový pruh s větou a tlačítkem „Můj výsledek“. Dole na ukázce i ve výsledku je „Zkus si další příklady“ (ostatní ukázky, hotové odškrtnuté) místo „Zpět na výběr“.
-- **Hlavička:** „Můj výsledek“ se ukáže až po první hotové nebo přeskočené ukázce. Na obrazovce IT admina se neukazuje, tam vede dál „Co dál?“ na výsledkové kartě (12. 11.). V embedu je do té doby skrytý celý světlý pruh.
+- **Hlavička:** „Můj výsledek“ se ukáže až po první hotové nebo přeskočené ukázce. Na obrazovce IT admina se neukazuje, tam vede dál „Co dál?“ na výsledkové kartě (12. 11.). Do té doby je skrytý celý světlý pruh, tmavá hlavička s logem není ani na samostatné stránce (19. 11.).
 - **Výsledek** je jeden sloupec (nejvýš 720 px): doporučený obor s jednou větou, cena s příspěvkem, „Co dál“ s větou o nové záložce, další příklady. Pryč jsou důvody, „Bavilo tě to?“, „Co od kurzu čekáš?“ a školení přes firmu. Barevně bez modrého bloku.
 - **Datová analýza** je práce analytika v osmi rozhodnutích: Jana napíše o problému, návštěvník stáhne data z pokladny, sečte měsíce, klikne na březen, porovná dny, klikne na víkend, rozdělí tržby podle produktů, klikne na snídaně a napíše Janě závěr. Jeviště mění barvu podle fáze (krémová, tmavá, modrá, žlutá), tlačítka a sloupce svítí, nad jevištěm se plní tři stopy a nad grafy se vypisuje dotaz SQL. Špatná volba zmizí a Jana k ní řekne svoje, po dvou špatných se rozsvítí správná, na kterou se klikne. Konec je „Zmizely víkendové snídaně“ a 52 800 Kč. Klikací koncept je v `prototyp/data-koncept.html`.
 - **IT administrátor (kyberbezpečnost):** noční velín na serveru pekárny Kvásek, Tereza a Petra jsou vymyšlené postavy. Ondřej 8. 11. rozhodl, že ukázka zůstává na příkladu pekárny, ne na serverech Coders Labu. Od 12. 11. je přestavěný podle Martinova zadání UX, viz sekce „IT admin podle Martinova zadání UX“. Koncept v `prototyp/admin-koncept.html` je starší, platí texty v `NAVRH-TEXTU.md`.
@@ -127,6 +127,10 @@ Do `offered` v `src/content/config.json` přidat `"ai"`. Pak je potřeba změnit
 ## Rozhodnuto 18. 11.
 
 - **IT admin se zjednodušil:** z horního panelu zůstal jen čas zásahu, zmizela mapa útoku i hvězdy (úvod, hláška po chybě, výsledek) a hodnotí se jen čas. Událost `game_finish` už nenese `stars`. Hra „Tvorba her“ si hvězdy nechává.
+
+## Rozhodnuto 19. 11.
+
+- **Bez tmavé hlavičky s logem CL:** samostatná stránka má nahoře jen světlý pruh s „Můj výsledek“ jako embed, skrytý do první hotové nebo přeskočené ukázky. Odkaz na úvod tím zmizel, dál se jde přes „Zkus si další příklady“ a výsledek. Texty `ui.toolName` a `ui.logoLabel` jsou pryč. `ZADANI.md` (tmavá hlavička se v samostatné stránce ponechává) tím přestává platit.
 
 ## Co jsem rozhodl při stavbě (ke kontrole, texty se neměnily)
 

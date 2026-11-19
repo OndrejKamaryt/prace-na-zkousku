@@ -60,6 +60,9 @@ test('A: Datová analýza na mobilu po krocích a výsledek v jednom sloupci', a
   await expect(bars).toHaveCount(4);
   await expect(bars.nth(2)).toContainText('62 100 Kč');
   await expect(bars.nth(2)).toContainText('9 300 Kč');
+  // samostatná stránka nemá tmavou hlavičku s logem, jen světlý pruh skrytý do první hotové ukázky
+  await expect(page.locator('header, .logo, .site')).toHaveCount(0);
+  await expect(page.locator('.pnz-bar')).toBeHidden();
   await expect(page.locator('.prog')).toBeHidden();
   await bars.nth(2).focus();
   await page.keyboard.press('Enter');
@@ -505,12 +508,6 @@ test('C2: Zkus si další příklady, hotové odškrtnuté, a výsledek ze dvou 
   await expect(page.locator('#r-others [data-go="hry"]')).toContainText('asi 5 minut');
   await expect(page.locator('#r-others [data-go="data"]')).toHaveCount(0);
 
-  // na úvodu jsou hotové odškrtnuté a pruh s odznaky je pryč
-  await page.locator('.logo').click();
-  await expect(page.locator('[data-state="data"]')).toHaveText('Hotovo ✓');
-  await expect(page.locator('[data-state="kyber"]')).toHaveText('Hotovo ✓');
-  await expect(page.locator('[data-state="hry"]')).toHaveText('Zkusit');
-  await expect(page.locator('.path-card[data-go="kyber"] .foot')).toContainText('2 minuty');
-  await expect(page.locator('.path-card[data-go="hry"] .foot')).toContainText('5 minut');
+  // pruh s odznaky je pryč
   await expect(page.locator('#start-badges, .badges, .minis')).toHaveCount(0);
 });
